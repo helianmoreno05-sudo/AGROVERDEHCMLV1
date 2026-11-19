@@ -1,11 +1,144 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Clima - Agro Verde</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../../assets/css/global.css">
+    <link rel="stylesheet" href="../../assets/css/clima/clima.css">
 </head>
+
 <body>
-    
+    <main class="pantalla container-fluid">
+        <!-- Encabezado -->
+        <header class="app-header">
+            <div class="app-header__left">
+                <h3 class="m-0 fw-bold">Clima</h3>
+                <span class="badge-finca">Finca el Manantial</span>
+            </div>
+            <img src="../../assets/img/agro-verde-sin-texto.png" alt="Agro Verde" class="app-logo-mini">
+        </header>
+
+        <!-- Tarjeta Temperatura Actual -->
+        <section class="tarjeta p-3 rounded-4 mb-3">
+            <div class="clima-actual__temp">24°C</div>
+            <div class="clima-actual__desc">Soleado</div>
+        </section>
+
+        <div class="row g-3">
+            <!-- Columna izquierda: Pronósticos -->
+            <div class="col-12 col-lg-7">
+                <p class="texto_gris small fw-semibold mb-2">Próximas horas</p>
+                <div class="tarjeta p-3 rounded-4 mb-3 horas-grid">
+                    <div class="hora-item">
+                        <span class="texto_gris small">12pm</span>
+                        <span class="fs-5">☀️</span>
+                        <span class="fw-semibold small">25°</span>
+                    </div>
+                    <div class="hora-item">
+                        <span class="texto_gris small">1pm</span>
+                        <span class="fs-5">☀️</span>
+                        <span class="fw-semibold small">26°</span>
+                    </div>
+                    <div class="hora-item">
+                        <span class="texto_gris small">2pm</span>
+                        <span class="fs-5">☀️</span>
+                        <span class="fw-semibold small">26°</span>
+                    </div>
+                    <div class="hora-item">
+                        <span class="texto_gris small">3pm</span>
+                        <span class="fs-5">🌦️</span>
+                        <span class="fw-semibold small">23°</span>
+                    </div>
+                    <div class="hora-item">
+                        <span class="texto_gris small">4pm</span>
+                        <span class="fs-5">🌧️</span>
+                        <span class="fw-semibold small">22°</span>
+                    </div>
+                </div>
+
+                <p class="texto_gris small fw-semibold mb-2">Pronóstico 5 días</p>
+                <div class="tarjeta p-3 rounded-4 mb-3">
+                    <div class="dia-row">
+                        <span class="dia-nombre">Hoy</span>
+                        <span>☀️</span>
+                        <span><small class="texto_gris me-2">18°</small><strong>26°</strong></span>
+                    </div>
+                    <div class="dia-row">
+                        <span class="dia-nombre">Mañana</span>
+                        <span>🌧️</span>
+                        <span><small class="texto_gris me-2">17°</small><strong>23°</strong></span>
+                    </div>
+                    <div class="dia-row">
+                        <span class="dia-nombre">Jueves</span>
+                        <span>⛅</span>
+                        <span><small class="texto_gris me-2">18°</small><strong>24°</strong></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Columna derecha: Alertas y Submódulos -->
+            <div class="col-12 col-lg-5">
+                <p class="texto_gris small fw-semibold mb-2">Alertas climáticas</p>
+                <div class="tarjeta p-3 rounded-4 mb-3 alertas-resumen">
+                    <p class="mb-1">• Lluvia fuerte prevista en Lote 3</p>
+                    <p class="m-0">• Humedad alta en Lote 2</p>
+                </div>
+
+                <nav class="d-flex flex-column gap-2">
+                    <a href="riesgo-plagas-clima.html"
+                        class="tarjeta p-3 rounded-4 d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong class="d-block">Riesgo de plagas por clima</strong>
+                            <span class="texto_gris small">2 amenazas activas</span>
+                        </div>
+                        <i class="bi bi-chevron-right texto_gris"></i>
+                    </a>
+
+                    <a href="alertas.html"
+                        class="tarjeta p-3 rounded-4 d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong class="d-block">Alertas por temporada climática</strong>
+                            <span class="texto_gris small">Lluvias, sequías y heladas</span>
+                        </div>
+                        <i class="bi bi-chevron-right texto_gris"></i>
+                    </a>
+
+                    <a href="historial-climatico.html"
+                        class="tarjeta p-3 rounded-4 d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong class="d-block">Historial climático</strong>
+                            <span class="texto_gris small">Registros por terreno</span>
+                        </div>
+                        <i class="bi bi-chevron-right texto_gris"></i>
+                    </a>
+
+                    <a href="calendario-agricola.html"
+                        class="tarjeta p-3 rounded-4 d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong class="d-block">Calendario agrícola</strong>
+                            <span class="texto_gris small">2 eventos próximos</span>
+                        </div>
+                        <i class="bi bi-chevron-right texto_gris"></i>
+                    </a>
+                </nav>
+            </div>
+        </div>
+    </main>
+
+    <!-- Barra de navegación inferior unificada -->
+    <nav class="navegacion_inferior d-flex justify-content-between">
+        <a href="../inicio/inicio.html" class="text-center small"><i class="bi bi-house-door d-block"></i>Inicio</a>
+        <a href="../cultivos/cultivos.html" class="text-center small"><i class="bi bi-flower1 d-block"></i>Cultivos</a>
+        <a href="clima.html" class="text-center small active"><i class="bi bi-cloud-sun d-block"></i>Clima</a>
+        <a href="../insumos/insumos.html" class="text-center small"><i class="bi bi-box-seam d-block"></i>Insumos</a>
+        <a href="../perfil/perfil.html" class="text-center small"><i class="bi bi-person-circle d-block"></i>Perfil</a>
+    </nav>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
