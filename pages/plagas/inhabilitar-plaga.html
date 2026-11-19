@@ -1,17 +1,21 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Inhabilitar plaga - Agro Verde</title>
-  
+
   <!-- traemos bootstrap para k se vea bien sin complicarme tanto -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- iconos de bootstrap para los botones y la flecha de devolverse -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-  <!-- estilos del css de plagas -->
+  <!-- estilos generales de plagas -->
+  <link rel="stylesheet" href="../../assets/css/plagas/plagas.css">
+  <!-- estilos del formulario de plagas -->
   <link rel="stylesheet" href="../../assets/css/plagas/gestion-plagas.css">
 </head>
+
 <body>
 
   <!-- este div es la pantalla principal k en pc se acomoda centrada para k no quede estirada -->
@@ -20,74 +24,56 @@
     <!-- la parte de arriba con el boton de regresar y el titulo de la pagina -->
     <div class="d-flex align-items-center mb-4 gap-3">
       <!-- boton para devolverse a la pantalla principal de plagas -->
-      <a href="../plagas/plagas.html" class="boton_atras text-white text-decoration-none d-flex align-items-center justify-content-center">
+      <a href="plagas.html"
+        class="boton_atras text-white text-decoration-none d-flex align-items-center justify-content-center"
+        aria-label="Volver a plagas">
         <i class="bi bi-chevron-left fs-5"></i>
       </a>
       <h4 class="m-0 text-white fw-bold">Inhabilitar plaga</h4>
     </div>
 
-    <!-- buscador y lista de plagas metidos en una tarjeta centrada para k se vea bien en pc y cel -->
+    <!-- buscador y lista de plagas metidos en una columna centrada para k se vea bien en pc y cel -->
     <div class="row justify-content-center">
       <div class="col-12 col-md-8 col-lg-6">
-        
+
         <!-- caja de texto para buscar entre las plagas de la lista -->
-        <input type="text" class="form-control caja_busqueda mb-3" placeholder="Buscar plaga">
+        <input type="text" class="form-control caja_busqueda mb-3" id="buscador" placeholder="Buscar plaga"
+          aria-label="Buscar plaga">
 
-        <form action="plagas.html" method="GET">
-          
-          <!-- lista de opciones para seleccionar la plaga a inhabilitar -->
-          <div class="d-flex flex-column gap-2 mb-4">
+        <form id="formulario_inhabilitar">
 
-            <!-- opcion 1 cogollero -->
-            <label class="tarjeta p-3 rounded-4 d-flex align-items-center gap-3 cursor-pointer">
-              <input type="radio" class="form-check-input radio_custom m-0" name="plaga" value="cogollero">
-              <div class="flex-grow-1">
-                <div class="fw-bold text-white">Cogollero - Lote 1</div>
-                <small class="texto_gris">Etapa: leve</small>
-              </div>
-              <span class="insignia insignia_optimo">Óptimo</span>
-            </label>
+          <!-- mensaje de error (lo muestra el script) -->
+          <div id="aviso_error" class="alert alert-danger py-2 small d-none" role="alert"></div>
 
-            <!-- opcion 2 broca del cafe -->
-            <label class="tarjeta p-3 rounded-4 d-flex align-items-center gap-3 cursor-pointer">
-              <input type="radio" class="form-check-input radio_custom m-0" name="plaga" value="broca">
-              <div class="flex-grow-1">
-                <div class="fw-bold text-white">Broca del café - Lote 2</div>
-                <small class="texto_gris">Etapa: inicial</small>
-              </div>
-              <span class="insignia insignia_revisar">Revisar</span>
-            </label>
-
-            <!-- opcion 3 mosca blanca -->
-            <label class="tarjeta p-3 rounded-4 d-flex align-items-center gap-3 cursor-pointer">
-              <input type="radio" class="form-check-input radio_custom m-0" name="plaga" value="mosca-blanca">
-              <div class="flex-grow-1">
-                <div class="fw-bold text-white">Mosca blanca - Lote 3</div>
-                <small class="texto_gris">Etapa: riesgo bajo</small>
-              </div>
-              <span class="insignia insignia_alerta">Alerta plaga</span>
-            </label>
-
-            <!-- opcion 4 polilla -->
-            <label class="tarjeta p-3 rounded-4 d-flex align-items-center gap-3 cursor-pointer">
-              <input type="radio" class="form-check-input radio_custom m-0" name="plaga" value="polilla">
-              <div class="flex-grow-1">
-                <div class="fw-bold text-white">Polilla - Lote 4</div>
-                <small class="texto_gris">Etapa: avanzada</small>
-              </div>
-              <span class="insignia insignia_optimo">Óptimo</span>
-            </label>
-
-          </div>
+          <!-- lista de opciones para seleccionar la plaga a inhabilitar (la llena el script) -->
+          <div class="d-flex flex-column gap-2 mb-4" id="lista_opciones"></div>
 
           <!-- boton rojo para confirmar e inhabilitar la plaga seleccionada -->
-          <button type="submit" class="btn_inhabilitar w-100 py-2 text-center">Inhabilitar Plaga</button>
+          <button type="submit" class="btn_inhabilitar w-100 py-2 text-center" id="boton_inhabilitar">Inhabilitar
+            Plaga</button>
 
         </form>
 
       </div>
     </div>
 
+  </div>
+
+  <!-- ventana para confirmar antes de inhabilitar -->
+  <div class="modal fade" id="modal_confirmar" tabindex="-1" aria-labelledby="titulo_confirmar" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content ventana_notas">
+        <div class="modal-header border-0">
+          <h5 class="modal-title" id="titulo_confirmar">Inhabilitar plaga</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body" id="texto_confirmar"></div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-outline-light rounded-pill" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn_inhabilitar px-4 py-2" id="boton_confirmar">Inhabilitar</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- menu de abajo k se queda fijo abajo del monitor para moverte rapido -->
@@ -106,5 +92,9 @@
 
   <!-- script de bootstrap para funciones de javascript -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- scripts de plagas (el orden importa: primero los datos) -->
+  <script src="../../assets/js/plagas/datos-plagas.js"></script>
+  <script src="../../assets/js/plagas/inhabilitar-plaga.js"></script>
 </body>
-</html>s
+
+</html>

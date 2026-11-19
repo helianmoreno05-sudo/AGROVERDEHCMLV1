@@ -112,6 +112,13 @@ body {
   text-decoration: none;
 }
 
+/* el fondo de la ventana emergente de notas */
+.ventana_notas {
+  background-color: #0f2a1d;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 /* la barra del menu de abajo k se queda fija abajo en el monitor del pc */
 .navegacion_inferior {
   position: fixed;
@@ -143,4 +150,10 @@ body {
   .pantalla {
     padding: 30px 40px 100px 40px;
   }
+}
+
+/* insignia de estado controlada en verde */
+.insignia_controlada {
+  background-color: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
 }

@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Plagas - Agro Verde</title>
-  
+
   <!-- Bootstrap 5 CSS (Versión estable) -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Íconos de Bootstrap -->
@@ -12,6 +13,7 @@
   <!-- Estilos CSS de Plagas -->
   <link rel="stylesheet" href="../../assets/css/plagas/plagas.css">
 </head>
+
 <body>
 
   <!-- Pantalla principal -->
@@ -25,77 +27,40 @@
       </a>
     </div>
 
-    <!-- Tarjeta de resumen de alertas -->
-    <div class="tarjeta p-3 rounded-4 mb-4">
-      <div class="d-flex align-items-center mb-2">
-        <div class="punto_rojo me-2"></div>
-        <span class="small">Plaga detectada en lote 3</span>
-      </div>
-      <div class="d-flex align-items-center mb-2">
-        <div class="punto_verde_pequeno me-2"></div>
-        <span class="small">Control de plaga en proceso - Lote 2</span>
-      </div>
-      <div class="d-flex align-items-center">
-        <div class="punto_verde_pequeno me-2"></div>
-        <span class="small">Lote 1 libre de amenaza</span>
-      </div>
-    </div>
+    <!-- Mensaje de confirmación (guardada, modificada, inhabilitada) -->
+    <div id="aviso_plagas"></div>
 
-    <!-- Lista de tarjetas de plagas en columnas -->
-    <div class="row g-3 mb-4">
-      
-      <!-- Reporte: Maíz - Lote 1 -->
-      <div class="col-12 col-md-6">
-        <div class="tarjeta p-3 rounded-4 d-flex flex-column justify-content-between h-100">
-          <div class="d-flex justify-content-between align-items-start mb-2">
-            <div>
-              <h5 class="m-0 text-white fw-bold">Maíz - Lote 1</h5>
-              <span class="insignia insignia_alerta mt-2 d-inline-block">Avanzada</span>
-            </div>
-            <div class="text-end">
-              <p class="m-0 fw-bold">Gusano</p>
-              <p class="m-0 small texto_gris">14/06/2026</p>
-            </div>
-          </div>
-          <div class="d-flex gap-2 mt-3">
-            <a href="modificar-plaga.html" class="btn_nuevo text-center text-decoration-none flex-fill">Notas</a>
-            <a href="modificar-plaga.html" class="btn_nuevo text-center text-decoration-none flex-fill">Modificar</a>
-          </div>
-        </div>
-      </div>
+    <!-- Tarjeta de resumen de alertas (la llena plagas.js) -->
+    <div class="tarjeta p-3 rounded-4 mb-4" id="resumen_alertas"></div>
 
-      <!-- Reporte: Café - Lote 2 -->
-      <div class="col-12 col-md-6">
-        <div class="tarjeta p-3 rounded-4 d-flex flex-column justify-content-between h-100">
-          <div class="d-flex justify-content-between align-items-start mb-2">
-            <div>
-              <h5 class="m-0 text-white fw-bold">Café - Lote 2</h5>
-              <span class="insignia insignia_revisar mt-2 d-inline-block">Iniciada</span>
-            </div>
-            <div class="text-end">
-              <p class="m-0 fw-bold">Broca del café</p>
-              <p class="m-0 small texto_gris">14/06/2026</p>
-            </div>
-          </div>
-          <div class="d-flex gap-2 mt-3">
-            <a href="modificar-plaga.html" class="btn_nuevo text-center text-decoration-none flex-fill">Notas</a>
-            <a href="modificar-plaga.html" class="btn_nuevo text-center text-decoration-none flex-fill">Modificar</a>
-          </div>
-        </div>
-      </div>
-
-    </div>
+    <!-- Lista de tarjetas de plagas (la llena plagas.js) -->
+    <div class="row g-3 mb-4" id="lista_plagas"></div>
 
     <!-- Accesos a Catálogo e Inhabilitar -->
     <div class="row g-2 mb-4">
       <div class="col-12 col-md-6">
-        <a href="catalogo-plagas.html" class="boton_acceso text-center py-3 rounded-4 text-decoration-none d-block">Catálogo de plagas</a>
+        <a href="catalogo-plagas.html"
+          class="boton_acceso text-center py-3 rounded-4 text-decoration-none d-block">Catálogo de plagas</a>
       </div>
       <div class="col-12 col-md-6">
-        <a href="inhabilitar-plaga.html" class="boton_acceso text-center py-3 rounded-4 text-decoration-none d-block">Inhabilitar Plaga</a>
+        <a href="inhabilitar-plaga.html"
+          class="boton_acceso text-center py-3 rounded-4 text-decoration-none d-block">Inhabilitar Plaga</a>
       </div>
     </div>
 
+  </div>
+
+  <!-- Ventana emergente de notas -->
+  <div class="modal fade" id="modal_notas" tabindex="-1" aria-labelledby="titulo_notas" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content ventana_notas">
+        <div class="modal-header border-0">
+          <h5 class="modal-title" id="titulo_notas">Notas</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body" id="texto_notas"></div>
+      </div>
+    </div>
   </div>
 
   <!-- Menú de navegación inferior fijo -->
@@ -109,5 +74,9 @@
 
   <!-- Script de Bootstrap -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Scripts de Plagas (el orden importa: primero los datos) -->
+  <script src="../../assets/js/plagas/datos-plagas.js"></script>
+  <script src="../../assets/js/plagas/plagas.js"></script>
 </body>
+
 </html>
