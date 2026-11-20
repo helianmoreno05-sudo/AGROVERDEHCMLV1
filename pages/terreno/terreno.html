@@ -4,103 +4,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Agro Verde</title>
-   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <link rel="stylesheet" href="../../assets/css/terreno/terreno.css">
+    <title>Lista de Terrenos - Agro Verde</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../../assets/css/global.css">
+    <link rel="stylesheet" href="../../assets/css/terreno/terreno.css">
 </head>
 
-<body class="container">
+<body>
+    <main class="pantalla container-fluid">
+        <!-- Encabezado -->
+        <header class="app-header">
+            <h3 class="m-0 fw-bold">Lista de terrenos</h3>
+            <a href="nuevo-terreno.html" class="btn-agro-sm">+ Nuevo</a>
+        </header>
 
-    <div class="d-flex justify-content-between align-items-center my-3">
-        <h5 class="mb-0">Lista Terrenos</h5>
-        <button class="btn btn-sm rounded-pill" style="background-color:#22c55e; color:#0b1a10; font-weight: 600;">
-            + nuevo
-        </button>
-    </div>
+        <div class="mx-auto" style="max-width: 700px;">
+            <!-- Buscador -->
+            <input type="search" class="agro-input mb-3" placeholder="Buscar terreno">
 
-    <input type="text" class="form-control buscador mb-3" placeholder="Buscar terreno">
+            <!-- Listado de terrenos -->
+            <div class="d-flex flex-column gap-2 mb-3">
+                <div class="tarjeta p-3 rounded-4 d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong class="d-block">Terreno 1</strong>
+                        <span class="texto_gris small">Etapa: Floración</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="badge-zona badge-zona--sur">Sur</span>
+                        <a href="editar-terreno.html" class="text-success fs-5" aria-label="Editar Terreno 1">
+                            <i class="bi bi-pencil-square"></i>
+                        </a>
+                    </div>
+                </div>
 
-    <!-- Tarjetas de terrenos -->
-    <div class="card tarjeta-terreno mb-3">
-        <div class="d-flex justify-content-between align-items-center">
-            <div>
-                <h6>Terreno 1</h6>
-                <div class="etapa">etapa Floracion</div>
+                <div class="tarjeta p-3 rounded-4 d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong class="d-block">Terreno de Café</strong>
+                        <span class="texto_gris small">Etapa: Maduración</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="badge-zona badge-zona--casa">Casa</span>
+                        <a href="editar-terreno.html" class="text-success fs-5" aria-label="Editar Terreno de Café">
+                            <i class="bi bi-pencil-square"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="tarjeta p-3 rounded-4 d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong class="d-block">Terreno loma</strong>
+                        <span class="texto_gris small">Etapa: Siembra</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="badge-zona badge-zona--norte">Norte</span>
+                        <a href="editar-terreno.html" class="text-success fs-5" aria-label="Editar Terreno loma">
+                            <i class="bi bi-pencil-square"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="tarjeta p-3 rounded-4 d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong class="d-block">Vacío</strong>
+                        <span class="texto_gris small">Etapa: ----</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="badge-zona badge-zona--norte">Norte</span>
+                        <a href="editar-terreno.html" class="text-success fs-5" aria-label="Editar Terreno Vacío">
+                            <i class="bi bi-pencil-square"></i>
+                        </a>
+                    </div>
+                </div>
             </div>
-            <div class="d-flex align-items-center gap-2">
-                <span class="badge-estado badge-sur">sur</span>
-                <button class="btn-editar"><i class="bi bi-pencil-square"></i></button>
+
+            <!-- Menú flotante rápido -->
+            <div class="d-flex justify-content-end mb-3">
+                <div class="floating-terreno-box">
+                    <a href="editar-terreno.html"
+                        class="text-white text-decoration-none d-flex align-items-center justify-content-between gap-3"
+                        style="font-size: 0.78rem;">
+                        <span>Editar terreno</span>
+                        <i class="bi bi-pencil text-success"></i>
+                    </a>
+                    <a href="../propiedad/ver-propiedad.html"
+                        class="text-white text-decoration-none d-flex align-items-center justify-content-between gap-3"
+                        style="font-size: 0.78rem;">
+                        <span>Propiedades</span>
+                        <i class="bi bi-gear text-success"></i>
+                    </a>
+                </div>
             </div>
+
+            <a href="historial-terrenos.html" class="btn-agro-primary">Ver historial de terrenos</a>
         </div>
-    </div>
+    </main>
 
-    <div class="card tarjeta-terreno mb-3">
-        <div class="d-flex justify-content-between align-items-center">
-            <div>
-                <h6>Terreno 2</h6>
-                <div class="etapa">etapa Crecimiento</div>
-            </div>
-            <div class="d-flex align-items-center gap-2">
-                <span class="badge-estado badge-sur">sur</span>
-                <button class="btn-editar"><i class="bi bi-pencil-square"></i></button>
-            </div>
-        </div>
-    </div>
-
-    <div class="card tarjeta-terreno mb-3">
-        <div class="d-flex justify-content-between align-items-center">
-            <div>
-                <h6>Terreno 3</h6>
-                <div class="etapa">etapa Floracion</div>
-            </div>
-            <div class="d-flex align-items-center gap-2">
-                <span class="badge-estado badge-sur">sur</span>
-                <button class="btn-editar"><i class="bi bi-pencil-square"></i></button>
-            </div>
-        </div>
-    </div>
-
-    <div class="card tarjeta-terreno mb-3">
-        <div class="d-flex justify-content-between align-items-center">
-            <div>
-                <h6>Terreno 4</h6>
-                <div class="etapa">etapa Floracion</div>
-            </div>
-            <div class="d-flex align-items-center gap-2">
-                <span class="badge-estado badge-sur">sur</span>
-                <button class="btn-editar"><i class="bi bi-pencil-square"></i></button>
-            </div>
-        </div>
-    </div>
-
-    <div class="card tarjeta-terreno mb-3">
-        <div class="d-flex justify-content-between align-items-center">
-            <div>
-                <h6>Terreno 5</h6>
-                <div class="etapa">etapa Floracion</div>
-            </div>
-            <div class="d-flex align-items-center gap-2">
-                <span class="badge-estado badge-sur">sur</span>
-                <button class="btn-editar"><i class="bi bi-pencil-square"></i></button>
-            </div>
-        </div>
-    </div>
-
-    <a href="historial-terrenos.html" class="btn btn-historial w-100 mb-4 text-decoration-none text-center d-block">
-    Ver historial de terrenos
-</a>
-
-    <!-- NAVEGACIÓN INFERIOR FIJA -->
-    <div class="nav-inferior">
-        <div class="item activo"><i class="bi bi-house-door-fill"></i>Inicio</div>
-        <div class="item"><i class="bi bi-flower2"></i>Cultivos</div>
-        <div class="item"><i class="bi bi-cloud-sun"></i>Clima</div>
-        <div class="item"><i class="bi bi-box-seam"></i>Insumos</div>
-        <div class="item"><i class="bi bi-person"></i>Perfil</div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <!-- Barra de navegación inferior -->
+    <nav class="navegacion_inferior d-flex justify-content-between">
+        <a href="../inicio/inicio.html" class="text-center small"><i class="bi bi-house-door d-block"></i>Inicio</a>
+        <a href="../cultivos/cultivos.html" class="text-center small"><i class="bi bi-flower1 d-block"></i>Cultivos</a>
+        <a href="../clima/clima.html" class="text-center small"><i class="bi bi-cloud-sun d-block"></i>Clima</a>
+        <a href="../insumos/insumos.html" class="text-center small"><i class="bi bi-box-seam d-block"></i>Insumos</a>
+        <a href="../perfil/perfil.html" class="text-center small"><i class="bi bi-person-circle d-block"></i>Perfil</a>
+    </nav>
 </body>
 
 </html>
