@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reportes - Agro Verde</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../../assets/css/global.css">
+    <link rel="stylesheet" href="../../assets/css/reportes/reportes.css">
+</head>
+
+<body>
+    <main class="pantalla container-fluid">
+        <!-- Encabezado -->
+        <header class="app-header">
+            <h3 class="m-0 fw-bold">Reportes</h3>
+            <div class="d-flex align-items-center gap-3">
+                <img src="../../assets/img/agro-verde-sin-texto.png" alt="Agro Verde" class="app-logo-mini">
+                <a href="crear-reportes.html" class="btn-agro-sm">+ Nuevo</a>
+            </div>
+        </header>
+
+        <div class="row g-3">
+            <!-- Productividad semanal -->
+            <div class="col-12 col-lg-5">
+                <div class="tarjeta p-3 rounded-4 h-100">
+                    <p class="small fw-semibold mb-2">Productividad semanal</p>
+                    <div class="chart-barras">
+                        <div class="barra-col">
+                            <div class="barra-fill" style="height: 45%;"></div>
+                            <span class="barra-dia">L</span>
+                        </div>
+                        <div class="barra-col">
+                            <div class="barra-fill" style="height: 75%;"></div>
+                            <span class="barra-dia">M</span>
+                        </div>
+                        <div class="barra-col">
+                            <div class="barra-fill" style="height: 60%;"></div>
+                            <span class="barra-dia">Mi</span>
+                        </div>
+                        <div class="barra-col">
+                            <div class="barra-fill" style="height: 85%;"></div>
+                            <span class="barra-dia">J</span>
+                        </div>
+                        <div class="barra-col">
+                            <div class="barra-fill" style="height: 65%;"></div>
+                            <span class="barra-dia">V</span>
+                        </div>
+                        <div class="barra-col">
+                            <div class="barra-fill barra-fill--destacada" style="height: 80%;"></div>
+                            <span class="barra-dia">S</span>
+                        </div>
+                        <div class="barra-col">
+                            <div class="barra-fill" style="height: 55%;"></div>
+                            <span class="barra-dia">D</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Informes disponibles y acciones -->
+            <div class="col-12 col-lg-7">
+                <p class="small fw-semibold mb-2">Informes disponibles</p>
+                <div class="d-flex flex-column gap-2 mb-3">
+                    <div class="tarjeta p-3 rounded-4 d-flex justify-content-between align-items-center gap-2">
+                        <div>
+                            <strong class="d-block small">Informe mensual - Lote 1</strong>
+                            <span class="texto_gris" style="font-size: 0.75rem;">Generado 15 Ago 2026</span>
+                        </div>
+                        <a href="pdf.html" class="btn-agro-sm text-nowrap">Exportar en PDF</a>
+                    </div>
+
+                    <div class="tarjeta p-3 rounded-4 d-flex justify-content-between align-items-center gap-2">
+                        <div>
+                            <strong class="d-block small">Uso de insumos Q2</strong>
+                            <span class="texto_gris" style="font-size: 0.75rem;">Generado 10 Ago 2026</span>
+                        </div>
+                        <a href="pdf.html" class="btn-agro-sm text-nowrap">Exportar en PDF</a>
+                    </div>
+
+                    <div class="tarjeta p-3 rounded-4 d-flex justify-content-between align-items-center gap-2">
+                        <div>
+                            <strong class="d-block small">Rendimiento por lote</strong>
+                            <span class="texto_gris" style="font-size: 0.75rem;">Generado 02 Ago 2026</span>
+                        </div>
+                        <a href="pdf.html" class="btn-agro-sm text-nowrap">Exportar en PDF</a>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-column gap-2">
+                    <a href="consumo.html" class="btn-agro-primary">Reportes de consumo</a>
+                    <a href="inhabilitar-reporte.html" class="btn-agro-danger">Inhabilitar reporte</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Barra de navegación inferior -->
+    <nav class="navegacion_inferior d-flex justify-content-between">
+        <a href="../inicio/inicio.html" class="text-center small"><i class="bi bi-house-door d-block"></i>Inicio</a>
+        <a href="../cultivos/cultivos.html" class="text-center small"><i class="bi bi-flower1 d-block"></i>Cultivos</a>
+        <a href="../clima/clima.html" class="text-center small"><i class="bi bi-cloud-sun d-block"></i>Clima</a>
+        <a href="../insumos/insumos.html" class="text-center small"><i class="bi bi-box-seam d-block"></i>Insumos</a>
+        <a href="../perfil/perfil.html" class="text-center small"><i class="bi bi-person-circle d-block"></i>Perfil</a>
+    </nav>
+</body>
+
+</html>
