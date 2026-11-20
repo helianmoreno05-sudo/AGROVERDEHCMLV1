@@ -1,90 +1,113 @@
-body {
-    background-color: #0f2e20;
-    color: white;
-    max-width: 480px;
-    padding-bottom: 30px;
-}
+/* =========================================
+   ESTILOS ESPECÍFICOS - FASE FENOLÓGICA
+   (Hereda body, .pantalla, .app-logo-mini y
+    .navegacion_inferior desde global.css)
+   ========================================= */
 
-/* Parte de arriba */
+/* Botón volver */
 .btn-volver {
-    width: 40px;
-    height: 40px;
-    border: 2px solid white;
+    width: 38px;
+    height: 38px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background-color: rgba(255, 255, 255, 0.08);
     border-radius: 10px;
-    color: white;
-    font-size: 22px;
+    color: #ffffff;
+    font-size: 1.15rem;
     text-decoration: none;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
+    transition: background-color 0.2s, color 0.2s;
 }
 
-.logo {
-    width: 56px;
-    height: 56px;
+.btn-volver:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #22c55e;
 }
 
-/* Desplegable */
+/* Desplegable de Cultivo */
 .campo {
-    background-color: #1a4632;
-    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
     padding: 12px 16px;
     cursor: pointer;
+    color: #ffffff;
+    font-weight: 600;
 }
 
 .lista {
-    background-color: #1a4632;
+    background-color: #163b29;
+    border: 1px solid #22c55e;
     border-radius: 12px;
-    padding: 10px;
+    padding: 8px;
     margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }
 
 .opcion {
-    padding: 3px 8px;
-    font-size: 14px;
-    border-radius: 20px;
+    padding: 6px 12px;
+    font-size: 0.9rem;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.opcion:hover {
+    background-color: rgba(34, 197, 94, 0.15);
 }
 
 .opcion-activa {
     background-color: #22c55e;
-    color: #06210f;
-    font-weight: 600;
+    color: #091c12;
+    font-weight: 700;
 }
 
 /* Tarjeta de recomendaciones */
 .tarjeta-fase {
-    background-color: #14261c;
-    border: none;
-    border-radius: 14px;
-    padding: 16px;
-    color: white;
+    background-color: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+    padding: 18px;
+    color: #ffffff;
 }
 
 .etapa {
     background-color: #22c55e;
-    color: #06210f;
-    border-radius: 20px;
-    font-size: 12px;
+    color: #091c12;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 700;
     text-align: center;
     padding: 6px 0;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
+    letter-spacing: 0.5px;
 }
 
 .recomendacion {
-    border: 2px solid #22c55e;
-    border-radius: 20px;
-    color: #22c55e;
-    font-size: 12px;
-    padding: 8px 14px;
-    margin-bottom: 16px;
+    border: 1.5px solid rgba(34, 197, 94, 0.6);
+    background-color: rgba(34, 197, 94, 0.06);
+    border-radius: 16px;
+    color: #e2f5ea;
+    font-size: 0.85rem;
+    padding: 10px 14px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.recomendacion:last-child {
+    margin-bottom: 0;
 }
 
 .punto {
-    display: inline-block;
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
-    margin-right: 10px;
+    flex-shrink: 0;
 }
 
 .punto-verde {
@@ -100,15 +123,17 @@ body {
 }
 
 .punto-azul {
-    background-color: #3b82f6;
+    background-color: #38bdf8;
 }
 
-/* Proxima etapa */
+/* Próxima etapa */
 .proxima {
-    border-bottom: 1px solid #b6cbbf;
-    padding: 10px 12px;
+    background-color: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 14px;
+    padding: 12px 16px;
 }
 
 .texto-gris {
-    color: #b6cbbf;
+    color: #9ca3af;
 }

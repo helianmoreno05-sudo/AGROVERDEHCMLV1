@@ -1,87 +1,74 @@
-/* ===== Variables de color ===== */
+/*ESTILOS ESPECÍFICOS - CREAR CULTIVO
+   (Hereda body, .pantalla y .app-logo-mini de global.css)*/
 :root {
-  --fondo: #08150e;
-  --campo-fondo: #122019;
-  --borde: #1e3427;
+  --campo-fondo: rgba(255, 255, 255, 0.08);
+  --borde: rgba(255, 255, 255, 0.12);
   --verde: #22c55e;
   --texto: #ffffff;
-  --texto-suave: #6f8479;
+  --texto-suave: #9ca3af;
 }
 
-/* ===== General ===== */
-body {
-  background-color: #000;
-  color: var(--texto);
-  font-family: "Segoe UI", Roboto, sans-serif;
-}
-
-.pantalla {
-  background-color: var(--fondo);
-  max-width: 390px;
-  min-height: 100vh;
-}
-
-/* ===== Encabezado ===== */
+/* Encabezado */
 .titulo {
-  font-size: 1.15rem;
+  font-size: 1.25rem;
   font-weight: 700;
   margin: 0;
+  color: var(--texto);
 }
 
 .btn-volver {
-  width: 34px;
-  height: 34px;
-  border: 1.5px solid var(--texto);
-  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--borde);
+  background-color: var(--campo-fondo);
+  border-radius: 10px;
   color: var(--texto);
   text-decoration: none;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 1rem;
+  font-size: 1.1rem;
+  transition: background-color 0.2s, color 0.2s;
 }
 
-.logo {
-  width: 48px;
-  height: 48px;
-  object-fit: contain;
+.btn-volver:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: var(--verde);
 }
 
-/* ===== Labels ===== */
+/* Labels y Campos */
 .form-label {
-  font-size: 0.72rem;
-  color: var(--texto);
-  margin-bottom: 0.3rem;
+  font-size: 0.85rem;
+  color: var(--texto-suave);
+  margin-bottom: 0.4rem;
 }
 
-/* ===== Campos ===== */
 .campo {
   background-color: var(--campo-fondo);
   border: 1px solid var(--borde);
-  border-radius: 10px;
+  border-radius: 12px;
   color: var(--texto);
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   padding: 0.7rem 0.9rem;
 }
 
 .campo::placeholder {
-  color: var(--texto-suave);
+  color: #6c8778;
 }
 
 .campo:focus {
-  background-color: var(--campo-fondo);
+  background-color: rgba(255, 255, 255, 0.12);
   color: var(--texto);
   border-color: var(--verde);
-  box-shadow: 0 0 0 0.15rem rgba(34, 197, 94, 0.2);
+  box-shadow: none;
 }
 
-/* Flecha del select en color claro */
 .form-select.campo {
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%236f8479' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
 }
 
 .form-select.campo option {
-  background-color: var(--campo-fondo);
+  background-color: #163b29;
   color: var(--texto);
 }
 
@@ -89,23 +76,20 @@ textarea.campo {
   resize: none;
 }
 
-/* ===== Terreno ===== */
-
+/* Desplegable de Terreno */
 .campo-terreno {
   display: block;
   position: relative;
   cursor: pointer;
   list-style: none;
-  color: var(--texto-suave);
+  color: #6c8778;
   user-select: none;
 }
-
 
 .campo-terreno::-webkit-details-marker {
   display: none;
 }
 
-/* Flecha propia */
 .campo-terreno::after {
   content: "";
   position: absolute;
@@ -127,7 +111,6 @@ textarea.campo {
   transform: translateY(-30%) rotate(-135deg);
 }
 
-/* Texto que se muestra en el campo */
 .txt-valor {
   display: none;
 }
@@ -146,16 +129,15 @@ textarea.campo {
   display: inline;
 }
 
-/* Lista de opciones */
 .lista-terrenos {
-  background-color: var(--campo-fondo);
-  border: 1.5px solid var(--verde);
+  background-color: #163b29;
+  border: 1px solid var(--verde);
   border-radius: 12px;
   overflow: hidden;
 }
 
 .lista-terrenos li {
-  border-bottom: 1px solid var(--verde);
+  border-bottom: 1px solid rgba(34, 197, 94, 0.25);
 }
 
 .lista-terrenos li:last-child {
@@ -171,31 +153,32 @@ textarea.campo {
 .terreno-item {
   display: block;
   text-align: center;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   font-weight: 600;
-  padding: 0.7rem 0;
+  padding: 0.75rem 0;
   cursor: pointer;
+  color: var(--texto);
 }
 
 .terreno-item:hover,
-.opcion-oculta:checked + .terreno-item {
-  background-color: rgba(34, 197, 94, 0.15);
+.opcion-oculta:checked+.terreno-item {
+  background-color: rgba(34, 197, 94, 0.2);
+  color: var(--verde);
 }
 
-/* ===== Cultivos recomendados ===== */
+/* Cultivos recomendados */
 .card-reco {
   background-color: var(--campo-fondo);
   border: 1px solid var(--borde);
   border-radius: 14px;
-  padding: 0.7rem;
+  padding: 0.75rem;
   height: 100%;
-  position: relative;
 }
 
 .punto {
   display: inline-block;
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   background-color: var(--verde);
   border-radius: 50%;
   margin-right: 4px;
@@ -207,24 +190,25 @@ textarea.campo {
 
 .compat {
   display: block;
-  font-size: 0.6rem;
+  font-size: 0.7rem;
   color: var(--texto-suave);
-  margin-top: 0.4rem;
+  margin-top: 0.35rem;
 }
 
-/* ===== Botón guardar ===== */
+/* Botón guardar */
 .btn-guardar {
   background-color: var(--verde);
   border: none;
-  border-radius: 10px;
-  color: #06210f;
-  font-size: 0.85rem;
+  border-radius: 50px;
+  color: #091c12;
+  font-size: 0.95rem;
   font-weight: 700;
   padding: 0.8rem;
+  transition: background-color 0.2s;
 }
 
 .btn-guardar:hover,
 .btn-guardar:focus {
   background-color: #1ea850;
-  color: #06210f;
+  color: #091c12;
 }
