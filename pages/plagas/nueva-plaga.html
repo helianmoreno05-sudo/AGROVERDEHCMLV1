@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,6 +14,7 @@
   <link rel="stylesheet" href="../../assets/css/global.css">
   <link rel="stylesheet" href="../../assets/css/plagas/gestion-plagas.css">
 </head>
+
 <body>
 
   <!-- Pantalla principal -->
@@ -67,7 +69,8 @@
             <!-- Notas u observaciones -->
             <div class="mb-4">
               <label for="notas" class="form-label text-white small fw-bold">Notas</label>
-              <textarea class="form-control caja_busqueda" id="notas" name="notas" rows="4" placeholder="Observaciones adicionales..."></textarea>
+              <textarea class="form-control caja_busqueda" id="notas" name="notas" rows="4"
+                placeholder="Observaciones adicionales..."></textarea>
             </div>
 
             <!-- Botón de guardar -->
@@ -92,5 +95,9 @@
 
   <!-- Script de Bootstrap -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Scripts de Plagas (el orden importa: primero los datos) -->
+  <script src="../../assets/js/plagas/datos-plagas.js"></script>
+  <script src="../../assets/js/plagas/nueva-plaga.js"></script>
 </body>
+
 </html>
