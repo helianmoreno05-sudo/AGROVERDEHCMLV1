@@ -1,39 +1,6 @@
-/* el fondo de toda la pagina */
-body {
-  background-color: #0f2a1d;
-  margin: 0;
-}
+/*ESTILOS ESPECÍFICOS - HISTORIAL*/
 
-/* el contenedor principal k en la pc ocupa toda la pantalla a lo ancho */
-.pantalla {
-  width: 100%;
-  max-width: 100%;
-  margin: 0 auto;
-  background-color: #0f2a1d;
-  color: white;
-  padding: 20px 16px 90px 16px;
-  min-height: 100vh;
-}
-
-/* el estilo base de los cuadritos o tarjetas */
-.tarjeta {
-  background-color: rgba(255, 255, 255, 0.08);
-  color: white;
-  text-decoration: none;
-  display: block;
-  transition: background-color 0.2s ease;
-}
-
-/* para k cambie un poquito el color cuando uno pasa el mouse o toca la tarjeta */
-.tarjeta:hover,
-.tarjeta:active,
-.tarjeta:focus {
-  background-color: rgba(255, 255, 255, 0.15);
-  color: white;
-  text-decoration: none;
-}
-
-/* boton cuadrado para devolverse con el icono de la flecha */
+/* Botón cuadrado para devolverse */
 .boton_atras {
   width: 40px;
   height: 40px;
@@ -43,13 +10,12 @@ body {
   transition: background-color 0.2s ease;
 }
 
-/* efecto cuando le hunden al boton de atras */
 .boton_atras:hover,
 .boton_atras:active {
   background-color: rgba(255, 255, 255, 0.1);
 }
 
-/* estilo del boton verde para seleccionar filtros */
+/* Botón verde para filtro activo */
 .btn_nuevo {
   background-color: #22c55e;
   color: #0f2a1d;
@@ -59,59 +25,46 @@ body {
   font-size: 14px;
 }
 
-/* estilo de los botones de filtro desmarcados */
+/* Botones de filtro inactivos */
 .boton_acceso {
   background-color: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   color: white;
-  border: none;
   text-decoration: none;
-  display: block;
+  display: inline-block;
+  font-size: 14px;
   transition: background-color 0.2s ease;
 }
 
-/* para k cambie de color cuando le undo o le paso el mouse encima a los filtros */
 .boton_acceso:hover,
 .boton_acceso:active,
 .boton_acceso:focus {
   background-color: rgba(255, 255, 255, 0.15);
   color: white;
-  text-decoration: none;
 }
 
-/* para poner las letras en un gris suave */
-.texto_gris {
-  color: #9ca3af;
+/* Contenedor circular de íconos de eventos */
+.icono-evento {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
-/* la barra del menu de abajo k se queda fija abajo en el monitor del pc */
-.navegacion_inferior {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  width: 100%;
-  max-width: 100%;
-  margin: 0 auto;
-  background-color: #0f2a1d;
-  padding: 12px 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  z-index: 1000;
+.icono-verde {
+  background-color: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
 }
 
-/* los links del menu de abajo */
-.navegacion_inferior a {
-  color: white;
-  text-decoration: none;
+.icono-rojo {
+  background-color: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
 }
 
-/* tamaño de los iconos del menu de abajo */
-.navegacion_inferior i {
-  font-size: 18px;
-}
-
-/* reglas para k en pantallas de pc y laptops se acomode con mas espacio */
-@media (min-width: 768px) {
-  .pantalla {
-    padding: 30px 40px 100px 40px;
-  }
+.icono-cyan {
+  background-color: rgba(6, 182, 212, 0.15);
+  color: #06b6d4;
 }
