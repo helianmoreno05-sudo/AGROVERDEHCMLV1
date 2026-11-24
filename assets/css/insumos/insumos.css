@@ -411,16 +411,8 @@
   }
 }
 
-/* Tablets: el contenido se centra un poco más ancho */
+/* Tablets: más espacio para la gráfica y el escáner */
 @media (min-width: 768px) {
-  .contenido-insumos,
-  .pantalla > .app-header,
-  .pantalla > .text-center {
-    max-width: 760px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
   .grafica {
     height: 300px;
   }
@@ -428,25 +420,31 @@
   .escaner {
     height: 260px;
   }
-}
 
-/* Computadores: listas en dos columnas y formularios centrados */
-@media (min-width: 992px) {
-  .contenido-insumos,
-  .pantalla > .app-header,
-  .pantalla > .text-center {
-    max-width: 1000px;
-  }
-
-  .lista-insumos {
+  /* Botones de acción (Usar / Inhabilitar) lado a lado */
+  .acciones-insumos {
     display: grid !important;
     grid-template-columns: repeat(2, 1fr);
-    align-items: start;
+  }
+}
+
+/* Computadores: el contenido ocupa todo el ancho de la pantalla */
+@media (min-width: 992px) {
+  .contenido-insumos {
+    max-width: 100%;
   }
 
-  .contenido-insumos form {
-    max-width: 640px;
-    margin: 0 auto;
+  /* Las listas se reparten en columnas que se llenan de arriba hacia abajo,
+     así no quedan huecos cuando un insumo se despliega */
+  .lista-insumos {
+    display: block !important;
+    column-count: 2;
+    column-gap: 12px;
+  }
+
+  .lista-insumos > * {
+    break-inside: avoid;
+    margin-bottom: 8px;
   }
 
   .tarjeta,
@@ -461,31 +459,11 @@
   .grafica {
     height: 340px;
   }
-
-  /* La barra inferior queda centrada y no tan estirada */
-  .navegacion_inferior {
-    padding-left: calc(50% - 320px);
-    padding-right: calc(50% - 320px);
-  }
 }
 
 /* Pantallas grandes: listas en tres columnas */
 @media (min-width: 1400px) {
-  .contenido-insumos,
-  .pantalla > .app-header,
-  .pantalla > .text-center {
-    max-width: 1200px;
-  }
-
   .lista-insumos {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-/* Botones de acción (Usar / Inhabilitar) lado a lado desde tablet */
-@media (min-width: 768px) {
-  .acciones-insumos {
-    display: grid !important;
-    grid-template-columns: repeat(2, 1fr);
+    column-count: 3;
   }
 }
