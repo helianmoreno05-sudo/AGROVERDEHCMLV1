@@ -28,13 +28,13 @@
             <div class="row g-2 mb-3">
                 <div class="col">
                     <div class="tarjeta-resumen">
-                        <div class="numero numero--verde">42</div>
+                        <div id="dato1" class="numero numero--verde">42</div>
                         <span class="texto_gris small">Insumos en stock</span>
                     </div>
                 </div>
                 <div class="col">
                     <div class="tarjeta-resumen">
-                        <div class="numero numero--rojo">5</div>
+                        <div id="dato2" class="numero numero--rojo">5</div>
                         <span class="texto_gris small">Insumos por agotarse</span>
                     </div>
                 </div>
@@ -47,7 +47,7 @@
                 <h5 class="fw-bold m-0">Inventario</h5>
                 <a href="consultar-catalogo.html" class="link-editar">Ver catálogo</a>
             </div>
-            <div class="lista-insumos d-flex flex-column gap-2 mb-3">
+            <div id="listaPrincipal" class="lista-insumos d-flex flex-column gap-2 mb-3">
                 <details class="insumo-desplegable item-buscable" open>
                     <summary>
                         <div class="d-flex align-items-center gap-3">
@@ -144,6 +144,8 @@
     </nav>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../assets/js/comun.js"></script>
+    <script src="../../assets/js/insumos/datos-insumos.js"></script>
     <script src="../../assets/js/insumos/insumos.js"></script>
     <script src="../../assets/js/confirmacion.js"></script>
 </body>

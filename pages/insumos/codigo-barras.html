@@ -28,11 +28,11 @@
                 <span class="small">Apunta la cámara al código de barras</span>
             </div>
 
-            <form action="insumos.html">
+            <form id="formCodigo" action="insumos.html">
                 <label for="codigo" class="agro-label">o ingresa el código manualmente</label>
                 <input type="text" id="codigo" name="codigo" class="agro-input" placeholder="Ej. 7501234567890">
 
-                <div class="tarjeta-total mb-3">
+                <div class="tarjeta-total mb-3 d-none" id="tarjetaEncontrado">
                     <strong class="d-block">Fertilizante NPK</strong>
                     <span class="texto_gris small d-block">Código: 7501234567890</span>
                     <span class="precio small">Insumo encontrado - 18 sacos en stock</span>
@@ -68,6 +68,8 @@
     </nav>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../assets/js/comun.js"></script>
+    <script src="../../assets/js/insumos/datos-insumos.js"></script>
     <script src="../../assets/js/insumos/insumos.js"></script>
     <script src="../../assets/js/confirmacion.js"></script>
 </body>

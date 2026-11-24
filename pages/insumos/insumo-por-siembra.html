@@ -24,7 +24,7 @@
 
         <div class="contenido-insumos">
             <p class="titulo-seccion">Seleccionar siembra</p>
-            <div class="pastillas pastillas--tres">
+            <div id="pillsSiembra" class="pastillas pastillas--tres">
                 <input type="radio" name="siembra" id="ps-0" checked>
                 <label for="ps-0">Maíz - Lote 1</label>
                 <input type="radio" name="siembra" id="ps-1">
@@ -36,26 +36,26 @@
             <div class="row g-2 mb-3">
                 <div class="col">
                     <div class="tarjeta-resumen">
-                        <div class="numero numero--verde">3</div>
+                        <div id="dato1" class="numero numero--verde">3</div>
                         <span class="texto_gris small">Insumos usados</span>
                     </div>
                 </div>
                 <div class="col">
                     <div class="tarjeta-resumen">
-                        <div class="numero numero--verde">9</div>
+                        <div id="dato2" class="numero numero--verde">9</div>
                         <span class="texto_gris small">Cantidad total</span>
                     </div>
                 </div>
                 <div class="col">
                     <div class="tarjeta-resumen">
-                        <div class="numero numero--rojo">1</div>
+                        <div id="dato3" class="numero numero--rojo">1</div>
                         <span class="texto_gris small">Por agotarse</span>
                     </div>
                 </div>
             </div>
 
-            <h6 class="fw-bold mb-2">Insumos - Maíz - Lote 1</h6>
-            <div class="lista-insumos d-flex flex-column gap-2">
+            <h6 class="fw-bold mb-2" id="tituloSiembra">Insumos - Maíz - Lote 1</h6>
+            <div id="listaPrincipal" class="lista-insumos d-flex flex-column gap-2">
                 <details class="insumo-desplegable item-buscable">
                     <summary>
                         <div class="d-flex align-items-center gap-3">
@@ -126,6 +126,8 @@
     </nav>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../assets/js/comun.js"></script>
+    <script src="../../assets/js/insumos/datos-insumos.js"></script>
     <script src="../../assets/js/insumos/insumos.js"></script>
     <script src="../../assets/js/confirmacion.js"></script>
 </body>
