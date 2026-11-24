@@ -211,6 +211,12 @@ function obtenerLista(clave, ejemplo) {
   return JSON.parse(guardado);
 }
 
+// Lee una lista sin crearla (para mirar los datos de otro módulo). Si no existe devuelve [].
+function leerLista(clave) {
+  let guardado = localStorage.getItem(clave);
+  return guardado === null ? [] : JSON.parse(guardado);
+}
+
 function guardarLista(clave, lista) {
   localStorage.setItem(clave, JSON.stringify(lista));
 }

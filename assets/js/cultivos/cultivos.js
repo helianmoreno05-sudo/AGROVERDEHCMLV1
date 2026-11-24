@@ -26,11 +26,18 @@ function cultivosHabilitados() {
 }
 
 // El cultivo del ?id= de la dirección, o el primero si no viene ninguno
+// Si no hay ningún cultivo guardado se vuelve a la lista
 function cultivoDeLaPagina(lista) {
   let cultivo = buscarPorId(lista, idDeLaDireccion());
 
   if (cultivo === null) {
     cultivo = lista[0];
+  }
+
+  if (cultivo === undefined) {
+    alert("No hay cultivos registrados todavía");
+    window.location.href = "cultivos.html";
+    throw new Error("sin cultivos");
   }
 
   return cultivo;

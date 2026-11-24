@@ -54,7 +54,7 @@ function posicionDeHoy(clima) {
 }
 
 function nombresDeLotes() {
-  let cultivos = obtenerLista("cultivos", []);
+  let cultivos = leerLista("cultivos");
   let nombres = cultivos.filter(function (c) { return c.habilitado; }).map(function (c) { return c.nombre; });
   return nombres.length > 0 ? nombres : ["Lote 1", "Lote 2", "Lote 3"];
 }

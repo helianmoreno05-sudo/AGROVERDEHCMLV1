@@ -111,6 +111,10 @@ Estos módulos ya están desarrollados y estandarizados en HTML y CSS. Cada uno 
 - HTML5
 - CSS3 (`global.css` + estilos modulares)
 - Bootstrap 5 y Bootstrap Icons
+- JavaScript (sin frameworks). Los datos se guardan en `localStorage` del navegador mientras no exista la API:
+  las funciones compartidas están en `assets/js/comun.js` (`obtenerLista`, `guardarLista`...), así que al conectar
+  la API solo hay que cambiar esas funciones.
+- [Open-Meteo](https://open-meteo.com/) para el clima real de la finca (gratis y sin clave).
 - Git y GitHub
 
 ## Equipo de desarrollo: ByteRaíz

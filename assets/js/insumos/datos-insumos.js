@@ -73,7 +73,7 @@ function pesos(valor) {
 
 // Nombres de los cultivos que se pueden elegir (los del módulo de Cultivos si existen)
 function nombresDeCultivos() {
-  let cultivos = obtenerLista("cultivos", []);
+  let cultivos = leerLista("cultivos");
   let nombres = [];
 
   for (let i = 0; i < cultivos.length; i++) {
