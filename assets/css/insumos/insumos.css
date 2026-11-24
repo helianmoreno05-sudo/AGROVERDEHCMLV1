@@ -467,3 +467,65 @@
     column-count: 3;
   }
 }
+
+/*ENCABEZADO DE LA PANTALLA PRINCIPAL Y LOGO*/
+
+/* La imagen del logo tiene mucho borde transparente, por eso se agranda */
+.app-logo-mini {
+  width: 72px;
+  height: 60px;
+}
+
+.encabezado-insumos {
+  flex-wrap: wrap;
+}
+
+/* Celular: logo arriba centrado, título y botón, y el buscador abajo */
+.logo-insumos {
+  width: 130px;
+  height: 90px;
+  object-fit: contain;
+  flex-basis: 100%;
+  margin: 0 auto;
+}
+
+.encabezado-insumos h3 {
+  flex: 1;
+}
+
+.buscador-insumos {
+  order: 3;
+  flex-basis: 100%;
+  margin-bottom: 0;
+}
+
+/* Computador: logo, título, buscador y botón en una sola fila */
+@media (min-width: 992px) {
+  .encabezado-insumos {
+    flex-wrap: nowrap;
+    gap: 20px;
+  }
+
+  .logo-insumos {
+    flex-basis: auto;
+    width: 110px;
+    height: 76px;
+    margin: 0;
+  }
+
+  .encabezado-insumos h3 {
+    flex: 0 0 auto;
+    font-size: 1.6rem;
+  }
+
+  .buscador-insumos {
+    order: 0;
+    flex: 1;
+    flex-basis: auto;
+  }
+
+  .app-logo-mini {
+    width: 90px;
+    height: 70px;
+  }
+}
