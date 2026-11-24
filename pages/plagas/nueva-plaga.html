@@ -36,7 +36,8 @@
       <div class="col-12 col-md-8 col-lg-6">
         <section class="tarjeta p-4 rounded-4">
           
-          <form action="plagas.html" method="GET">
+          <form action="plagas.html" method="GET" id="formulario_plaga">
+            <div id="aviso_error" class="alert alert-danger d-none small py-2"></div>
             <input type="hidden" name="mensaje" value="guardada">
             
             <!-- Nombre de la plaga -->
@@ -59,11 +60,11 @@
 
             <!-- Nivel de severidad -->
             <div class="mb-3">
-              <label for="severidad" class="form-label text-white small fw-bold">Nivel de severidad</label>
-              <select class="form-select caja_busqueda" id="severidad" name="severidad" required>
-                <option value="iniciada" selected>Iniciada</option>
-                <option value="moderada">Moderada</option>
-                <option value="avanzada">Avanzada</option>
+              <label for="estado" class="form-label text-white small fw-bold">Nivel de severidad</label>
+              <select class="form-select caja_busqueda" id="estado" name="estado" required>
+                <option value="Iniciada">Iniciada</option>
+                <option value="Avanzada">Avanzada</option>
+                <option value="Controlada">Controlada</option>
               </select>
             </div>
 

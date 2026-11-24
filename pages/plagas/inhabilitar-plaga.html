@@ -36,13 +36,14 @@
       <div class="col-12 col-md-8 col-lg-6">
         
         <!-- Buscador -->
-        <input type="search" class="form-control caja_busqueda mb-3" placeholder="Buscar plaga o lote" aria-label="Buscar plaga">
+        <input type="search" id="buscador" class="form-control caja_busqueda mb-3" placeholder="Buscar plaga o lote" aria-label="Buscar plaga">
 
-        <form action="plagas.html" method="GET">
+        <form action="plagas.html" method="GET" id="formulario_inhabilitar">
+            <div id="aviso_error" class="alert alert-danger d-none small py-2"></div>
           <input type="hidden" name="mensaje" value="inhabilitada">
           
           <!-- Lista de opciones para seleccionar la plaga -->
-          <div class="d-flex flex-column gap-2 mb-4">
+          <div class="d-flex flex-column gap-2 mb-4" id="lista_opciones">
 
             <!-- Opción 1: Cogollero -->
             <label class="tarjeta p-3 rounded-4 d-flex align-items-center gap-3 cursor-pointer">
@@ -87,7 +88,7 @@
           </div>
 
           <!-- Botón rojo para confirmar -->
-          <button type="submit" class="btn_inhabilitar w-100 py-2 text-center">Inhabilitar Plaga</button>
+          <button type="submit" id="boton_inhabilitar" class="btn_inhabilitar w-100 py-2 text-center">Inhabilitar Plaga</button>
 
         </form>
 
@@ -95,6 +96,24 @@
     </div>
 
   </main>
+
+
+  <!-- Ventana para confirmar antes de inhabilitar -->
+  <div class="modal fade" id="modal_confirmar" tabindex="-1" aria-labelledby="titulo_confirmar" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content ventana_notas">
+        <div class="modal-header border-0">
+          <h5 class="modal-title" id="titulo_confirmar">Inhabilitar plaga</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body" id="texto_confirmar"></div>
+        <div class="modal-footer border-0">
+          <button type="button" class="boton_acceso border-0 py-2 px-3 rounded-4" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" id="boton_confirmar" class="btn_inhabilitar py-2 px-3">Inhabilitar</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Barra de navegación inferior fija -->
   <nav class="navegacion_inferior d-flex justify-content-between">
