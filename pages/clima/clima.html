@@ -24,15 +24,15 @@
 
         <!-- Tarjeta Temperatura Actual -->
         <section class="tarjeta p-3 rounded-4 mb-3">
-            <div class="clima-actual__temp">24°C</div>
-            <div class="clima-actual__desc">Soleado</div>
+            <div class="clima-actual__temp" id="climaTemp">24°C</div>
+            <div class="clima-actual__desc" id="climaDesc">Soleado</div>
         </section>
 
         <div class="row g-3">
             <!-- Columna izquierda: Pronósticos -->
             <div class="col-12 col-lg-7">
                 <p class="texto_gris small fw-semibold mb-2">Próximas horas</p>
-                <div class="tarjeta p-3 rounded-4 mb-3 horas-grid">
+                <div class="tarjeta p-3 rounded-4 mb-3 horas-grid" id="climaHoras">
                     <div class="hora-item">
                         <span class="texto_gris small">12pm</span>
                         <span class="fs-5">☀️</span>
@@ -61,7 +61,7 @@
                 </div>
 
                 <p class="texto_gris small fw-semibold mb-2">Pronóstico 5 días</p>
-                <div class="tarjeta p-3 rounded-4 mb-3">
+                <div class="tarjeta p-3 rounded-4 mb-3" id="climaDias">
                     <div class="dia-row">
                         <span class="dia-nombre">Hoy</span>
                         <span>☀️</span>
@@ -83,7 +83,7 @@
             <!-- Columna derecha: Alertas y Submódulos -->
             <div class="col-12 col-lg-5">
                 <p class="texto_gris small fw-semibold mb-2">Alertas climáticas</p>
-                <div class="tarjeta p-3 rounded-4 mb-3 alertas-resumen">
+                <div class="tarjeta p-3 rounded-4 mb-3 alertas-resumen" id="climaAlertas">
                     <p class="mb-1">• Lluvia fuerte prevista en Lote 3</p>
                     <p class="m-0">• Humedad alta en Lote 2</p>
                 </div>
@@ -93,7 +93,7 @@
                         class="tarjeta p-3 rounded-4 d-flex justify-content-between align-items-center">
                         <div>
                             <strong class="d-block">Riesgo de plagas por clima</strong>
-                            <span class="texto_gris small">2 amenazas activas</span>
+                            <span class="texto_gris small" id="contadorAmenazas">2 amenazas activas</span>
                         </div>
                         <i class="bi bi-chevron-right texto_gris"></i>
                     </a>
@@ -120,7 +120,7 @@
                         class="tarjeta p-3 rounded-4 d-flex justify-content-between align-items-center">
                         <div>
                             <strong class="d-block">Calendario agrícola</strong>
-                            <span class="texto_gris small">2 eventos próximos</span>
+                            <span class="texto_gris small" id="contadorEventos">2 eventos próximos</span>
                         </div>
                         <i class="bi bi-chevron-right texto_gris"></i>
                     </a>
@@ -139,6 +139,8 @@
     </nav>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../assets/js/comun.js"></script>
+    <script src="../../assets/js/clima/clima.js"></script>
 </body>
 
 </html>
