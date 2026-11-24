@@ -21,7 +21,7 @@
       <img src="../../assets/img/agro-verde-sin-texto.png" alt="Agro Verde" class="app-logo-mini">
     </header>
 
-    <form action="terreno.html" class="mx-auto" style="max-width: 600px;">
+    <form action="terreno.html" id="formNuevoTerreno" class="mx-auto" style="max-width: 600px;">
       <label for="nombreTerreno" class="agro-label">Nombre del terreno</label>
       <input type="text" id="nombreTerreno" name="nombreTerreno" class="agro-input" placeholder="Ingrese el nombre"
         required>
@@ -29,7 +29,7 @@
       <label for="ubicacionTerreno" class="agro-label">Ubicación del terreno</label>
       <div class="input-group-agro">
         <input type="text" id="ubicacionTerreno" name="ubicacionTerreno" placeholder="Ingrese ubicación">
-        <button type="button" class="btn-agro-sm">Actual</button>
+        <button type="button" class="btn-agro-sm boton-ubicacion">Actual</button>
       </div>
 
       <label for="areaTerreno" class="agro-label">Área del terreno</label>
@@ -67,10 +67,10 @@
 
       <label for="caudalEstimado" class="agro-label">Caudal estimado (L/min)</label>
       <input type="number" id="caudalEstimado" name="caudalEstimado" class="agro-input mb-2" value="120">
-      <button type="button" class="btn-agro-primary py-2 mb-3">Asociar fuente</button>
+      <button type="button" class="btn-agro-primary py-2 mb-3 boton-asociar">Asociar fuente</button>
 
       <label class="agro-label">Capturar coordenadas</label>
-      <button type="button" class="btn-agro-outline mb-4">
+      <button type="button" class="btn-agro-outline mb-4 boton-ubicacion">
         <i class="bi bi-geo-alt me-1"></i> Usar mi ubicación actual
       </button>
 
@@ -80,6 +80,9 @@
       </div>
     </form>
   </main>
+    <script src="../../assets/js/comun.js"></script>
+    <script src="../../assets/js/terreno/terreno.js"></script>
+    <script src="../../assets/js/confirmacion.js"></script>
 </body>
 
 </html>
