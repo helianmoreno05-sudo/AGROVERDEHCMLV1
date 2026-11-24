@@ -392,3 +392,100 @@
 .app-header .btn-agro-sm {
   white-space: nowrap;
 }
+
+/*RESPONSIVO - TABLETS Y COMPUTADORES*/
+
+/* Pantallas muy pequeñas (menos de 360px) */
+@media (max-width: 359px) {
+  .pastillas--tres label {
+    font-size: 0.7rem;
+    padding: 8px 4px;
+  }
+
+  .tarjeta-resumen .numero {
+    font-size: 1.3rem;
+  }
+
+  .app-header h3 {
+    font-size: 1.1rem;
+  }
+}
+
+/* Tablets: el contenido se centra un poco más ancho */
+@media (min-width: 768px) {
+  .contenido-insumos,
+  .pantalla > .app-header,
+  .pantalla > .text-center {
+    max-width: 760px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .grafica {
+    height: 300px;
+  }
+
+  .escaner {
+    height: 260px;
+  }
+}
+
+/* Computadores: listas en dos columnas y formularios centrados */
+@media (min-width: 992px) {
+  .contenido-insumos,
+  .pantalla > .app-header,
+  .pantalla > .text-center {
+    max-width: 1000px;
+  }
+
+  .lista-insumos {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr);
+    align-items: start;
+  }
+
+  .contenido-insumos form {
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  .tarjeta,
+  .insumo-desplegable {
+    transition: background-color 0.2s, transform 0.2s;
+  }
+
+  a.tarjeta:hover {
+    transform: translateY(-2px);
+  }
+
+  .grafica {
+    height: 340px;
+  }
+
+  /* La barra inferior queda centrada y no tan estirada */
+  .navegacion_inferior {
+    padding-left: calc(50% - 320px);
+    padding-right: calc(50% - 320px);
+  }
+}
+
+/* Pantallas grandes: listas en tres columnas */
+@media (min-width: 1400px) {
+  .contenido-insumos,
+  .pantalla > .app-header,
+  .pantalla > .text-center {
+    max-width: 1200px;
+  }
+
+  .lista-insumos {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Botones de acción (Usar / Inhabilitar) lado a lado desde tablet */
+@media (min-width: 768px) {
+  .acciones-insumos {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
