@@ -22,9 +22,9 @@
         </header>
 
         <div class="mx-auto" style="max-width: 720px;">
-            <input type="search" class="agro-input mb-3" placeholder="Buscar cultivo o lote">
+            <input type="search" id="buscadorInhabilitar" class="agro-input mb-3" placeholder="Buscar cultivo o lote">
 
-            <div class="d-flex flex-column gap-2 mb-4">
+            <div class="d-flex flex-column gap-2 mb-4" id="listaInhabilitar">
                 <label class="tarjeta p-3 rounded-4 d-flex justify-content-between align-items-center"
                     style="cursor: pointer;">
                     <div class="d-flex align-items-center gap-3">
@@ -74,7 +74,7 @@
                 </label>
             </div>
 
-            <a href="cultivos.html?mensaje=inhabilitado" class="btn-agro-danger">Inhabilitar cultivo</a>
+            <a href="cultivos.html?mensaje=inhabilitado" class="btn-agro-danger" id="botonInhabilitar">Inhabilitar cultivo</a>
         </div>
     </main>
 
@@ -85,6 +85,8 @@
         <a href="../insumos/insumos.html" class="text-center small"><i class="bi bi-box-seam d-block"></i>Insumos</a>
         <a href="../perfil/perfil.html" class="text-center small"><i class="bi bi-person-circle d-block"></i>Perfil</a>
     </nav>
+    <script src="../../assets/js/comun.js"></script>
+    <script src="../../assets/js/cultivos/cultivos.js"></script>
 </body>
 
 </html>

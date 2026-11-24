@@ -195,3 +195,98 @@ function contarSinLeer() {
 
   return total;
 }
+// ================== DATOS DE LOS MÓDULOS ==================
+// Cada módulo (cultivos, terrenos, reportes...) guarda su lista en localStorage
+// con estas funciones. Cuando esté la API solo hay que cambiar estas dos primeras.
+
+// Trae una lista guardada. Si todavía no existe, guarda la de ejemplo.
+function obtenerLista(clave, ejemplo) {
+  let guardado = localStorage.getItem(clave);
+
+  if (guardado === null) {
+    guardarLista(clave, ejemplo);
+    return ejemplo;
+  }
+
+  return JSON.parse(guardado);
+}
+
+function guardarLista(clave, lista) {
+  localStorage.setItem(clave, JSON.stringify(lista));
+}
+
+// Busca un elemento por su id. Si no existe devuelve null.
+function buscarPorId(lista, id) {
+  for (let i = 0; i < lista.length; i++) {
+    if (lista[i].id === id) {
+      return lista[i];
+    }
+  }
+
+  return null;
+}
+
+// Da el siguiente id libre de una lista
+function nuevoId(lista) {
+  let mayor = 0;
+
+  for (let i = 0; i < lista.length; i++) {
+    if (lista[i].id > mayor) {
+      mayor = lista[i].id;
+    }
+  }
+
+  return mayor + 1;
+}
+
+// Lee el ?id=3 de la dirección de la página (devuelve null si no hay)
+function idDeLaDireccion() {
+  let parametros = new URLSearchParams(window.location.search);
+  let id = parametros.get("id");
+
+  if (id === null) {
+    return null;
+  }
+
+  return Number(id);
+}
+
+// Evita que lo que escribe la persona dañe el HTML de la página
+function textoSeguro(texto) {
+  let caja = document.createElement("div");
+  caja.textContent = texto;
+  return caja.innerHTML;
+}
+
+// Muestra "2026-08-15" como "15/08/2026"
+function fechaBonita(fecha) {
+  if (!fecha) {
+    return "----";
+  }
+
+  let partes = fecha.split("-");
+  return partes[2] + "/" + partes[1] + "/" + partes[0];
+}
+
+// Filtra las tarjetas mientras se escribe en un buscador.
+// selectorTarjetas: qué elementos se esconden o se muestran (ej. ".tarjeta-cultivo")
+function activarBuscadorDeLista(idBuscador, selectorTarjetas) {
+  let buscador = document.getElementById(idBuscador);
+
+  if (buscador === null) {
+    return;
+  }
+
+  buscador.addEventListener("input", function () {
+    let texto = buscador.value.toLowerCase();
+    let tarjetas = document.querySelectorAll(selectorTarjetas);
+
+    for (let i = 0; i < tarjetas.length; i++) {
+      if (tarjetas[i].textContent.toLowerCase().includes(texto)) {
+        tarjetas[i].classList.remove("d-none");
+      } else {
+        tarjetas[i].classList.add("d-none");
+      }
+    }
+  });
+}

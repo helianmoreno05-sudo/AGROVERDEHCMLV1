@@ -46,35 +46,17 @@
             <p class="small fw-semibold mb-3">Recomendación según la fase fenológica</p>
 
             <section class="card tarjeta-fase mb-4">
-                <div class="etapa">FLORACIÓN</div>
+                <div class="etapa" id="faseEtapa">FLORACIÓN</div>
 
-                <div class="recomendacion">
-                    <span class="punto punto-verde"></span>
-                    <span>Mantener un riego constante, la floración es sensible al estrés hídrico</span>
-                </div>
-
-                <div class="recomendacion">
-                    <span class="punto punto-rojo"></span>
-                    <span>Vigilar aparición de plagas del follaje durante esta etapa</span>
-                </div>
-
-                <div class="recomendacion">
-                    <span class="punto punto-amarillo"></span>
-                    <span>Evitar labores mecánicas cerca de la raíz</span>
-                </div>
-
-                <div class="recomendacion">
-                    <span class="punto punto-azul"></span>
-                    <span>Aplicar fertilización de refuerzo</span>
-                </div>
+                <div id="faseConsejos"></div>
             </section>
 
             <!-- Próxima etapa -->
             <h6 class="small fw-bold texto_gris mb-2">PRÓXIMA ETAPA ESTIMADA</h6>
 
             <div class="proxima d-flex justify-content-between align-items-center">
-                <span class="texto-gris">Maduración</span>
-                <span class="fw-bold text-success">en 18 Días</span>
+                <span class="texto-gris" id="faseSiguiente">Maduración</span>
+                <span class="fw-bold text-success" id="faseDias">en 18 Días</span>
             </div>
 
         </div>
@@ -89,23 +71,11 @@
         <a href="../perfil/perfil.html" class="text-center small"><i class="bi bi-person-circle d-block"></i>Perfil</a>
     </nav>
 
-    <script>
-        const detalleCultivo = document.getElementById('detalleCultivoFase');
-        const cultivoActual = document.getElementById('cultivoActualFase');
-        const opciones = document.querySelectorAll('.lista .opcion');
-
-        opciones.forEach(op => {
-            op.addEventListener('click', () => {
-                opciones.forEach(o => o.classList.remove('opcion-activa'));
-                op.classList.add('opcion-activa');
-                cultivoActual.textContent = op.textContent;
-                detalleCultivo.removeAttribute('open');
-            });
-        });
-    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
         crossorigin="anonymous"></script>
+    <script src="../../assets/js/comun.js"></script>
+    <script src="../../assets/js/cultivos/cultivos.js"></script>
 </body>
 
 </html>
