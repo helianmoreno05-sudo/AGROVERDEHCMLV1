@@ -23,65 +23,95 @@
         </header>
 
         <div class="contenido-insumos">
-                <label for="siembra" class="agro-label">Seleccionar siembra</label>
-                <select id="siembra" name="siembra" class="agro-select">
-                    <option value="" selected disabled>Maíz - Lote 1</option>
-                    <option>Maíz - Lote 1</option>
-                    <option>Frijol - Lote 3</option>
-                    <option>Café - Lote 2</option>
-                </select>
+            <p class="titulo-seccion">Seleccionar siembra</p>
+            <div class="pastillas pastillas--tres">
+                <input type="radio" name="siembra" id="ps-0" checked>
+                <label for="ps-0">Maíz - Lote 1</label>
+                <input type="radio" name="siembra" id="ps-1">
+                <label for="ps-1">Café - Lote 2</label>
+                <input type="radio" name="siembra" id="ps-2">
+                <label for="ps-2">Frijol - Lote 3</label>
+            </div>
 
             <div class="row g-2 mb-3">
                 <div class="col">
                     <div class="tarjeta-resumen">
-                        <div class="numero">3</div>
+                        <div class="numero numero--verde">3</div>
                         <span class="texto_gris small">Insumos usados</span>
                     </div>
                 </div>
                 <div class="col">
                     <div class="tarjeta-resumen">
-                        <div class="numero">9</div>
+                        <div class="numero numero--verde">9</div>
                         <span class="texto_gris small">Cantidad total</span>
                     </div>
                 </div>
                 <div class="col">
                     <div class="tarjeta-resumen">
-                        <div class="numero numero--alerta">1</div>
+                        <div class="numero numero--rojo">1</div>
                         <span class="texto_gris small">Por agotarse</span>
                     </div>
                 </div>
             </div>
 
-            <p class="titulo-seccion">Insumos - Maíz - Lote 1</p>
-            <div class="d-flex flex-column gap-2 mb-3">
-                <div class="tarjeta p-3 rounded-4 d-flex justify-content-between align-items-center">
-                    <div>
-                        <strong class="d-block">Herbicida selectivo</strong>
-                        <span class="texto_gris small">Control de maleza</span>
-                    </div>
-                    <i class="bi bi-check-circle-fill text-success"></i>
-                </div>
-                <div class="tarjeta p-3 rounded-4 d-flex justify-content-between align-items-center">
-                    <div>
-                        <strong class="d-block">Semilla de maíz</strong>
-                        <span class="texto_gris small">50 kg disponibles</span>
-                    </div>
-                    <i class="bi bi-check-circle-fill text-success"></i>
-                </div>
-                <div class="tarjeta p-3 rounded-4 d-flex justify-content-between align-items-center">
-                    <div>
-                        <strong class="d-block">Fungicida orgánico</strong>
-                        <span class="texto_gris small">Prevención de hongos</span>
-                    </div>
-                    <i class="bi bi-check-circle-fill text-success"></i>
-                </div>
-                <div class="tarjeta p-3 rounded-4 d-flex justify-content-between align-items-center">
-                    <div>
-                        <strong class="d-block">Fertilizante NPK</strong>
-                        <span class="texto_gris small">Aplicado en floración</span>
-                    </div>
-                    <i class="bi bi-check-circle-fill text-success"></i>
-                </div>
+            <h6 class="fw-bold mb-2">Insumos - Maíz - Lote 1</h6>
+            <div class="d-flex flex-column gap-2">
+                <details class="insumo-desplegable item-buscable">
+                    <summary>
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="punto-insumo punto-insumo--verde"></span>
+                            <div>
+                                <strong class="d-block">Fertilizante NPK</strong>
+                                <span class="texto_gris small">Aplicado en floración</span>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center gap-3">
+                            <i class="bi bi-chevron-down"></i>
+                        </div>
+                    </summary>
+                </details>
+                <details class="insumo-desplegable item-buscable">
+                    <summary>
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="punto-insumo punto-insumo--azul"></span>
+                            <div>
+                                <strong class="d-block">Herbicida selectivo</strong>
+                                <span class="texto_gris small">Control de maleza</span>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center gap-3">
+                            <i class="bi bi-chevron-down"></i>
+                        </div>
+                    </summary>
+                </details>
+                <details class="insumo-desplegable item-buscable">
+                    <summary>
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="punto-insumo punto-insumo--rojo"></span>
+                            <div>
+                                <strong class="d-block">Fungicida orgánico</strong>
+                                <span class="texto_gris small">Prevención de hongos</span>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center gap-3">
+                            <i class="bi bi-chevron-down"></i>
+                        </div>
+                    </summary>
+                </details>
+                <details class="insumo-desplegable item-buscable">
+                    <summary>
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="punto-insumo punto-insumo--verde"></span>
+                            <div>
+                                <strong class="d-block">Semilla de maíz</strong>
+                                <span class="texto_gris small">50 kg disponibles</span>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center gap-3">
+                            <i class="bi bi-chevron-down"></i>
+                        </div>
+                    </summary>
+                </details>
             </div>
         </div>
     </main>

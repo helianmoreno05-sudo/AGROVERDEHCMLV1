@@ -294,3 +294,101 @@
   font-size: 3rem;
   color: var(--green-primary);
 }
+
+/* Puntos de color de cada insumo */
+.punto-insumo {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background-color: var(--green-primary);
+}
+
+.punto-insumo--azul {
+  background-color: #38bdf8;
+}
+
+.punto-insumo--amarillo {
+  background-color: #eab308;
+}
+
+.punto-insumo--rojo {
+  background-color: #ef4444;
+}
+
+.punto-insumo--gris {
+  background-color: var(--text-muted);
+}
+
+/* Colores de los números de resumen */
+.tarjeta-resumen .numero--verde {
+  color: var(--green-primary);
+}
+
+.tarjeta-resumen .numero--rojo {
+  color: #ef4444;
+}
+
+/* Monto grande (costos) */
+.monto-total {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--green-primary);
+}
+
+/* Selector de siembra con tres opciones */
+.pastillas--tres {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.pastillas--tres label {
+  border-radius: 50px;
+  padding: 8px 6px;
+  font-size: 0.78rem;
+}
+
+/* Opciones con borde verde */
+.tarjeta--borde-verde {
+  border-color: rgba(34, 197, 94, 0.6);
+}
+
+/* Colores de las barras de la gráfica */
+.grafica .barra--azul {
+  background-color: #38bdf8;
+}
+
+.grafica .barra--amarillo {
+  background-color: #eab308;
+}
+
+.grafica .barra--rojo {
+  background-color: #ef4444;
+}
+
+/* Etiquetas en mayúsculas (Registrar proveedor) */
+.formulario-mayusculas .agro-label {
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+/* Botón OK de la ventana de guardado */
+.btn-agro-ok {
+  width: 100%;
+  background-color: #b5835a;
+  color: var(--text-main);
+  font-weight: 700;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+}
+
+/* Títulos largos y botón "+ Nuevo" en una sola línea */
+.app-header h3 {
+  font-size: 1.3rem;
+}
+
+.app-header .btn-agro-sm {
+  white-space: nowrap;
+}

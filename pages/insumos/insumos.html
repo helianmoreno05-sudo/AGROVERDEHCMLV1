@@ -13,6 +13,11 @@
 
 <body>
     <main class="pantalla container-fluid">
+        <!-- Logo -->
+        <div class="text-center mb-2">
+            <img src="../../assets/img/agro-verde-sin-texto.png" alt="Agro Verde" class="app-logo-mini">
+        </div>
+
         <!-- Encabezado -->
         <header class="app-header">
             <h3 class="m-0 fw-bold">Insumos</h3>
@@ -20,81 +25,114 @@
         </header>
 
         <div class="contenido-insumos">
+            <!-- Buscador -->
+            <input type="search" id="buscador" class="agro-input" placeholder="Buscar insumo">
+
             <!-- Resumen -->
             <div class="row g-2 mb-3">
                 <div class="col">
                     <div class="tarjeta-resumen">
-                        <div class="numero">42</div>
+                        <div class="numero numero--verde">42</div>
                         <span class="texto_gris small">Insumos en stock</span>
                     </div>
                 </div>
                 <div class="col">
                     <div class="tarjeta-resumen">
-                        <div class="numero numero--alerta">5</div>
+                        <div class="numero numero--rojo">5</div>
                         <span class="texto_gris small">Insumos por agotarse</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Buscador -->
-            <input type="search" id="buscador" class="agro-input mb-3" placeholder="Buscar insumo">
+            <a href="opciones-insumo.html" class="btn-agro-outline mb-3">Opciones Insumos</a>
 
             <!-- Inventario -->
-            <div class="d-flex justify-content-between align-items-center">
-                <p class="titulo-seccion">Inventario</p>
-                <a href="consultar-catalogo.html" class="link-editar mb-2">Ver catálogo</a>
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="fw-bold m-0">Inventario</h5>
+                <a href="consultar-catalogo.html" class="link-editar">Ver catálogo</a>
             </div>
             <div class="d-flex flex-column gap-2 mb-3">
-                <details class="insumo-desplegable item-buscable">
+                <details class="insumo-desplegable item-buscable" open>
                     <summary>
-                        <div>
-                            <strong class="d-block">Herbicida selectivo</strong>
-                            <span class="texto_gris small">9 litros disponibles</span>
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="punto-insumo punto-insumo--verde"></span>
+                            <div>
+                                <strong class="d-block">Fertilizante NPK</strong>
+                                <span class="texto_gris small">18 sacos disponibles</span>
+                            </div>
                         </div>
-                        <i class="bi bi-chevron-down"></i>
+                        <div class="d-flex align-items-center gap-3">
+                            <a href="editar-insumo.html" class="btn-agro-sm">Editar</a>
+                            <i class="bi bi-chevron-down"></i>
+                        </div>
                     </summary>
-                    <p class="descripcion">Herbicida selectivo para el control de malezas sin afectar el cultivo. Presentación: litro. Estado: disponible.</p>
-                        <a href="editar-insumo.html" class="link-editar d-inline-block mt-2"><i class="bi bi-pencil-square"></i> Editar</a>
+                    <div class="descripcion">
+                        <p class="titulo-seccion mb-1">Descripción</p>
+                        Fertilizante NPK de uso agrícola que aporta nitrógeno, fósforo y potasio, esenciales para el crecimiento, desarrollo y producción de los cultivos. Cantidad disponible: 18 sacos. Recomendado para mejorar la nutrición del suelo y favorecer un desarrollo saludable de las plantas. Presentación: saco. Estado: disponible.
+                    </div>
                 </details>
                 <details class="insumo-desplegable item-buscable">
                     <summary>
-                        <div>
-                            <strong class="d-block">Semilla de maíz</strong>
-                            <span class="texto_gris small">50 kg disponibles</span>
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="punto-insumo punto-insumo--azul"></span>
+                            <div>
+                                <strong class="d-block">Herbicida selectivo</strong>
+                                <span class="texto_gris small">9 litros disponibles</span>
+                            </div>
                         </div>
-                        <i class="bi bi-chevron-down"></i>
+                        <div class="d-flex align-items-center gap-3">
+                            <a href="editar-insumo.html" class="btn-agro-sm">Editar</a>
+                            <i class="bi bi-chevron-down"></i>
+                        </div>
                     </summary>
-                    <p class="descripcion">Semilla de maíz certificada para siembra. Presentación: kilogramo. Estado: disponible.</p>
-                        <a href="editar-insumo.html" class="link-editar d-inline-block mt-2"><i class="bi bi-pencil-square"></i> Editar</a>
+                    <div class="descripcion">
+                        <p class="titulo-seccion mb-1">Descripción</p>
+                        Herbicida selectivo para el control de malezas sin afectar el cultivo. Presentación: litro. Estado: disponible.
+                    </div>
                 </details>
                 <details class="insumo-desplegable item-buscable">
                     <summary>
-                        <div>
-                            <strong class="d-block">Fungicida orgánico</strong>
-                            <span class="texto-bajo-stock small">3 unidades - bajo stock</span>
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="punto-insumo punto-insumo--rojo"></span>
+                            <div>
+                                <strong class="d-block">Fungicida orgánico</strong>
+                                <span class="texto-bajo-stock small">3 unidades - bajo stock</span>
+                            </div>
                         </div>
-                        <i class="bi bi-chevron-down"></i>
+                        <div class="d-flex align-items-center gap-3">
+                            <a href="editar-insumo.html" class="btn-agro-sm">Editar</a>
+                            <i class="bi bi-chevron-down"></i>
+                        </div>
                     </summary>
-                    <p class="descripcion">Fungicida orgánico para la prevención de hongos en hojas y tallos. Presentación: unidad. Estado: bajo stock.</p>
-                        <a href="editar-insumo.html" class="link-editar d-inline-block mt-2"><i class="bi bi-pencil-square"></i> Editar</a>
+                    <div class="descripcion">
+                        <p class="titulo-seccion mb-1">Descripción</p>
+                        Fungicida orgánico para la prevención de hongos en hojas y tallos. Presentación: unidad. Estado: bajo stock.
+                    </div>
                 </details>
                 <details class="insumo-desplegable item-buscable">
                     <summary>
-                        <div>
-                            <strong class="d-block">Fertilizante NPK</strong>
-                            <span class="texto_gris small">18 sacos disponibles</span>
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="punto-insumo punto-insumo--verde"></span>
+                            <div>
+                                <strong class="d-block">Semilla de maíz</strong>
+                                <span class="texto_gris small">50 kg disponibles</span>
+                            </div>
                         </div>
-                        <i class="bi bi-chevron-down"></i>
+                        <div class="d-flex align-items-center gap-3">
+                            <a href="editar-insumo.html" class="btn-agro-sm">Editar</a>
+                            <i class="bi bi-chevron-down"></i>
+                        </div>
                     </summary>
-                    <p class="descripcion">Fertilizante NPK de uso agrícola que aporta nitrógeno, fósforo y potasio, esenciales para el crecimiento, desarrollo y producción de los cultivos. Cantidad disponible: 18 sacos. Recomendado para mejorar la nutrición del suelo y favorecer un desarrollo saludable de las plantas. Presentación: saco. Estado: disponible.</p>
-                        <a href="editar-insumo.html" class="link-editar d-inline-block mt-2"><i class="bi bi-pencil-square"></i> Editar</a>
+                    <div class="descripcion">
+                        <p class="titulo-seccion mb-1">Descripción</p>
+                        Semilla de maíz certificada para siembra. Presentación: kilogramo. Estado: disponible.
+                    </div>
                 </details>
             </div>
 
             <!-- Acciones -->
             <div class="d-flex flex-column gap-2">
                 <a href="uso-insumo.html" class="btn-agro-primary">Usar insumo</a>
-                <a href="opciones-insumo.html" class="btn-agro-outline">Opciones insumos</a>
                 <a href="inhabilitar-insumo.html" class="btn-agro-danger">Inhabilitar insumo</a>
             </div>
         </div>

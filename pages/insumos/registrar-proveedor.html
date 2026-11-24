@@ -16,7 +16,7 @@
         <!-- Encabezado -->
         <header class="app-header">
             <div class="app-header__left">
-                <a href="proveedores-insumos.html" class="btn-back" aria-label="Volver"><i class="bi bi-arrow-left"></i></a>
+                <a href="opciones-insumo.html" class="btn-back" aria-label="Volver"><i class="bi bi-arrow-left"></i></a>
                 <h3 class="m-0 fw-bold">Proveedores</h3>
             </div>
             <img src="../../assets/img/agro-verde-sin-texto.png" alt="Agro Verde" class="app-logo-mini">
@@ -24,11 +24,11 @@
 
         <div class="contenido-insumos">
             <div class="pastillas">
-                <a href="proveedores-insumos.html">Ver proveedores</a>
                 <a href="registrar-proveedor.html" class="activa">Registrar</a>
+                <a href="proveedores-insumos.html">Ver proveedores</a>
             </div>
 
-            <form action="proveedores-insumos.html">
+            <form action="proveedores-insumos.html" class="formulario-mayusculas">
                 <input type="hidden" name="guardado" value="1">
                 <label for="proveedor" class="agro-label">Nombre del proveedor</label>
                 <input type="text" id="proveedor" name="proveedor" class="agro-input" placeholder="Ej. AgroSur S.A">
@@ -45,7 +45,7 @@
                     <option>Fungicida orgánico</option>
                 </select>
 
-                <button type="submit" class="btn-agro-primary">Guardar proveedor</button>
+                <button type="submit" class="btn-agro-outline mt-4">Guardar proveedor</button>
             </form>
         </div>
     </main>

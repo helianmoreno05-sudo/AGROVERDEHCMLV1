@@ -88,9 +88,21 @@ Estos módulos ya están desarrollados y estandarizados en HTML y CSS. Cada uno 
 - Ver etapa (`ver-etapa.html`)
 - Inhabilitar propiedad (`inhabilitar-propiedad.html`)
 
+### Insumos
+
+- Inventario de insumos (`insumos.html`)
+- Crear, editar, usar e inhabilitar insumo (`crear-insumo.html`, `editar-insumo.html`, `uso-insumo.html`, `inhabilitar-insumo.html`)
+- Opciones de insumos (`opciones-insumo.html`)
+- Costos por insumo y por siembra (`costos-por-insumo.html`, `costos-por-siembra.html`)
+- Insumos por siembra e insumos usados (`insumo-por-siembra.html`, `insumos-usados.html`)
+- Gráfica de insumos (`grafica-insumos.html`)
+- Proveedores (`proveedores-insumos.html`, `registrar-proveedor.html`, `nuevo-proveedor.html`)
+- Historial de uso (`historial-insumo.html`, `historial-uso.html`)
+- Actualizar stock y código de barras (`actualizar-stock.html`, `codigo-barras.html`)
+- Catálogo de insumos (`consultar-catalogo.html`)
+
 ## Módulos pendientes
 
-- **Insumos** (`pages/insumos/` — inventario, gestión y proveedores)
 - **Perfil** (`pages/perfil/` — vista y edición de perfil de usuario)
 - **Historial general** (`pages/historial/` — unificación si aplica)
 
