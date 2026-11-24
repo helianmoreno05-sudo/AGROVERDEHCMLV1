@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar proveedor - Agro Verde</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../../assets/css/global.css">
+    <link rel="stylesheet" href="../../assets/css/insumos/insumos.css">
+</head>
+
+<body>
+    <main class="pantalla container-fluid">
+        <!-- Encabezado -->
+        <header class="app-header">
+            <div class="app-header__left">
+                <a href="proveedores-insumos.html" class="btn-back" aria-label="Volver"><i class="bi bi-arrow-left"></i></a>
+                <h3 class="m-0 fw-bold">Proveedores</h3>
+            </div>
+            <img src="../../assets/img/agro-verde-sin-texto.png" alt="Agro Verde" class="app-logo-mini">
+        </header>
+
+        <div class="contenido-insumos">
+            <div class="pastillas">
+                <a href="proveedores-insumos.html">Ver proveedores</a>
+                <a href="registrar-proveedor.html" class="activa">Registrar</a>
+            </div>
+
+            <form action="proveedores-insumos.html">
+                <input type="hidden" name="guardado" value="1">
+                <label for="proveedor" class="agro-label">Nombre del proveedor</label>
+                <input type="text" id="proveedor" name="proveedor" class="agro-input" placeholder="Ej. AgroSur S.A">
+                <label for="telefono" class="agro-label">Teléfono</label>
+                <input type="tel" id="telefono" name="telefono" class="agro-input" placeholder="Ej. 310 000 0000">
+                <label for="correo" class="agro-label">Correo electrónico</label>
+                <input type="email" id="correo" name="correo" class="agro-input" placeholder="Ej. contacto@agro.com">
+                <label for="insumo" class="agro-label">Insumo que provee</label>
+                <select id="insumo" name="insumo" class="agro-select">
+                    <option value="" selected disabled>Seleccionar insumo</option>
+                    <option>Fertilizante NPK</option>
+                    <option>Herbicida selectivo</option>
+                    <option>Semilla de maíz</option>
+                    <option>Fungicida orgánico</option>
+                </select>
+
+                <button type="submit" class="btn-agro-primary">Guardar proveedor</button>
+            </form>
+        </div>
+    </main>
+
+    <!-- Barra de navegación inferior -->
+    <nav class="navegacion_inferior d-flex justify-content-between">
+        <a href="../inicio/inicio.html" class="text-center small"><i class="bi bi-house-door d-block"></i>Inicio</a>
+        <a href="../cultivos/cultivos.html" class="text-center small"><i class="bi bi-flower1 d-block"></i>Cultivos</a>
+        <a href="../clima/clima.html" class="text-center small"><i class="bi bi-cloud-sun d-block"></i>Clima</a>
+        <a href="insumos.html" class="text-center small active"><i class="bi bi-box-seam d-block"></i>Insumos</a>
+        <a href="../perfil/perfil.html" class="text-center small"><i class="bi bi-person-circle d-block"></i>Perfil</a>
+    </nav>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../assets/js/insumos/insumos.js"></script>
+</body>
+
+</html>
