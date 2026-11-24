@@ -282,19 +282,6 @@
   color: var(--green-primary);
 }
 
-/* Ventana "Guardado correctamente" */
-.modal-agro .modal-content {
-  background-color: var(--bg-main);
-  border: 1px solid var(--border-subtle);
-  border-radius: 18px;
-  color: var(--text-main);
-}
-
-.modal-agro .bi-check-circle-fill {
-  font-size: 3rem;
-  color: var(--green-primary);
-}
-
 /* Puntos de color de cada insumo */
 .punto-insumo {
   width: 8px;
@@ -371,17 +358,6 @@
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.05em;
-}
-
-/* Botón OK de la ventana de guardado */
-.btn-agro-ok {
-  width: 100%;
-  background-color: #b5835a;
-  color: var(--text-main);
-  font-weight: 700;
-  border: none;
-  border-radius: 10px;
-  padding: 10px 20px;
 }
 
 /* Títulos largos y botón "+ Nuevo" en una sola línea */

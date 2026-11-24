@@ -31,7 +31,7 @@ Estos módulos ya están desarrollados y estandarizados en HTML y CSS. Cada uno 
 - Recuperar contraseña (`recuperar-contrasena.html`)
 - Acceso de usuario (`acceso-usuario.html`)
 - Crear propiedad (`crear-propiedad.html`)
-- Notificaciones por correo (`notificaciones-por-correo.html`)
+- Notificaciones por correo (`notificaciones-correo.html`)
 
 ### Inicio
 
@@ -63,8 +63,8 @@ Estos módulos ya están desarrollados y estandarizados en HTML y CSS. Cada uno 
 - Panel principal de clima (`clima.html`)
 - Riesgo de plagas por clima (`riesgo-plagas-clima.html`)
 - Alertas climáticas (`alertas.html`)
-- Historial climático (`historial-clima.html`)
-- Calendario agrícola y climático (`calendario-clima.html`)
+- Historial climático (`historial-climatico.html`)
+- Calendario agrícola y climático (`calendario-agricola.html`)
 
 ### Terreno
 

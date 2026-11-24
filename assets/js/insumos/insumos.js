@@ -64,22 +64,5 @@ function activarBuscador() {
   });
 }
 
-// ================== MENSAJE DE GUARDADO ==================
-
-// Si la página se abre con ?guardado=1 mostramos la ventana "Guardado correctamente"
-function mostrarGuardado() {
-  let ventana = document.getElementById("modal-guardado");
-
-  if (ventana === null) {
-    return;
-  }
-
-  if (window.location.search.includes("guardado=1")) {
-    let modal = new bootstrap.Modal(ventana);
-    modal.show();
-  }
-}
-
 activarContadores();
 activarBuscador();
-mostrarGuardado();
