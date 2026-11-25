@@ -14,6 +14,14 @@ function actualizarTextos() {
   document.getElementById("textoTelefono").textContent = campoTelefono.value;
 }
 
+// Muestra el error debajo de los campos (y no solo en una ventanita) y marca el campo
+function mostrarError(texto, campo) {
+  let aviso = document.getElementById("aviso-error");
+  aviso.textContent = texto;
+  aviso.classList.remove("d-none");
+  campo.focus();
+}
+
 function iniciarAlertas() {
   // si no hay sesión, protegerPagina nos manda al login y paramos aquí
   if (protegerPagina() === false) {
@@ -49,7 +57,7 @@ function iniciarAlertas() {
     let telefono = campoTelefono.value.trim();
 
     if (correoValido(correo) === false) {
-      alert("Escribe un correo válido, por ejemplo tu@correo.com");
+      mostrarError("Escribe un correo válido, por ejemplo tu@correo.com", campoCorreo);
       return;
     }
 
@@ -59,7 +67,7 @@ function iniciarAlertas() {
     let alertaSms = document.getElementById("alertaSms");
 
     if (alertaSms.checked === true && /^\+57[0-9]{10}$/.test(telefonoSinEspacios) === false) {
-      alert("El teléfono debe verse así: +57 300 123 4567");
+      mostrarError("Para recibir alertas por SMS escribe tu teléfono así: +57 300 123 4567 (o apaga \"Alerta por SMS\").", campoTelefono);
       return;
     }
 
@@ -71,8 +79,10 @@ function iniciarAlertas() {
     }
 
     localStorage.setItem(llave, JSON.stringify(datos));
-    actualizarTextos();
-    alert("Alertas guardadas");
+    registrarEvento("Alertas actualizadas", "Se guardaron las alertas por correo y SMS", "sistema", "bi-bell", "info");
+
+    // volvemos a la configuración de alertas con el mensaje de "Guardado correctamente"
+    window.location.href = "alertas-configuracion.html?mensaje=guardado";
   });
 }
 
