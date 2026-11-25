@@ -212,3 +212,9 @@ textarea.campo {
   background-color: #1ea850;
   color: #091c12;
 }
+/* Terreno con un cultivo sembrado: se ve pero no se puede elegir */
+.terreno-ocupado {
+  opacity: 0.45;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}

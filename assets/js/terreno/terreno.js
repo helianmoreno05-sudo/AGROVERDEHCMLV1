@@ -6,10 +6,11 @@ const CLAVE_HISTORIAL_TERRENOS = "historialTerrenos";
 
 function terrenosDeEjemplo() {
   return [
-    { id: 1, nombre: "Terreno 1", etapa: "Floración", zona: "Sur", ubicacion: "Finca el Manantial", area: 3.5, suelo: "limoso", fuente: "rio", caudal: 120, habilitado: true },
+    { id: 1, nombre: "Terreno 1", etapa: "Floración", zona: "Sur", ubicacion: "Finca el Manantial", area: 2.4, suelo: "limoso", fuente: "rio", caudal: 120, habilitado: true },
     { id: 2, nombre: "Terreno de Café", etapa: "Maduración", zona: "Casa", ubicacion: "Finca el Manantial", area: 1.8, suelo: "arcilloso", fuente: "pozo", caudal: 80, habilitado: true },
     { id: 3, nombre: "Terreno loma", etapa: "Siembra", zona: "Norte", ubicacion: "Finca el Manantial", area: 1.2, suelo: "mixto", fuente: "acueducto", caudal: 60, habilitado: true },
-    { id: 4, nombre: "Vacío", etapa: "----", zona: "Norte", ubicacion: "Finca el Manantial", area: 0.5, suelo: "arenoso", fuente: "rio", caudal: 0, habilitado: true }
+    { id: 4, nombre: "Vacío", etapa: "----", zona: "Norte", ubicacion: "Finca el Manantial", area: 0.5, suelo: "arenoso", fuente: "rio", caudal: 0, habilitado: true },
+    { id: 5, nombre: "Terreno huerta", etapa: "Crecimiento", zona: "Casa", ubicacion: "Finca el Manantial", area: 1, suelo: "arcilloso", fuente: "acueducto", caudal: 40, habilitado: true }
   ];
 }
 
