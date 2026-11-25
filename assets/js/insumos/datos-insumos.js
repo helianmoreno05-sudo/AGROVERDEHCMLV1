@@ -61,6 +61,60 @@ function insumoPorNombre(lista, nombre) {
   return null;
 }
 
+// ================== MEDIDAS Y PESO APROXIMADO ==================
+// Medidas que se cuentan por bulto o saco: necesitan saber cuánto pesa cada uno
+const MEDIDAS_CON_PESO = ["bultos", "sacos"];
+
+// Peso aproximado (kg) de un bulto o saco según el producto. Se busca por palabras del nombre.
+const PESOS_APROXIMADOS = [
+  { palabras: ["cal", "dolomita", "yeso"], kg: 25 },
+  { palabras: ["gallinaza", "pollinaza", "compost", "humus", "lombricompuesto", "bocashi"], kg: 40 },
+  { palabras: ["urea", "npk", "fertilizante", "triple", "dap", "kcl", "abono"], kg: 50 },
+  { palabras: ["semilla"], kg: 25 },
+  { palabras: ["concentrado", "sal mineralizada"], kg: 40 }
+];
+
+function pesoSugerido(nombre, unidad) {
+  if (!MEDIDAS_CON_PESO.includes(unidad)) {
+    return 0;
+  }
+
+  let texto = nombre.toLowerCase();
+
+  for (let i = 0; i < PESOS_APROXIMADOS.length; i++) {
+    for (let j = 0; j < PESOS_APROXIMADOS[i].palabras.length; j++) {
+      if (texto.includes(PESOS_APROXIMADOS[i].palabras[j])) {
+        return PESOS_APROXIMADOS[i].kg;
+      }
+    }
+  }
+
+  // si no lo reconocemos: un saco suele ser de 50 kg y un bulto de 40 kg
+  return unidad === "sacos" ? 50 : 40;
+}
+
+// Cuántos kilos son "cantidad" de un insumo (0 si es líquido o por unidad)
+function kilosDe(insumo, cantidad) {
+  if (insumo.unidad === "kg") return cantidad;
+  if (insumo.unidad === "g") return cantidad / 1000;
+  if (MEDIDAS_CON_PESO.includes(insumo.unidad)) {
+    return cantidad * (insumo.pesoUnidad || pesoSugerido(insumo.nombre, insumo.unidad));
+  }
+  return 0;
+}
+
+// "3 bultos (≈ 75 kg)" o "9 L"
+function textoCantidad(insumo, cantidad) {
+  let numero = cantidad === undefined ? insumo.cantidad : cantidad;
+  let texto = numero + " " + insumo.unidad;
+
+  if (MEDIDAS_CON_PESO.includes(insumo.unidad)) {
+    texto += " (≈ " + Math.round(kilosDe(insumo, numero)) + " kg)";
+  }
+
+  return texto;
+}
+
 // Un insumo está por agotarse cuando le queda lo mínimo o menos
 function porAgotarse(insumo) {
   return insumo.cantidad <= insumo.minimo;

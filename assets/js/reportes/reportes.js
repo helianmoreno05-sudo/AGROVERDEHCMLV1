@@ -176,6 +176,7 @@ function mostrarConsumo() {
   }
 
   let usos = obtenerUsosInsumos();
+  let insumos = obtenerInsumos();
   let semana = fechaDeHoy(7);
   let mes = fechaDeHoy(0).slice(0, 7);
   let totalSemana = 0;
@@ -188,12 +189,15 @@ function mostrarConsumo() {
     total += u.cantidad;
     porInsumo[u.insumo] = (porInsumo[u.insumo] || 0) + u.cantidad;
 
-    // en los totales solo se suman los kilos (no se pueden sumar kg con litros o sacos)
-    if (u.unidad.toLowerCase() === "kg" && u.fecha >= semana) {
-      totalSemana += u.cantidad;
+    // todo se pasa a kilos (los bultos y sacos con su peso aproximado; los líquidos no cuentan)
+    let insumo = insumoPorNombre(insumos, u.insumo) || { nombre: u.insumo, unidad: u.unidad };
+    let kilos = kilosDe(insumo, u.cantidad);
+
+    if (u.fecha >= semana) {
+      totalSemana += kilos;
     }
-    if (u.unidad.toLowerCase() === "kg" && u.fecha.slice(0, 7) === mes) {
-      totalMes += u.cantidad;
+    if (u.fecha.slice(0, 7) === mes) {
+      totalMes += kilos;
     }
   }
 
@@ -210,8 +214,8 @@ function mostrarConsumo() {
   let meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
   let hoy = new Date();
 
-  document.getElementById("consumoSemanal").textContent = totalSemana + " kg";
-  document.getElementById("consumoMensual").textContent = totalMes + " kg";
+  document.getElementById("consumoSemanal").textContent = Math.round(totalSemana) + " kg";
+  document.getElementById("consumoMensual").textContent = Math.round(totalMes) + " kg";
   document.getElementById("consumoMes").textContent = meses[hoy.getMonth()] + " " + hoy.getFullYear();
   document.getElementById("consumoInsumo").textContent = masUsado;
   document.getElementById("consumoPorcentaje").textContent = total > 0 ? Math.round((mayor / total) * 100) + "%" : "0%";

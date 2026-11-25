@@ -92,7 +92,7 @@ function mostrarInventario() {
             <span class="punto-insumo punto-insumo--${bajo ? "rojo" : colorDelPunto(i)}"></span>
             <div>
               <strong class="d-block">${textoSeguro(insumo.nombre)}</strong>
-              <span class="${bajo ? "texto-bajo-stock" : "texto_gris"} small">${insumo.cantidad} ${textoSeguro(insumo.unidad)} ${bajo ? "- bajo stock" : "disponibles"}</span>
+              <span class="${bajo ? "texto-bajo-stock" : "texto_gris"} small">${textoSeguro(textoCantidad(insumo))} ${bajo ? "- bajo stock" : "disponibles"}</span>
             </div>
           </div>
           <div class="d-flex align-items-center gap-3">
@@ -121,6 +121,7 @@ function leerFormularioInsumo() {
   let cantidad = Number(document.getElementById("cantidad").value);
   let unidad = document.getElementById("medida").value;
   let precio = Number(document.getElementById("precio").value);
+  let pesoUnidad = Number(document.getElementById("pesoUnidad").value);
   let minimo = Number(document.getElementById("minimo").value);
   let llegada = document.getElementById("llegada").value;
   let caducidad = document.getElementById("caducidad").value;
@@ -137,6 +138,11 @@ function leerFormularioInsumo() {
 
   if (unidad === "") {
     alert("Selecciona la medida del insumo");
+    return null;
+  }
+
+  if (MEDIDAS_CON_PESO.includes(unidad) && (isNaN(pesoUnidad) || pesoUnidad <= 0)) {
+    alert("Escribe cuánto pesa aproximadamente cada " + unidad.replace(/s$/, "") + " (en kg)");
     return null;
   }
 
@@ -160,7 +166,40 @@ function leerFormularioInsumo() {
     return null;
   }
 
-  return { nombre: nombre, cantidad: cantidad, unidad: unidad, precio: precio, minimo: minimo, llegada: llegada, caducidad: caducidad };
+  return { nombre: nombre, cantidad: cantidad, unidad: unidad, pesoUnidad: MEDIDAS_CON_PESO.includes(unidad) ? pesoUnidad : 0, precio: precio, minimo: minimo, llegada: llegada, caducidad: caducidad };
+}
+
+// Muestra el campo de peso solo para bultos y sacos y propone el peso según el nombre.
+// Si la persona cambia el peso a mano, ya no se le cambia solo.
+function activarPesoAproximado() {
+  let medida = document.getElementById("medida");
+  let nombre = document.getElementById("nombre");
+  let peso = document.getElementById("pesoUnidad");
+  let grupo = document.getElementById("grupoPeso");
+  let ayuda = document.getElementById("ayudaPeso");
+  let escritoAMano = peso.value !== "";
+
+  function actualizar() {
+    let conPeso = MEDIDAS_CON_PESO.includes(medida.value);
+    grupo.classList.toggle("d-none", !conPeso);
+
+    if (!conPeso) {
+      return;
+    }
+
+    let sugerido = pesoSugerido(nombre.value, medida.value);
+    if (!escritoAMano) {
+      peso.value = sugerido;
+    }
+    ayuda.textContent = "Un " + medida.value.replace(/s$/, "") + " de " + (nombre.value.trim() || "este insumo") + " pesa aprox. " + sugerido + " kg. Puedes cambiarlo.";
+  }
+
+  peso.addEventListener("input", function () {
+    escritoAMano = peso.value !== "";
+  });
+  medida.addEventListener("change", actualizar);
+  nombre.addEventListener("input", actualizar);
+  actualizar();
 }
 
 function activarCrearInsumo() {
@@ -172,6 +211,7 @@ function activarCrearInsumo() {
 
   let selectCultivo = document.getElementById("cultivo");
   llenarSelect(selectCultivo, nombresDeCultivos());
+  activarPesoAproximado();
 
   formulario.addEventListener("submit", function (evento) {
     evento.preventDefault();
@@ -224,6 +264,10 @@ function activarEditarInsumo() {
   if (medida.value !== insumo.unidad) {
     medida.add(new Option(insumo.unidad, insumo.unidad, true, true));
   }
+  if (insumo.pesoUnidad) {
+    document.getElementById("pesoUnidad").value = insumo.pesoUnidad;
+  }
+  activarPesoAproximado();
   document.getElementById("llegada").value = insumo.llegada;
   document.getElementById("caducidad").value = insumo.caducidad;
 
@@ -263,7 +307,7 @@ function activarInhabilitarInsumo() {
         <label for="i-${insumo.id}" class="tarjeta p-3 rounded-4">
           <div>
             <strong class="d-block">${textoSeguro(insumo.nombre)}</strong>
-            <span class="${bajo ? "texto-bajo-stock" : "texto_gris"} small">${insumo.cantidad} ${textoSeguro(insumo.unidad)} ${bajo ? "- bajo stock" : "disponibles"}</span>
+            <span class="${bajo ? "texto-bajo-stock" : "texto_gris"} small">${textoSeguro(textoCantidad(insumo))} ${bajo ? "- bajo stock" : "disponibles"}</span>
           </div>
           <i class="bi bi-circle"></i>
         </label>
@@ -337,7 +381,7 @@ function activarActualizarStock() {
             <span class="punto-insumo punto-insumo--${bajo ? "rojo" : "verde"}"></span>
             <div>
               <strong class="d-block">${textoSeguro(insumo.nombre)}</strong>
-              <span class="${bajo ? "texto-bajo-stock" : "texto_gris"} small">${insumo.cantidad} ${textoSeguro(insumo.unidad)} ${bajo ? "- bajo stock" : "disponibles"}</span>
+              <span class="${bajo ? "texto-bajo-stock" : "texto_gris"} small">${textoSeguro(textoCantidad(insumo))} ${bajo ? "- bajo stock" : "disponibles"}</span>
             </div>
           </div>
           <i class="bi bi-chevron-down"></i>
@@ -638,34 +682,52 @@ function mostrarCostosPorInsumo() {
     return;
   }
 
-  let insumos = obtenerInsumos();
+  let insumos = insumosHabilitados();
   let mes = fechaDeHoy(0).slice(0, 7);
   let usos = obtenerUsosInsumos().filter(function (u) { return u.fecha.slice(0, 7) === mes; });
-  let grupos = {};
-  let total = 0;
-
-  // se suma cuánto se usó de cada insumo en el mes y cuánto costó
-  for (let i = 0; i < usos.length; i++) {
-    let nombre = usos[i].insumo;
-    let costo = costoDelUso(usos[i], insumos);
-
-    if (grupos[nombre] === undefined) {
-      grupos[nombre] = { cantidad: 0, unidad: usos[i].unidad, costo: 0 };
-    }
-    grupos[nombre].cantidad += usos[i].cantidad;
-    grupos[nombre].costo += costo;
-    total += costo;
-  }
-
+  let totalMes = 0;
+  let totalStock = 0;
   let html = "";
-  let posicion = 0;
-  for (let nombre in grupos) {
-    html += filaDeCosto(nombre, grupos[nombre].cantidad, grupos[nombre].unidad, insumoPorNombre(insumos, nombre), grupos[nombre].costo, colorDelPunto(posicion));
-    posicion++;
+
+  for (let i = 0; i < insumos.length; i++) {
+    let insumo = insumos[i];
+
+    // lo que se usó de este insumo en el mes
+    let usado = 0;
+    for (let j = 0; j < usos.length; j++) {
+      if (usos[j].insumo === insumo.nombre) {
+        usado += usos[j].cantidad;
+      }
+    }
+
+    let valorStock = insumo.cantidad * insumo.precio;
+    let costoUsado = usado * insumo.precio;
+    totalStock += valorStock;
+    totalMes += costoUsado;
+
+    html += `
+      <div class="tarjeta p-3 rounded-4">
+        <div class="d-flex align-items-center gap-3 mb-2">
+          <span class="punto-insumo punto-insumo--${colorDelPunto(i)}"></span>
+          <div>
+            <strong class="d-block">${textoSeguro(insumo.nombre)}</strong>
+            <span class="texto_gris small">Precio individual: <span class="text-white">${pesos(insumo.precio)}</span> c/u</span>
+          </div>
+        </div>
+        <div class="d-flex justify-content-between small border-top pt-2" style="border-color: var(--border-subtle) !important;">
+          <span class="texto_gris">En stock: ${textoSeguro(textoCantidad(insumo))} × ${pesos(insumo.precio)}</span>
+          <strong class="precio">${pesos(valorStock)}</strong>
+        </div>
+        <div class="d-flex justify-content-between small mt-1">
+          <span class="texto_gris">Usado este mes: ${textoSeguro(textoCantidad(insumo, usado))} × ${pesos(insumo.precio)}</span>
+          <strong>${pesos(costoUsado)}</strong>
+        </div>
+      </div>`;
   }
 
-  ponerTexto("montoTotal", pesos(total));
-  document.getElementById("listaPrincipal").innerHTML = html || '<p class="texto_gris">No hay usos registrados este mes.</p>';
+  ponerTexto("montoTotal", pesos(totalMes));
+  ponerTexto("montoStock", pesos(totalStock));
+  document.getElementById("listaPrincipal").innerHTML = html || '<p class="texto_gris">No hay insumos registrados.</p>';
 }
 
 // Renglón de costo: precio individual por unidad, cantidad usada y total
