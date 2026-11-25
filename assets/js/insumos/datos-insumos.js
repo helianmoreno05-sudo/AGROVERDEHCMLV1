@@ -93,10 +93,24 @@ function pesoSugerido(nombre, unidad) {
   return unidad === "sacos" ? 50 : 40;
 }
 
-// Cuántos kilos son "cantidad" de un insumo (0 si es líquido o por unidad)
+// Contenido de cada unidad pasado a kilos o litros: { valor, medida: "kg" | "L" }
+function contenidoNormalizado(insumo) {
+  let c = insumo.contenido;
+
+  if (!c || !c.cantidad) return null;
+  if (c.medida === "g") return { valor: c.cantidad / 1000, medida: "kg" };
+  if (c.medida === "mL") return { valor: c.cantidad / 1000, medida: "L" };
+  return { valor: c.cantidad, medida: c.medida };
+}
+
+// Cuántos kilos son "cantidad" de un insumo (0 si es líquido)
 function kilosDe(insumo, cantidad) {
   if (insumo.unidad === "kg") return cantidad;
   if (insumo.unidad === "g") return cantidad / 1000;
+  if (insumo.unidad === "und") {
+    let contenido = contenidoNormalizado(insumo);
+    return contenido !== null && contenido.medida === "kg" ? cantidad * contenido.valor : 0;
+  }
   if (MEDIDAS_CON_PESO.includes(insumo.unidad)) {
     return cantidad * (insumo.pesoUnidad || pesoSugerido(insumo.nombre, insumo.unidad));
   }
@@ -110,6 +124,13 @@ function textoCantidad(insumo, cantidad) {
 
   if (MEDIDAS_CON_PESO.includes(insumo.unidad)) {
     texto += " (≈ " + Math.round(kilosDe(insumo, numero)) + " kg)";
+  }
+
+  // por unidad: "3 und (500 g c/u ≈ 1.5 kg)"
+  let contenido = contenidoNormalizado(insumo);
+  if (insumo.unidad === "und" && contenido !== null) {
+    let total = Math.round(numero * contenido.valor * 100) / 100;
+    texto += " (" + insumo.contenido.cantidad + " " + insumo.contenido.medida + " c/u ≈ " + total + " " + contenido.medida + ")";
   }
 
   return texto;

@@ -102,7 +102,7 @@ function mostrarInventario() {
         </summary>
         <div class="descripcion">
           <p class="titulo-seccion mb-1">Descripción</p>
-          ${textoSeguro(insumo.descripcion || "Sin descripción.")} Cantidad disponible: ${insumo.cantidad} ${textoSeguro(insumo.unidad)}. Estado: ${estado}.
+          ${textoSeguro(insumo.descripcion || "Sin descripción.")} Proveedor: ${textoSeguro(insumo.proveedor || "No especifica")}. Cantidad disponible: ${textoSeguro(textoCantidad(insumo))}. Estado: ${estado}.
         </div>
       </details>`;
   }
@@ -122,6 +122,7 @@ function leerFormularioInsumo() {
   let unidad = document.getElementById("medida").value;
   let precio = Number(document.getElementById("precio").value);
   let pesoUnidad = Number(document.getElementById("pesoUnidad").value);
+  let contenidoCantidad = Number(document.getElementById("contenidoCantidad").value);
   let minimo = Number(document.getElementById("minimo").value);
   let llegada = document.getElementById("llegada").value;
   let caducidad = document.getElementById("caducidad").value;
@@ -146,6 +147,11 @@ function leerFormularioInsumo() {
     return null;
   }
 
+  if (unidad === "und" && (isNaN(contenidoCantidad) || contenidoCantidad <= 0)) {
+    alert("Escribe cuánto trae cada unidad, por ejemplo una caja de 500 g");
+    return null;
+  }
+
   if (isNaN(precio) || precio <= 0) {
     alert("Escribe el precio por unidad (sirve para calcular los costos)");
     return null;
@@ -166,7 +172,9 @@ function leerFormularioInsumo() {
     return null;
   }
 
-  return { nombre: nombre, cantidad: cantidad, unidad: unidad, pesoUnidad: MEDIDAS_CON_PESO.includes(unidad) ? pesoUnidad : 0, precio: precio, minimo: minimo, llegada: llegada, caducidad: caducidad };
+  return { nombre: nombre, cantidad: cantidad, unidad: unidad, pesoUnidad: MEDIDAS_CON_PESO.includes(unidad) ? pesoUnidad : 0,
+    contenido: unidad === "und" ? { cantidad: contenidoCantidad, medida: document.getElementById("contenidoMedida").value } : null,
+    proveedor: document.getElementById("proveedorInsumo").value, precio: precio, minimo: minimo, llegada: llegada, caducidad: caducidad };
 }
 
 // Muestra el campo de peso solo para bultos y sacos y propone el peso según el nombre.
@@ -180,6 +188,7 @@ function activarPesoAproximado() {
   let escritoAMano = peso.value !== "";
 
   function actualizar() {
+    document.getElementById("grupoContenido").classList.toggle("d-none", medida.value !== "und");
     let conPeso = MEDIDAS_CON_PESO.includes(medida.value);
     grupo.classList.toggle("d-none", !conPeso);
 
@@ -202,6 +211,24 @@ function activarPesoAproximado() {
   actualizar();
 }
 
+// Llena el select de proveedor. Siempre está "No especifica"; si no hay proveedores es la única opción.
+function llenarProveedores(elegido) {
+  let select = document.getElementById("proveedorInsumo");
+  let proveedores = obtenerProveedores();
+
+  select.innerHTML = '<option value="No especifica">No especifica</option>';
+  for (let i = 0; i < proveedores.length; i++) {
+    select.add(new Option(proveedores[i].nombre, proveedores[i].nombre));
+  }
+
+  if (elegido) {
+    select.value = elegido;
+    if (select.value !== elegido) {
+      select.add(new Option(elegido, elegido, true, true));
+    }
+  }
+}
+
 function activarCrearInsumo() {
   let formulario = document.getElementById("formCrearInsumo");
 
@@ -211,6 +238,7 @@ function activarCrearInsumo() {
 
   let selectCultivo = document.getElementById("cultivo");
   llenarSelect(selectCultivo, nombresDeCultivos());
+  llenarProveedores();
   activarPesoAproximado();
 
   formulario.addEventListener("submit", function (evento) {
@@ -267,6 +295,11 @@ function activarEditarInsumo() {
   if (insumo.pesoUnidad) {
     document.getElementById("pesoUnidad").value = insumo.pesoUnidad;
   }
+  if (insumo.contenido) {
+    document.getElementById("contenidoCantidad").value = insumo.contenido.cantidad;
+    document.getElementById("contenidoMedida").value = insumo.contenido.medida;
+  }
+  llenarProveedores(insumo.proveedor);
   activarPesoAproximado();
   document.getElementById("llegada").value = insumo.llegada;
   document.getElementById("caducidad").value = insumo.caducidad;
