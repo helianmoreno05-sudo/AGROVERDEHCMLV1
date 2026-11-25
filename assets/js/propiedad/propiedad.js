@@ -96,14 +96,21 @@ function activarCrearPropiedad() {
       return;
     }
 
+    let area = Number(document.getElementById("areaPropiedad").value);
+
+    if (isNaN(area) || area <= 0) {
+      alert("Escribe el área de la propiedad en hectáreas");
+      return;
+    }
+
     let lista = obtenerLista(CLAVE_PROPIEDADES, propiedadesDeEjemplo());
     lista.push({
       id: nuevoId(lista),
       nombre: nombre,
-      tipo: "Finca",
-      zona: "Norte",
+      tipo: document.getElementById("tipoPropiedad").value,
+      zona: document.getElementById("zonaPropiedad").value,
       ubicacion: ubicacion,
-      area: 0,
+      area: area,
       notas: document.getElementById("notasPropiedad").value.trim(),
       habilitado: true
     });

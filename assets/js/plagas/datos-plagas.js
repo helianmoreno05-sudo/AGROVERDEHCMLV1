@@ -68,3 +68,45 @@ function clase_insignia(estado) {
     if (estado === "Controlada") return "insignia_controlada";
     return "insignia_revisar";
 }
+
+// llena el select de "Ubicación / Cultivo" con los cultivos registrados
+// (y con las ubicaciones que ya tengan las plagas, para no perder ninguna)
+function llenar_select_cultivos() {
+    const select = document.getElementById("ubicacion");
+
+    if (!select || select.tagName !== "SELECT") {
+        return;
+    }
+
+    const guardados = JSON.parse(localStorage.getItem("cultivos") || "[]");
+    let nombres = guardados.filter(function (c) { return c.habilitado; }).map(function (c) { return c.nombre; });
+
+    if (nombres.length === 0) {
+        nombres = ["Maíz - Lote 1", "Café - Lote 2", "Fríjol - Lote 3", "Tomate - Lote 4"];
+    }
+
+    obtener_plagas().forEach(function (plaga) {
+        if (!nombres.includes(plaga.ubicacion)) {
+            nombres.push(plaga.ubicacion);
+        }
+    });
+
+    select.innerHTML = nombres.map(function (nombre) {
+        return `<option value="${escapar_html(nombre)}">${escapar_html(nombre)}</option>`;
+    }).join("");
+}
+
+// elige en el select el cultivo que contenga el texto (ej. "Café" -> "Café - Lote 2")
+function elegir_cultivo(texto) {
+    const select = document.getElementById("ubicacion");
+    const buscado = texto.toLowerCase().split("/")[0];
+
+    for (let i = 0; i < select.options.length; i++) {
+        if (select.options[i].value.toLowerCase().includes(buscado)) {
+            select.selectedIndex = i;
+            return;
+        }
+    }
+}
+
+llenar_select_cultivos();

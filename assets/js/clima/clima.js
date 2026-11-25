@@ -174,7 +174,7 @@ function mostrarClimaPrincipal(clima) {
 }
 
 // ================== CALENDARIO ==================
-function eventosDeEjemplo() {
+function eventosCalendarioDeEjemplo() {
   return [
     { fecha: fechaDeHoy(-5), titulo: "Fumigación Lote 2" },
     { fecha: fechaDeHoy(-10), titulo: "Cosecha Lote 1" }
@@ -182,7 +182,7 @@ function eventosDeEjemplo() {
 }
 
 function eventosProximos() {
-  return obtenerLista(CLAVE_EVENTOS_CAL, eventosDeEjemplo())
+  return obtenerLista(CLAVE_EVENTOS_CAL, eventosCalendarioDeEjemplo())
     .filter(function (e) { return e.fecha >= fechaDeHoy(0); })
     .sort(function (a, b) { return a.fecha < b.fecha ? -1 : 1; });
 }
@@ -191,7 +191,7 @@ function mostrarCalendario() {
   let hoy = new Date();
   let anio = hoy.getFullYear();
   let mes = hoy.getMonth();
-  let eventos = obtenerLista(CLAVE_EVENTOS_CAL, eventosDeEjemplo());
+  let eventos = obtenerLista(CLAVE_EVENTOS_CAL, eventosCalendarioDeEjemplo());
 
   document.getElementById("calMes").textContent = MESES[mes] + " " + anio + " • toca un día para agregar un evento";
 
@@ -253,7 +253,7 @@ function activarCalendario() {
       return;
     }
 
-    let eventos = obtenerLista(CLAVE_EVENTOS_CAL, eventosDeEjemplo());
+    let eventos = obtenerLista(CLAVE_EVENTOS_CAL, eventosCalendarioDeEjemplo());
     eventos.push({ fecha: dia.dataset.fecha, titulo: titulo.trim() });
     guardarLista(CLAVE_EVENTOS_CAL, eventos);
     registrarEvento("Evento agendado", titulo.trim() + " - " + fechaBonita(dia.dataset.fecha), "cultivos", "bi-calendar-event", "info");

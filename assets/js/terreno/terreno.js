@@ -6,7 +6,7 @@ const CLAVE_HISTORIAL_TERRENOS = "historialTerrenos";
 
 function terrenosDeEjemplo() {
   return [
-    { id: 1, nombre: "Terreno 1", etapa: "Floración", zona: "Sur", ubicacion: "Finca el Manantial", area: 2.4, suelo: "limoso", fuente: "rio", caudal: 120, habilitado: true },
+    { id: 1, nombre: "Terreno 1", etapa: "Floración", zona: "Sur", ubicacion: "Finca el Manantial", area: 3.5, suelo: "limoso", fuente: "rio", caudal: 120, habilitado: true },
     { id: 2, nombre: "Terreno de Café", etapa: "Maduración", zona: "Casa", ubicacion: "Finca el Manantial", area: 1.8, suelo: "arcilloso", fuente: "pozo", caudal: 80, habilitado: true },
     { id: 3, nombre: "Terreno loma", etapa: "Siembra", zona: "Norte", ubicacion: "Finca el Manantial", area: 1.2, suelo: "mixto", fuente: "acueducto", caudal: 60, habilitado: true },
     { id: 4, nombre: "Vacío", etapa: "----", zona: "Norte", ubicacion: "Finca el Manantial", area: 0.5, suelo: "arenoso", fuente: "rio", caudal: 0, habilitado: true }
@@ -36,6 +36,22 @@ function anotarCambioTerreno(nombre, detalle, color) {
   registrarEvento("Terreno: " + nombre, detalle, "inventario", "bi-geo-alt", colores[color]);
 }
 
+// La etapa de un terreno es la del cultivo que tenga sembrado.
+// Si todavía no se han registrado cultivos se usa la etapa guardada en el terreno.
+function etapaDelTerreno(terreno, cultivos) {
+  if (cultivos.length === 0) {
+    return terreno.etapa;
+  }
+
+  for (let i = 0; i < cultivos.length; i++) {
+    if (cultivos[i].habilitado && cultivos[i].terreno === terreno.nombre) {
+      return cultivos[i].etapa;
+    }
+  }
+
+  return "Sin cultivo";
+}
+
 // ================== LISTA DE TERRENOS ==================
 function mostrarTerrenos() {
   let contenedor = document.getElementById("listaTerrenos");
@@ -45,15 +61,17 @@ function mostrarTerrenos() {
   }
 
   let lista = obtenerTerrenos().filter(function (t) { return t.habilitado; });
+  let cultivos = leerLista("cultivos");
   let html = "";
 
   for (let i = 0; i < lista.length; i++) {
     let t = lista[i];
+    let etapa = etapaDelTerreno(t, cultivos);
     html += `
       <div class="tarjeta p-3 rounded-4 d-flex justify-content-between align-items-center tarjeta-buscable">
         <div>
           <strong class="d-block">${textoSeguro(t.nombre)}</strong>
-          <span class="texto_gris small">Etapa: ${textoSeguro(t.etapa)}</span>
+          <span class="texto_gris small">Etapa: ${textoSeguro(etapa)}</span>
         </div>
         <div class="d-flex align-items-center gap-3">
           <span class="badge-zona badge-zona--${t.zona.toLowerCase()}">${textoSeguro(t.zona)}</span>
@@ -137,6 +155,7 @@ function leerTerreno(formulario, ids) {
     ubicacion: document.getElementById(ids.ubicacion).value.trim(),
     area: area,
     suelo: suelo,
+    zona: document.getElementById(ids.zona).value,
     fuente: formulario.querySelector('input[name="fuenteHidrica"]:checked').value,
     caudal: Number(document.getElementById(ids.caudal).value)
   };
@@ -149,7 +168,7 @@ function activarNuevoTerreno() {
     return;
   }
 
-  let ids = { nombre: "nombreTerreno", ubicacion: "ubicacionTerreno", area: "areaTerreno", suelo: "tipoSuelo", caudal: "caudalEstimado" };
+  let ids = { nombre: "nombreTerreno", ubicacion: "ubicacionTerreno", area: "areaTerreno", suelo: "tipoSuelo", caudal: "caudalEstimado", zona: "zonaTerreno" };
   activarUbicacion(ids.ubicacion);
   activarAsociarFuente(formulario, ids.caudal);
 
@@ -164,8 +183,7 @@ function activarNuevoTerreno() {
 
     let lista = obtenerTerrenos();
     datos.id = nuevoId(lista);
-    datos.etapa = "----";
-    datos.zona = "Norte";
+    datos.etapa = "Sin cultivo";
     datos.habilitado = true;
     lista.push(datos);
 
@@ -184,7 +202,7 @@ function activarEditarTerreno() {
 
   let lista = obtenerTerrenos();
   let terreno = buscarPorId(lista, idDeLaDireccion()) || lista[0];
-  let ids = { nombre: "nombreTerrenoEdit", ubicacion: "ubicacionTerrenoEdit", area: "areaTerrenoEdit", suelo: "tipoSueloEdit", caudal: "caudalEstimadoEdit" };
+  let ids = { nombre: "nombreTerrenoEdit", ubicacion: "ubicacionTerrenoEdit", area: "areaTerrenoEdit", suelo: "tipoSueloEdit", caudal: "caudalEstimadoEdit", zona: "zonaTerrenoEdit" };
 
   // llenamos el formulario con lo guardado
   document.getElementById(ids.nombre).value = terreno.nombre;
@@ -192,6 +210,7 @@ function activarEditarTerreno() {
   document.getElementById(ids.area).value = terreno.area;
   document.getElementById(ids.suelo).value = terreno.suelo;
   document.getElementById(ids.caudal).value = terreno.caudal;
+  document.getElementById(ids.zona).value = terreno.zona;
   formulario.querySelector('input[name="fuenteHidrica"][value="' + terreno.fuente + '"]').checked = true;
 
   activarUbicacion(ids.ubicacion);
@@ -206,6 +225,29 @@ function activarEditarTerreno() {
       return;
     }
 
+    let sembrado = 0;
+    let cultivos = leerLista("cultivos");
+    for (let i = 0; i < cultivos.length; i++) {
+      if (cultivos[i].habilitado && cultivos[i].terreno === terreno.nombre) {
+        sembrado += cultivos[i].area;
+      }
+    }
+
+    if (datos.area < sembrado) {
+      alert("El terreno tiene " + sembrado + " ha sembradas: el área no puede ser menor que eso");
+      return;
+    }
+
+    // si cambia el nombre, los cultivos sembrados siguen apuntando a este terreno
+    if (datos.nombre !== terreno.nombre && cultivos.length > 0) {
+      for (let i = 0; i < cultivos.length; i++) {
+        if (cultivos[i].terreno === terreno.nombre) {
+          cultivos[i].terreno = datos.nombre;
+        }
+      }
+      guardarLista("cultivos", cultivos);
+    }
+
     let areaAntes = terreno.area;
     Object.assign(terreno, datos);
     guardarLista(CLAVE_TERRENOS, lista);
@@ -217,6 +259,13 @@ function activarEditarTerreno() {
 
   document.getElementById("botonInhabilitarTerreno").addEventListener("click", function (evento) {
     evento.preventDefault();
+
+    let ocupado = leerLista("cultivos").some(function (c) { return c.habilitado && c.terreno === terreno.nombre; });
+
+    if (ocupado) {
+      alert(terreno.nombre + " tiene un cultivo sembrado. Inhabilita primero el cultivo.");
+      return;
+    }
 
     if (confirm("¿Seguro que quieres inhabilitar " + terreno.nombre + "?") === false) {
       return;

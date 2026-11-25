@@ -30,7 +30,20 @@
                 <label for="cantidad" class="agro-label">Cantidad insumo</label>
                 <input type="number" id="cantidad" name="cantidad" class="agro-input" value="25">
                 <label for="medida" class="agro-label">Medida del insumo</label>
-                <input type="text" id="medida" name="medida" class="agro-input" value="KG">
+                <select id="medida" name="medida" class="agro-select">
+                    <option value="" selected disabled>Seleccionar medida</option>
+                    <option value="kg">Kilogramos (kg)</option>
+                    <option value="g">Gramos (g)</option>
+                    <option value="L">Litros (L)</option>
+                    <option value="mL">Mililitros (mL)</option>
+                    <option value="sacos">Sacos</option>
+                    <option value="bultos">Bultos</option>
+                    <option value="und">Unidades</option>
+                </select>
+                <label for="precio" class="agro-label">Precio por unidad ($)</label>
+                <input type="number" id="precio" name="precio" class="agro-input" placeholder="Ej. 63000" min="0" step="100">
+                <label for="minimo" class="agro-label">Stock mínimo (avisar cuando quede esto o menos)</label>
+                <input type="number" id="minimo" name="minimo" class="agro-input" placeholder="Ej. 5" min="0">
                 <label for="llegada" class="agro-label">Fecha de llegada</label>
                 <input type="date" id="llegada" name="llegada" class="agro-input" value="2026-03-10">
                 <label for="caducidad" class="agro-label">Fecha de caducidad</label>

@@ -7,9 +7,9 @@ const CLAVE_CULTIVOS = "cultivos";
 // Cultivos que existen la primera vez (los mismos del Figma)
 function cultivosDeEjemplo() {
   return [
-    { id: 1, nombre: "Maíz - Lote 1", tipo: "cereal", terreno: "Lote El Progreso", ubicacion: "Finca el Manantial Norte", etapa: "Floración", estado: "Óptimo", fechaSiembra: "2026-02-12", area: 2.5, rendimiento: 7.2, notas: "Cultivo en etapa de floración, sin novedades registradas.", fuente: "Río", caudal: 120, latitud: "4.85921", longitud: "-74.05812", habilitado: true },
-    { id: 2, nombre: "Café - Lote 2", tipo: "cafe", terreno: "Terreno de Café", ubicacion: "Finca el Manantial Sur", etapa: "Maduración", estado: "Revisar", fechaSiembra: "2025-09-03", area: 1.8, rendimiento: 1.5, notas: "Revisar la humedad del suelo.", fuente: "Pozo", caudal: 80, latitud: "4.85810", longitud: "-74.05790", habilitado: true },
-    { id: 3, nombre: "Fríjol - Lote 3", tipo: "leguminosa", terreno: "Terreno Loma", ubicacion: "Finca el Manantial Este", etapa: "Siembra", estado: "Alerta plaga", fechaSiembra: "2026-10-20", area: 1.2, rendimiento: 1.8, notas: "Se reportó plaga en el lote.", fuente: "Acueducto", caudal: 60, latitud: "4.86011", longitud: "-74.05655", habilitado: true },
+    { id: 1, nombre: "Maíz - Lote 1", tipo: "cereal", terreno: "Terreno 1", ubicacion: "Finca el Manantial Norte", etapa: "Floración", estado: "Óptimo", fechaSiembra: "2026-02-12", area: 2.5, rendimiento: 7.2, notas: "Cultivo en etapa de floración, sin novedades registradas.", fuente: "Río", caudal: 120, latitud: "4.85921", longitud: "-74.05812", habilitado: true },
+    { id: 2, nombre: "Café - Lote 2", tipo: "permanente", terreno: "Terreno de Café", ubicacion: "Finca el Manantial Sur", etapa: "Maduración", estado: "Revisar", fechaSiembra: "2025-09-03", area: 1.8, rendimiento: 1.5, notas: "Revisar la humedad del suelo.", fuente: "Pozo", caudal: 80, latitud: "4.85810", longitud: "-74.05790", habilitado: true },
+    { id: 3, nombre: "Fríjol - Lote 3", tipo: "leguminosa", terreno: "Terreno loma", ubicacion: "Finca el Manantial Este", etapa: "Siembra", estado: "Alerta plaga", fechaSiembra: "2026-10-20", area: 1.2, rendimiento: 1.8, notas: "Se reportó plaga en el lote.", fuente: "Acueducto", caudal: 60, latitud: "4.86011", longitud: "-74.05655", habilitado: true },
     { id: 4, nombre: "Tomate - Lote 4", tipo: "hortaliza", terreno: "Terreno 1", ubicacion: "Finca el Manantial Oeste", etapa: "Crecimiento", estado: "Óptimo", fechaSiembra: "2026-08-15", area: 0.8, rendimiento: 40, notas: "Crecimiento normal.", fuente: "Río", caudal: 100, latitud: "4.85700", longitud: "-74.05900", habilitado: true }
   ];
 }
@@ -92,11 +92,65 @@ function mostrarListaCultivos() {
 }
 
 // ================== CREAR CULTIVO ==================
+// Terrenos habilitados (vienen de terreno.js)
+function terrenosDisponibles() {
+  return obtenerTerrenos().filter(function (t) { return t.habilitado; });
+}
+
+// Valida fecha y área contra el terreno elegido. Devuelve un texto de error o "".
+function errorDeSiembra(fecha, area, terreno) {
+  if (fecha === "" || fecha > fechaDeHoy(0)) {
+    return "La fecha de siembra no puede ser después de hoy";
+  }
+
+  if (isNaN(area) || area <= 0) {
+    return "Escribe el área sembrada en hectáreas, por ejemplo 2.5";
+  }
+
+  if (terreno !== null && area > terreno.area) {
+    return "El área sembrada (" + area + " ha) no puede ser mayor que el terreno " + terreno.nombre + " (" + terreno.area + " ha)";
+  }
+
+  return "";
+}
+
 function activarCrearCultivo() {
   let formulario = document.getElementById("formCultivo");
 
   if (formulario === null) {
     return;
+  }
+
+  document.getElementById("fecha").max = fechaDeHoy(0);
+
+  // la lista de terrenos sale de los terrenos registrados
+  let terrenos = terrenosDisponibles();
+  let lista = document.getElementById("listaTerrenosCultivo");
+  let html = "";
+
+  for (let i = 0; i < terrenos.length; i++) {
+    html += `
+      <li>
+        <input type="radio" name="terreno" id="t${terrenos[i].id}" value="${terrenos[i].id}" class="opcion-oculta">
+        <label for="t${terrenos[i].id}" class="terreno-item">${textoSeguro(terrenos[i].nombre)} (${terrenos[i].area} ha)</label>
+      </li>`;
+  }
+
+  lista.innerHTML = html || '<li class="texto_gris small p-2">No hay terrenos. Crea uno en el módulo Terreno.</li>';
+
+  // al elegir un terreno se cierra la lista y se muestra el elegido
+  let items = lista.querySelectorAll(".terreno-item");
+  let campoTerreno = document.getElementById("terrenoSeleccionado");
+  for (let i = 0; i < items.length; i++) {
+    items[i].addEventListener("click", function () {
+      for (let j = 0; j < items.length; j++) {
+        items[j].classList.remove("activo");
+      }
+      items[i].classList.add("activo");
+      campoTerreno.textContent = items[i].textContent;
+      campoTerreno.classList.add("con-valor");
+      document.getElementById("detalleTerreno").removeAttribute("open");
+    });
   }
 
   formulario.addEventListener("submit", function (evento) {
@@ -115,23 +169,33 @@ function activarCrearCultivo() {
       return;
     }
 
+    let datosTerreno = buscarPorId(terrenos, Number(terreno.value));
+    let fecha = document.getElementById("fecha").value;
+    let area = Number(document.getElementById("area").value);
+    let error = errorDeSiembra(fecha, area, datosTerreno);
+
+    if (error !== "") {
+      alert(error);
+      return;
+    }
+
     let lista = obtenerCultivos();
-    let nombreTerreno = document.querySelector('label[for="' + terreno.id + '"]').textContent;
+    let nombreTerreno = datosTerreno.nombre;
 
     lista.push({
       id: nuevoId(lista),
       nombre: nombre,
       tipo: document.getElementById("tipo").value,
       terreno: nombreTerreno,
-      ubicacion: "Finca el Manantial",
+      ubicacion: datosTerreno.ubicacion || "Finca el Manantial",
       etapa: "Siembra",
       estado: "Óptimo",
-      fechaSiembra: document.getElementById("fecha").value,
-      area: Number(document.getElementById("area").value),
+      fechaSiembra: fecha,
+      area: area,
       rendimiento: 0,
       notas: document.getElementById("notas").value.trim(),
-      fuente: "Río",
-      caudal: 0,
+      fuente: { rio: "Río", pozo: "Pozo", acueducto: "Acueducto" }[datosTerreno.fuente] || "Río",
+      caudal: datosTerreno.caudal || 0,
       latitud: "",
       longitud: "",
       habilitado: true
@@ -191,9 +255,17 @@ function activarEditarCultivo() {
   let lista = obtenerCultivos();
   let c = cultivoDeLaPagina(lista);
 
+  // los terrenos del select salen de los terrenos registrados
+  let terrenos = terrenosDisponibles();
+  let selectTerreno = document.getElementById("editTerrenoLote");
+  for (let i = 0; i < terrenos.length; i++) {
+    selectTerreno.add(new Option(terrenos[i].nombre, terrenos[i].nombre));
+  }
+  document.getElementById("editFechaSiembra").max = fechaDeHoy(0);
+
   // llenamos el formulario con los datos guardados
   document.getElementById("editNombreCultivo").value = c.nombre;
-  elegirOpcion(document.getElementById("editTipoCultivo"), c.tipo);
+  elegirOpcion(document.getElementById("editTipoCultivo"), tipoDelCultivo(c));
   elegirOpcion(document.getElementById("editTerrenoLote"), c.terreno);
   document.getElementById("editUbicacion").value = c.ubicacion;
   elegirOpcion(document.getElementById("editEtapa"), c.etapa);
@@ -222,6 +294,18 @@ function activarEditarCultivo() {
 
     let terreno = document.getElementById("editTerrenoLote");
     let etapa = document.getElementById("editEtapa");
+    let datosTerreno = null;
+    for (let i = 0; i < terrenos.length; i++) {
+      if (terrenos[i].nombre === terreno.value) {
+        datosTerreno = terrenos[i];
+      }
+    }
+    let error = errorDeSiembra(document.getElementById("editFechaSiembra").value, Number(document.getElementById("editArea").value), datosTerreno);
+
+    if (error !== "") {
+      alert(error);
+      return;
+    }
     let fuente = formulario.querySelector('input[name="fuenteHidricaCultivo"]:checked');
 
     c.nombre = nombre;
@@ -368,7 +452,14 @@ function mostrarFase(cultivo) {
 
 // ================== DÍA DE COSECHA ==================
 // Días que tarda cada tipo de cultivo desde la siembra hasta la cosecha
-const CICLOS = { cereal: 120, maiz: 120, cafe: 240, leguminosa: 90, hortaliza: 100, platano: 365, yuca: 300 };
+const CICLOS = { fruta: 180, verdura: 70, hortaliza: 100, cereal: 120, leguminosa: 90, tuberculo: 150, permanente: 240 };
+
+// Cultivos guardados con los tipos viejos (café, maíz...) pasan a su categoría
+const TIPOS_VIEJOS = { cafe: "permanente", maiz: "cereal", platano: "fruta", yuca: "tuberculo" };
+
+function tipoDelCultivo(cultivo) {
+  return TIPOS_VIEJOS[cultivo.tipo] || cultivo.tipo;
+}
 
 function mostrarDiaCosecha() {
   if (document.getElementById("cosechaFecha") === null) {
@@ -376,7 +467,7 @@ function mostrarDiaCosecha() {
   }
 
   let c = cultivoDeLaPagina(cultivosHabilitados());
-  let ciclo = CICLOS[c.tipo] || 120;
+  let ciclo = CICLOS[tipoDelCultivo(c)] || 120;
   let meses = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
 
   let siembra = new Date(c.fechaSiembra + "T00:00:00");

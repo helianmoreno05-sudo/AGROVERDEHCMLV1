@@ -119,7 +119,9 @@ function mostrarInventario() {
 function leerFormularioInsumo() {
   let nombre = document.getElementById("nombre").value.trim();
   let cantidad = Number(document.getElementById("cantidad").value);
-  let unidad = document.getElementById("medida").value.trim();
+  let unidad = document.getElementById("medida").value;
+  let precio = Number(document.getElementById("precio").value);
+  let minimo = Number(document.getElementById("minimo").value);
   let llegada = document.getElementById("llegada").value;
   let caducidad = document.getElementById("caducidad").value;
 
@@ -134,7 +136,22 @@ function leerFormularioInsumo() {
   }
 
   if (unidad === "") {
-    alert("Escribe la medida del insumo, por ejemplo KG o ML");
+    alert("Selecciona la medida del insumo");
+    return null;
+  }
+
+  if (isNaN(precio) || precio <= 0) {
+    alert("Escribe el precio por unidad (sirve para calcular los costos)");
+    return null;
+  }
+
+  if (isNaN(minimo) || minimo < 0) {
+    alert("Escribe el stock mínimo (0 si no quieres aviso)");
+    return null;
+  }
+
+  if (llegada > fechaDeHoy(0)) {
+    alert("La fecha de llegada no puede ser después de hoy");
     return null;
   }
 
@@ -143,7 +160,7 @@ function leerFormularioInsumo() {
     return null;
   }
 
-  return { nombre: nombre, cantidad: cantidad, unidad: unidad, llegada: llegada, caducidad: caducidad };
+  return { nombre: nombre, cantidad: cantidad, unidad: unidad, precio: precio, minimo: minimo, llegada: llegada, caducidad: caducidad };
 }
 
 function activarCrearInsumo() {
@@ -174,8 +191,6 @@ function activarCrearInsumo() {
 
     datos.id = nuevoId(lista);
     datos.categoria = datos.nombre.split(" ")[0];
-    datos.minimo = 5;
-    datos.precio = 0;
     datos.codigo = "770" + String(datos.id).padStart(10, "0");
     datos.cultivo = selectCultivo.value;
     datos.descripcion = "";
@@ -200,7 +215,15 @@ function activarEditarInsumo() {
 
   document.getElementById("nombre").value = insumo.nombre;
   document.getElementById("cantidad").value = insumo.cantidad;
-  document.getElementById("medida").value = insumo.unidad;
+  document.getElementById("precio").value = insumo.precio;
+  document.getElementById("minimo").value = insumo.minimo;
+
+  // si la unidad guardada no está en la lista, se agrega para no perderla
+  let medida = document.getElementById("medida");
+  medida.value = insumo.unidad;
+  if (medida.value !== insumo.unidad) {
+    medida.add(new Option(insumo.unidad, insumo.unidad, true, true));
+  }
   document.getElementById("llegada").value = insumo.llegada;
   document.getElementById("caducidad").value = insumo.caducidad;
 
@@ -399,7 +422,10 @@ function activarUsoInsumo() {
 
   // al elegir el insumo se pone su unidad
   selectInsumo.addEventListener("change", function () {
-    document.getElementById("unidad").value = insumoPorNombre(lista, selectInsumo.value).unidad;
+    let elegido = insumoPorNombre(lista, selectInsumo.value);
+    document.getElementById("unidad").value = elegido.unidad;
+    document.getElementById("cantidad").max = elegido.cantidad;
+    document.getElementById("cantidad").placeholder = "Hay " + elegido.cantidad + " " + elegido.unidad;
   });
 
   document.getElementById("fecha").value = fechaDeHoy(0);
@@ -440,7 +466,7 @@ function activarUsoInsumo() {
       insumo: nombreInsumo,
       cultivo: cultivo,
       cantidad: cantidad,
-      unidad: document.getElementById("unidad").value.trim() || insumo.unidad,
+      unidad: insumo.unidad,
       fecha: fecha,
       observaciones: document.getElementById("observaciones").value.trim()
     });

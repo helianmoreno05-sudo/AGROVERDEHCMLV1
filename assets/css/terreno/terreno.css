@@ -111,3 +111,11 @@
   gap: 6px;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
 }
+/* Zonas nuevas del terreno */
+.badge-zona--este,
+.badge-zona--oeste,
+.badge-zona--centro {
+  background-color: rgba(234, 179, 8, 0.2);
+  color: #eab308;
+  border: 1px solid rgba(234, 179, 8, 0.4);
+}

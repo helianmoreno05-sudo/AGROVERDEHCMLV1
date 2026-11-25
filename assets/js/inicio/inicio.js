@@ -63,4 +63,33 @@ function mostrarInicio() {
   }
 }
 
+// Tarjetas de resumen con los datos reales de los módulos
+async function mostrarResumen() {
+  let cultivos = obtenerCultivos().filter(function (c) { return c.habilitado; });
+  document.getElementById("inicioCultivos").textContent = cultivos.length;
+
+  let activas = obtener_plagas().filter(function (p) { return p.habilitada && p.estado !== "Controlada"; });
+  document.getElementById("inicioPlagas").textContent = activas.length;
+
+  let clima = await obtenerClima();
+
+  if (clima === null || !clima.current) {
+    return;
+  }
+
+  let actual = describirClima(clima.current.weather_code);
+  document.getElementById("inicioClima").textContent = Math.round(clima.current.temperature_2m) + "°C - " + actual.texto;
+  document.getElementById("inicioHumedad").textContent = clima.current.relative_humidity_2m + "%";
+
+  // riesgo de hoy: alto cuenta 100, medio 50 y bajo 10, y se saca el promedio
+  let puntos = { rojo: 100, amarillo: 50, verde: 10 };
+  let riesgos = calcularRiesgos(clima);
+  let total = 0;
+  for (let i = 0; i < riesgos.length; i++) {
+    total += puntos[riesgos[i].nivel.color];
+  }
+  document.getElementById("inicioRiesgo").textContent = Math.round(total / riesgos.length) + "%";
+}
+
 mostrarInicio();
+mostrarResumen();

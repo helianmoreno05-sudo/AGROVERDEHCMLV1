@@ -49,5 +49,5 @@ if (parametros.get("nombre")) {
     document.getElementById("nombre").value = parametros.get("nombre");
 }
 if (parametros.get("cultivo")) {
-    document.getElementById("ubicacion").value = parametros.get("cultivo");
+    elegir_cultivo(parametros.get("cultivo"));
 }
