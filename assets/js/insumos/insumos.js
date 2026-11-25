@@ -641,24 +641,52 @@ function mostrarCostosPorInsumo() {
   let insumos = obtenerInsumos();
   let mes = fechaDeHoy(0).slice(0, 7);
   let usos = obtenerUsosInsumos().filter(function (u) { return u.fecha.slice(0, 7) === mes; });
-  let costos = {};
+  let grupos = {};
   let total = 0;
 
+  // se suma cuánto se usó de cada insumo en el mes y cuánto costó
   for (let i = 0; i < usos.length; i++) {
+    let nombre = usos[i].insumo;
     let costo = costoDelUso(usos[i], insumos);
-    costos[usos[i].insumo] = (costos[usos[i].insumo] || 0) + costo;
+
+    if (grupos[nombre] === undefined) {
+      grupos[nombre] = { cantidad: 0, unidad: usos[i].unidad, costo: 0 };
+    }
+    grupos[nombre].cantidad += usos[i].cantidad;
+    grupos[nombre].costo += costo;
     total += costo;
   }
 
   let html = "";
   let posicion = 0;
-  for (let nombre in costos) {
-    html += filaSimple(nombre, "Individual", `<span class="precio">${pesos(costos[nombre])}</span>`, colorDelPunto(posicion));
+  for (let nombre in grupos) {
+    html += filaDeCosto(nombre, grupos[nombre].cantidad, grupos[nombre].unidad, insumoPorNombre(insumos, nombre), grupos[nombre].costo, colorDelPunto(posicion));
     posicion++;
   }
 
   ponerTexto("montoTotal", pesos(total));
   document.getElementById("listaPrincipal").innerHTML = html || '<p class="texto_gris">No hay usos registrados este mes.</p>';
+}
+
+// Renglón de costo: precio individual por unidad, cantidad usada y total
+function filaDeCosto(nombre, cantidad, unidad, insumo, costo, color) {
+  let precio = insumo === null ? 0 : insumo.precio;
+
+  return `
+    <div class="tarjeta p-3 rounded-4 d-flex justify-content-between align-items-center gap-2">
+      <div class="d-flex align-items-center gap-3">
+        <span class="punto-insumo punto-insumo--${color}"></span>
+        <div>
+          <strong class="d-block">${textoSeguro(nombre)}</strong>
+          <span class="texto_gris small d-block">Precio individual: <span class="text-white">${pesos(precio)}</span> c/u</span>
+          <span class="texto_gris small">Usado: ${cantidad} ${textoSeguro(unidad)} × ${pesos(precio)}</span>
+        </div>
+      </div>
+      <div class="text-end">
+        <span class="texto_gris small d-block">Total</span>
+        <span class="precio">${pesos(costo)}</span>
+      </div>
+    </div>`;
 }
 
 // Botones de siembra (Maíz - Lote 1, Café - Lote 2...) de "por siembra"
@@ -698,7 +726,7 @@ function mostrarCostosPorSiembra() {
     for (let i = 0; i < usos.length; i++) {
       let costo = costoDelUso(usos[i], insumos);
       total += costo;
-      html += filaSimple(usos[i].insumo, usos[i].cantidad + " " + usos[i].unidad, `<span class="precio">${pesos(costo)}</span>`, colorDelPunto(i));
+      html += filaDeCosto(usos[i].insumo, usos[i].cantidad, usos[i].unidad, insumoPorNombre(insumos, usos[i].insumo), costo, colorDelPunto(i));
     }
 
     ponerTexto("montoTotal", pesos(total));
