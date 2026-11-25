@@ -489,6 +489,27 @@ function mostrarDiaCosecha() {
   barra.parentElement.setAttribute("aria-valuenow", avance);
 }
 
+// Notificación de las cosechas que llegan en los próximos días (según Configuración de alertas)
+function revisarCosechasProximas() {
+  if (!alertaActiva("alertaCosecha")) {
+    return;
+  }
+
+  let aviso = valorDeAlerta("diasCosecha", 7);
+  let lista = cultivosHabilitados();
+
+  for (let i = 0; i < lista.length; i++) {
+    let cosecha = new Date(lista[i].fechaSiembra + "T00:00:00");
+    cosecha.setDate(cosecha.getDate() + (CICLOS[tipoDelCultivo(lista[i])] || 120));
+    let faltan = Math.ceil((cosecha - new Date()) / 86400000);
+
+    if (faltan >= 0 && faltan <= aviso) {
+      crearNotificacion("Cosecha próxima", lista[i].nombre + " se cosecha en " + faltan + " día(s) (" + fechaBonita(cosecha.toISOString().slice(0, 10)) + ")", "cosecha_" + idPropiedadActual() + "_" + lista[i].id);
+    }
+  }
+}
+
+revisarCosechasProximas();
 mostrarListaCultivos();
 activarCrearCultivo();
 mostrarCultivo();

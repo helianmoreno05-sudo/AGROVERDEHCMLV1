@@ -182,6 +182,34 @@ function guardarNotificaciones(lista) {
   localStorage.setItem("notificaciones", JSON.stringify(lista));
 }
 
+// Revisa si la persona dejó activado ese tipo de alerta en "Configuración de alertas"
+// tipo: alertaPlagas, alertaClima, alertaStock, alertaCosecha o alertaReportes
+function alertaActiva(tipo) {
+  let config = JSON.parse(localStorage.getItem("configAlertas") || "null");
+  return config === null || config[tipo] !== false;
+}
+
+// Lee un número de "Configuración de alertas" (o el valor por defecto)
+function valorDeAlerta(nombre, porDefecto) {
+  let config = JSON.parse(localStorage.getItem("configAlertas") || "null");
+  return config !== null && config[nombre] !== undefined ? config[nombre] : porDefecto;
+}
+
+// Agrega una notificación arriba de la lista.
+// "llave" evita repetirla: si ya hay una sin leer con la misma llave no se agrega otra.
+function crearNotificacion(titulo, detalle, llave) {
+  let lista = obtenerNotificaciones();
+
+  for (let i = 0; i < lista.length; i++) {
+    if (lista[i].llave === llave && lista[i].leida === false) {
+      return;
+    }
+  }
+
+  lista.unshift({ titulo: titulo, detalle: detalle, leida: false, llave: llave, fecha: fechaDeHoy(0) });
+  guardarNotificaciones(lista);
+}
+
 // Cuenta cuántas notificaciones faltan por leer
 function contarSinLeer() {
   let lista = obtenerNotificaciones();

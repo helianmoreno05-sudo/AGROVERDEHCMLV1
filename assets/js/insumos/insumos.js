@@ -1004,7 +1004,8 @@ function mostrarHistorialDeUnInsumo() {
   document.getElementById("listaPrincipal").innerHTML = html || '<p class="texto_gris">Este insumo todavía no se ha usado.</p>';
 }
 
-// Primero se dibujan las pantallas y después se activan los botones
+// Primero se revisa el stock bajo, se dibujan las pantallas y después se activan los botones
+revisarStockBajo();
 mostrarInventario();
 activarCrearInsumo();
 activarEditarInsumo();

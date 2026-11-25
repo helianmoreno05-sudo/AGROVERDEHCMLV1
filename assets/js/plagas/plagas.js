@@ -73,4 +73,11 @@ lista_plagas.addEventListener("click", function (evento) {
     modal_notas.show();
 });
 
+// las plagas en estado "Avanzada" llegan como notificación (si la alerta está activa)
+if (alertaActiva("alertaPlagas")) {
+    plagas.filter(function (plaga) { return plaga.estado === "Avanzada"; }).forEach(function (plaga) {
+        crearNotificacion("Plaga avanzada", plaga.nombre + " en " + plaga.ubicacion + " necesita control", "plaga_" + idPropiedadActual() + "_" + plaga.id);
+    });
+}
+
 mostrar_plagas();

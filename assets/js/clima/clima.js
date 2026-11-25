@@ -261,6 +261,24 @@ function activarCalendario() {
   });
 }
 
+// Notificaciones del clima de hoy: humedad alta (según Configuración de alertas) y heladas
+function revisarAlertasDeClima(clima) {
+  if (!alertaActiva("alertaClima") || !clima.current) {
+    return;
+  }
+
+  let humedadMaxima = valorDeAlerta("humedadMaxima", 80);
+  let hoy = posicionDeHoy(clima);
+
+  if (clima.current.relative_humidity_2m > humedadMaxima) {
+    crearNotificacion("Alerta climática", "Humedad de " + clima.current.relative_humidity_2m + "% en " + nombrePropiedadActual() + " (tu límite es " + humedadMaxima + "%)", "humedad_" + fechaDeHoy(0));
+  }
+
+  if (clima.daily.temperature_2m_min[hoy] <= 3) {
+    crearNotificacion("Alerta climática", "Se espera helada hoy: mínima de " + Math.round(clima.daily.temperature_2m_min[hoy]) + "°C", "helada_" + fechaDeHoy(0));
+  }
+}
+
 // ================== ARRANQUE ==================
 async function iniciarClima() {
   activarCalendario();
@@ -278,6 +296,8 @@ async function iniciarClima() {
   if (clima === null || !clima.daily) {
     return;
   }
+
+  revisarAlertasDeClima(clima);
 
   if (document.getElementById("climaTemp") !== null) {
     mostrarClimaPrincipal(clima);

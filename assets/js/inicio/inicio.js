@@ -77,6 +77,7 @@ async function mostrarResumen() {
     return;
   }
 
+  revisarAlertasDeClima(clima);
   let actual = describirClima(clima.current.weather_code);
   document.getElementById("inicioClima").textContent = Math.round(clima.current.temperature_2m) + "°C - " + actual.texto;
   document.getElementById("inicioHumedad").textContent = clima.current.relative_humidity_2m + "%";

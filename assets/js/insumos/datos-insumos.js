@@ -66,6 +66,25 @@ function porAgotarse(insumo) {
   return insumo.cantidad <= insumo.minimo;
 }
 
+// Crea la notificación de "Stock mínimo" de cada insumo que esté por agotarse
+function revisarStockBajo() {
+  if (!alertaActiva("alertaStock")) {
+    return;
+  }
+
+  let lista = insumosHabilitados();
+
+  for (let i = 0; i < lista.length; i++) {
+    if (porAgotarse(lista[i])) {
+      crearNotificacion(
+        "Stock mínimo",
+        lista[i].nombre + " quedó en " + lista[i].cantidad + " " + lista[i].unidad + " (mínimo " + lista[i].minimo + ") en " + nombrePropiedadActual(),
+        "stock_" + idPropiedadActual() + "_" + lista[i].id + "_" + lista[i].cantidad
+      );
+    }
+  }
+}
+
 // 63000 -> "$63.000"
 function pesos(valor) {
   return "$" + Math.round(valor).toLocaleString("es-CO");
