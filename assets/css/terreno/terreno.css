@@ -100,17 +100,7 @@
   background-color: rgba(34, 197, 94, 0.15);
 }
 
-/* Menú flotante inferior en Lista de terrenos */
-.floating-terreno-box {
-  background-color: #163b29;
-  border: 1px solid var(--border-subtle);
-  border-radius: 14px;
-  padding: 8px 12px;
-  display: inline-flex;
-  flex-direction: column;
-  gap: 6px;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
-}
+
 /* Zonas nuevas del terreno */
 .badge-zona--este,
 .badge-zona--oeste,

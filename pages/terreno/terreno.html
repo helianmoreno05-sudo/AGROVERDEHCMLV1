@@ -78,27 +78,35 @@
                 </div>
             </div>
 
-            <!-- Menú flotante rápido -->
-            <div class="d-flex justify-content-end mb-3">
-                <div class="floating-terreno-box">
-                    <a href="editar-terreno.html"
-                        class="text-white text-decoration-none d-flex align-items-center justify-content-between gap-3"
-                        style="font-size: 0.78rem;">
-                        <span>Editar terreno</span>
-                        <i class="bi bi-pencil text-success"></i>
-                    </a>
-                    <a href="../propiedad/ver-propiedad.html"
-                        class="text-white text-decoration-none d-flex align-items-center justify-content-between gap-3"
-                        style="font-size: 0.78rem;">
-                        <span>Propiedades</span>
-                        <i class="bi bi-gear text-success"></i>
-                    </a>
-                </div>
-            </div>
-
             <a href="historial-terrenos.html" class="btn-agro-primary">Ver historial de terrenos</a>
         </div>
     </main>
+
+    <!-- Menú flotante desplegable hacia arriba (dropup) -->
+    <div class="contenedor_menu_flotante dropup">
+      <button class="boton_mas_flotante dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Más opciones">
+        <i class="bi bi-list"></i>
+      </button>
+      <div class="dropdown-menu panel_monitoreo dropdown-menu-end shadow">
+        <div class="encabezado_panel">
+          <i class="bi bi-geo-alt-fill me-2"></i> Opciones de terreno
+        </div>
+        <div class="cuerpo_panel">
+        <a href="nuevo-terreno.html" class="dropdown-item opcion_panel">
+          <i class="bi bi-plus-circle icon"></i> Nuevo terreno
+        </a>
+        <a href="editar-terreno.html" class="dropdown-item opcion_panel">
+          <i class="bi bi-pencil icon"></i> Editar terreno
+        </a>
+        <a href="historial-terrenos.html" class="dropdown-item opcion_panel">
+          <i class="bi bi-clock-history icon"></i> Historial de terrenos
+        </a>
+        <a href="../propiedad/ver-propiedad.html" class="dropdown-item opcion_panel">
+          <i class="bi bi-gear icon"></i> Propiedades
+        </a>
+        </div>
+      </div>
+    </div>
 
     <!-- Barra de navegación inferior -->
     <nav class="navegacion_inferior d-flex justify-content-between">
@@ -108,6 +116,7 @@
         <a href="../insumos/insumos.html" class="text-center small"><i class="bi bi-box-seam d-block"></i>Insumos</a>
         <a href="../perfil/perfil.html" class="text-center small"><i class="bi bi-person-circle d-block"></i>Perfil</a>
     </nav>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../assets/js/comun.js"></script>
     <script src="../../assets/js/terreno/terreno.js"></script>
     <script src="../../assets/js/confirmacion.js"></script>
