@@ -48,6 +48,11 @@ function mostrarPerfil() {
   document.getElementById("nombre-usuario").textContent = usuario.nombre;
   document.getElementById("rol-usuario").textContent = usuario.rol + " - Finca El Manantial";
 
+  // ----- iniciales del nombre en el círculo -----
+  let partes = usuario.nombre.trim().split(" ");
+  let iniciales = partes[0].charAt(0) + (partes.length > 1 ? partes[partes.length - 1].charAt(0) : "");
+  document.getElementById("avatar-usuario").textContent = iniciales.toUpperCase();
+
   // ----- lista de usuarios: solo para el Administrador -----
   if (usuario.rol !== "Administrador") {
     // d-none es una clase de Bootstrap que esconde el elemento

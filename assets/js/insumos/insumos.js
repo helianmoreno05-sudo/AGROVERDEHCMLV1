@@ -807,21 +807,60 @@ function mostrarProveedores() {
 
   for (let i = 0; i < lista.length; i++) {
     let p = lista[i];
-    let contacto = "Tel: " + (p.telefono || "----") + "\nCorreo: " + (p.correo || "----") + "\nInsumos: " + p.insumos;
-    html += filaSimple(p.nombre, p.insumos, `<a href="#" class="link-editar boton-ver" data-contacto="${textoSeguro(contacto)}">Ver</a>`, "azul");
+    html += filaSimple(p.nombre, p.insumos, `<a href="ver-proveedor.html?id=${p.id}" class="link-editar">Ver</a>`, "azul");
   }
 
-  let contenedor = document.getElementById("listaPrincipal");
-  contenedor.innerHTML = html;
+  document.getElementById("listaPrincipal").innerHTML = html;
+}
 
-  // "Ver" muestra los datos de contacto del proveedor
-  contenedor.addEventListener("click", function (evento) {
-    let boton = evento.target.closest(".boton-ver");
+// ================== VER PROVEEDOR ==================
+function mostrarProveedor() {
+  if (document.getElementById("proveedorNombre") === null) {
+    return;
+  }
 
-    if (boton !== null) {
+  let lista = obtenerProveedores();
+  let proveedor = buscarPorId(lista, idDeLaDireccion()) || lista[0];
+
+  if (proveedor === undefined) {
+    window.location.href = "proveedores-insumos.html";
+    return;
+  }
+
+  ponerTexto("proveedorNombre", proveedor.nombre);
+  ponerTexto("proveedorInsumos", "Provee: " + proveedor.insumos);
+  ponerTexto("proveedorTelefono", proveedor.telefono || "----");
+  ponerTexto("proveedorCorreo", proveedor.correo || "----");
+  ponerTexto("proveedorLlegada", proveedor.llegada ? fechaBonita(proveedor.llegada) : "----");
+
+  let llamar = document.getElementById("proveedorLlamar");
+  let escribir = document.getElementById("proveedorEscribir");
+  llamar.href = proveedor.telefono ? "tel:" + proveedor.telefono.replace(/\s/g, "") : "#";
+  escribir.href = proveedor.correo ? "mailto:" + proveedor.correo : "#";
+
+  // si no tiene teléfono o correo, el botón avisa en vez de no hacer nada
+  llamar.addEventListener("click", function (evento) {
+    if (!proveedor.telefono) {
       evento.preventDefault();
-      alert(boton.dataset.contacto);
+      alert("Este proveedor no tiene teléfono registrado");
     }
+  });
+  escribir.addEventListener("click", function (evento) {
+    if (!proveedor.correo) {
+      evento.preventDefault();
+      alert("Este proveedor no tiene correo registrado");
+    }
+  });
+
+  document.getElementById("proveedorEliminar").addEventListener("click", function () {
+    if (confirm("¿Seguro que quieres eliminar a " + proveedor.nombre + "?") === false) {
+      return;
+    }
+
+    let restantes = lista.filter(function (p) { return p.id !== proveedor.id; });
+    guardarLista(CLAVE_PROVEEDORES, restantes);
+    registrarEvento("Proveedor eliminado", proveedor.nombre, "insumos", "bi-truck", "danger");
+    window.location.href = "proveedores-insumos.html?mensaje=inhabilitado";
   });
 }
 
@@ -954,6 +993,7 @@ mostrarInsumosPorSiembra();
 mostrarInsumosUsados();
 mostrarGrafica();
 mostrarProveedores();
+mostrarProveedor();
 activarFormularioProveedor();
 mostrarHistorialInsumos();
 mostrarHistorialDeUnInsumo();

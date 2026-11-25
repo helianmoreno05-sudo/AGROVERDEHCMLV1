@@ -29,6 +29,7 @@ Estos módulos ya están desarrollados y estandarizados en HTML y CSS. Cada uno 
 - Iniciar sesión (`iniciar-sesion.html`)
 - Crear cuenta (`crear-cuenta.html`)
 - Recuperar contraseña (`recuperar-contrasena.html`)
+- Términos de servicio y política de privacidad (`terminos.html`, `privacidad.html`)
 - Acceso de usuario (`acceso-usuario.html`)
 - Crear propiedad (`crear-propiedad.html`)
 - Notificaciones por correo (`notificaciones-correo.html`)
@@ -38,6 +39,7 @@ Estos módulos ya están desarrollados y estandarizados en HTML y CSS. Cada uno 
 - Pantalla principal (`inicio.html`)
 - Notificaciones generales (`notificaciones-general.html`)
 - Configuración (`configuracion.html`)
+- Idioma y regionalización, unidades de medida, configuración de alertas y ayuda y soporte (`idioma.html`, `unidades.html`, `alertas-configuracion.html`, `soporte.html`)
 
 ### Cultivos
 

@@ -7,8 +7,7 @@ function iniciarConfiguracion() {
     return;
   }
 
-  // ----- unidades de medida -----
-  // Al darle click cambia entre Métrico e Imperial y se queda guardado
+  // ----- unidades de medida (se eligen en unidades.html) -----
   let opcionUnidades = document.getElementById("opcion-unidades");
   let textoUnidades = document.getElementById("texto-unidades");
 
@@ -18,20 +17,13 @@ function iniciarConfiguracion() {
   }
   textoUnidades.textContent = unidades;
 
-  opcionUnidades.addEventListener("click", function (evento) {
-    evento.preventDefault();
+  // el idioma elegido en "Idioma y regionalización"
+  let idioma = JSON.parse(localStorage.getItem("idiomaRegion") || "null");
+  if (idioma !== null) {
+    document.getElementById("texto-idioma").textContent = idioma.idioma;
+  }
 
-    if (unidades === "Métrico") {
-      unidades = "Imperial";
-    } else {
-      unidades = "Métrico";
-    }
-
-    localStorage.setItem("unidades", unidades);
-    textoUnidades.textContent = unidades;
-  });
-
-  // ----- opciones que todavía no tienen pantalla (idioma y soporte) -----
+  // ----- opciones que todavía no tienen pantalla (por ahora ninguna) -----
   let pendientes = document.querySelectorAll(".pendiente");
 
   for (let i = 0; i < pendientes.length; i++) {
