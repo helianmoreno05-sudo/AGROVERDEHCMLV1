@@ -46,7 +46,7 @@ function mostrarPerfil() {
 
   // ----- tarjeta grande con el nombre y el rol -----
   document.getElementById("nombre-usuario").textContent = usuario.nombre;
-  document.getElementById("rol-usuario").textContent = usuario.rol + " - Finca El Manantial";
+  document.getElementById("rol-usuario").textContent = usuario.rol + " - " + nombrePropiedadActual();
 
   // ----- iniciales del nombre en el círculo -----
   let partes = usuario.nombre.trim().split(" ");

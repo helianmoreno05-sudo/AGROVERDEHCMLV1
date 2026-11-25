@@ -195,17 +195,77 @@ function contarSinLeer() {
 
   return total;
 }
+// ================== PROPIEDAD ACTUAL ==================
+// La persona trabaja en una propiedad a la vez (Finca el manantial es la 3).
+// Cada propiedad tiene sus propios cultivos, terrenos, insumos, reportes y plagas.
+const PROPIEDAD_PRINCIPAL = 3;
+
+// Listas que son de toda la cuenta y no de una propiedad
+const LISTAS_GENERALES = ["propiedades", "usuarios", "mensajesSoporte"];
+
+function idPropiedadActual() {
+  let id = localStorage.getItem("propiedadActual");
+  return id === null ? PROPIEDAD_PRINCIPAL : Number(id);
+}
+
+function cambiarPropiedad(id) {
+  localStorage.setItem("propiedadActual", id);
+}
+
+// Nombre de la propiedad en la que se está trabajando
+function nombrePropiedadActual() {
+  let propiedades = leerListaGeneral("propiedades");
+
+  for (let i = 0; i < propiedades.length; i++) {
+    if (propiedades[i].id === idPropiedadActual()) {
+      return propiedades[i].nombre;
+    }
+  }
+
+  return "Finca el manantial";
+}
+
+// La propiedad principal usa la llave normal (así no se pierde lo que ya estaba guardado);
+// las demás le agregan su id: "cultivos_prop4"
+function claveDePropiedad(clave, idPropiedad) {
+  let id = idPropiedad === undefined ? idPropiedadActual() : idPropiedad;
+
+  if (LISTAS_GENERALES.includes(clave) || id === PROPIEDAD_PRINCIPAL) {
+    return clave;
+  }
+
+  return clave + "_prop" + id;
+}
+
+function leerListaGeneral(clave) {
+  let guardado = localStorage.getItem(clave);
+  return guardado === null ? [] : JSON.parse(guardado);
+}
+
+// Pone el nombre de la propiedad actual en los elementos con la clase "nombre-propiedad-actual"
+function mostrarNombrePropiedad() {
+  let elementos = document.querySelectorAll(".nombre-propiedad-actual");
+
+  for (let i = 0; i < elementos.length; i++) {
+    elementos[i].textContent = nombrePropiedadActual();
+  }
+}
+
+document.addEventListener("DOMContentLoaded", mostrarNombrePropiedad);
+
 // ================== DATOS DE LOS MÓDULOS ==================
 // Cada módulo (cultivos, terrenos, reportes...) guarda su lista en localStorage
 // con estas funciones. Cuando esté la API solo hay que cambiar estas dos primeras.
 
-// Trae una lista guardada. Si todavía no existe, guarda la de ejemplo.
+// Trae una lista guardada de la propiedad actual. Si todavía no existe, guarda la de ejemplo
+// (solo la propiedad principal trae ejemplos; una propiedad nueva empieza vacía).
 function obtenerLista(clave, ejemplo) {
-  let guardado = localStorage.getItem(clave);
+  let guardado = localStorage.getItem(claveDePropiedad(clave));
 
   if (guardado === null) {
-    guardarLista(clave, ejemplo);
-    return ejemplo;
+    let inicial = idPropiedadActual() === PROPIEDAD_PRINCIPAL || LISTAS_GENERALES.includes(clave) ? ejemplo : [];
+    guardarLista(clave, inicial);
+    return inicial;
   }
 
   return JSON.parse(guardado);
@@ -213,12 +273,12 @@ function obtenerLista(clave, ejemplo) {
 
 // Lee una lista sin crearla (para mirar los datos de otro módulo). Si no existe devuelve [].
 function leerLista(clave) {
-  let guardado = localStorage.getItem(clave);
+  let guardado = localStorage.getItem(claveDePropiedad(clave));
   return guardado === null ? [] : JSON.parse(guardado);
 }
 
 function guardarLista(clave, lista) {
-  localStorage.setItem(clave, JSON.stringify(lista));
+  localStorage.setItem(claveDePropiedad(clave), JSON.stringify(lista));
 }
 
 // Busca un elemento por su id. Si no existe devuelve null.

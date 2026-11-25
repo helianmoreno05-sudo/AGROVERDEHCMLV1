@@ -91,5 +91,41 @@ async function mostrarResumen() {
   document.getElementById("inicioRiesgo").textContent = Math.round(total / riesgos.length) + "%";
 }
 
+// Menú del nombre de la finca: lista las propiedades para cambiar de una a otra
+function mostrarMenuPropiedades() {
+  let menu = document.getElementById("menuPropiedades");
+  // las propiedades vienen de propiedad.js
+  let propiedades = propiedadesHabilitadas();
+
+  let html = '<li><h6 class="dropdown-header">Cambiar de propiedad</h6></li>';
+
+  for (let i = 0; i < propiedades.length; i++) {
+    let actual = propiedades[i].id === idPropiedadActual();
+    html += `
+      <li>
+        <button type="button" class="dropdown-item d-flex justify-content-between gap-3${actual ? " active" : ""}" data-id="${propiedades[i].id}">
+          <span>${textoSeguro(propiedades[i].nombre)} <small class="texto_gris">${textoSeguro(propiedades[i].tipo || "")}</small></span>
+          ${actual ? '<i class="bi bi-check-lg"></i>' : ""}
+        </button>
+      </li>`;
+  }
+
+  html += '<li><hr class="dropdown-divider"></li><li><a class="dropdown-item" href="../propiedad/ver-propiedad.html"><i class="bi bi-gear me-2"></i>Administrar propiedades</a></li>';
+  menu.innerHTML = html;
+
+  menu.addEventListener("click", function (evento) {
+    let opcion = evento.target.closest("button[data-id]");
+
+    if (opcion === null || Number(opcion.dataset.id) === idPropiedadActual()) {
+      return;
+    }
+
+    cambiarPropiedad(Number(opcion.dataset.id));
+    registrarEvento("Cambio de propiedad", "Ahora se trabaja en " + nombrePropiedadActual(), "sistema", "bi-house", "info");
+    window.location.reload();
+  });
+}
+
 mostrarInicio();
+mostrarMenuPropiedades();
 mostrarResumen();

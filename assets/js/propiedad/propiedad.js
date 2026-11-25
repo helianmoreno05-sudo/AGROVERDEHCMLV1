@@ -11,6 +11,7 @@ function propiedadesDeEjemplo() {
   ];
 }
 
+// La lista de propiedades es de toda la cuenta (no cambia con la propiedad actual)
 function propiedadesHabilitadas() {
   return obtenerLista(CLAVE_PROPIEDADES, propiedadesDeEjemplo()).filter(function (p) { return p.habilitado; });
 }
@@ -57,7 +58,7 @@ function mostrarPropiedades() {
       <a href="ver-etapa.html?id=${p.id}" class="tarjeta-propiedad d-flex align-items-center justify-content-between p-3 px-md-4 py-md-3 text-decoration-none">
         <div>
           <h2 class="nombre-propiedad m-0 fs-5">${textoSeguro(p.nombre)}</h2>
-          <span class="tipo-propiedad">${textoSeguro(p.tipo)}</span>
+          <span class="tipo-propiedad">${textoSeguro(p.tipo)}${p.id === idPropiedadActual() ? ' • <strong class="text-success">Propiedad actual</strong>' : ""}</span>
         </div>
         <span class="badge-ubicacion ${claseZona(p.zona)} px-4 py-1">${textoSeguro(p.zona)}</span>
       </a>`;
@@ -162,6 +163,11 @@ function activarInhabilitarPropiedad() {
     let todas = obtenerLista(CLAVE_PROPIEDADES, propiedadesDeEjemplo());
     let propiedad = buscarPorId(todas, Number(elegida.value));
 
+    if (propiedad.id === idPropiedadActual()) {
+      alert("No puedes inhabilitar la propiedad en la que estás trabajando. Cambia primero a otra propiedad.");
+      return;
+    }
+
     if (confirm("¿Seguro que quieres inhabilitar " + propiedad.nombre + "?") === false) {
       return;
     }
@@ -188,6 +194,28 @@ function mostrarEtapa() {
   document.getElementById("etapaRegion").textContent = propiedad.ubicacion;
   document.getElementById("etapaArea").textContent = propiedad.area ? String(propiedad.area).replace(".", ",") + " ha" : "----";
   document.getElementById("etapaNotas").textContent = propiedad.notas || "Sin descripción.";
+
+  // el primer cultivo sembrado en esa propiedad
+  let cultivos = leerListaGeneral(claveDePropiedad("cultivos", propiedad.id)).filter(function (c) { return c.habilitado; });
+  let primero = cultivos[0];
+  document.getElementById("etapaCultivo").textContent = primero ? primero.nombre : "Sin cultivos";
+  document.getElementById("etapaEstado").textContent = primero ? primero.estado : "----";
+  document.getElementById("etapaEtapa").textContent = primero ? primero.etapa : "----";
+
+  // botón para trabajar en esta propiedad
+  let boton = document.getElementById("botonUsarPropiedad");
+
+  if (propiedad.id === idPropiedadActual()) {
+    boton.textContent = "Estás trabajando en esta propiedad";
+    boton.disabled = true;
+    return;
+  }
+
+  boton.addEventListener("click", function () {
+    cambiarPropiedad(propiedad.id);
+    registrarEvento("Cambio de propiedad", "Ahora se trabaja en " + propiedad.nombre, "sistema", "bi-house", "info");
+    window.location.href = "../inicio/inicio.html";
+  });
 }
 
 activarBotonesComunes();

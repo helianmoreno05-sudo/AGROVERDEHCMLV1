@@ -24,12 +24,20 @@ const plagas_iniciales = [
 ];
 
 // lee las plagas guardadas (si no hay ninguna, deja las de ejemplo)
+// cada propiedad tiene sus plagas: la principal (id 3) usa la llave normal
+function clave_plagas() {
+    const id = localStorage.getItem("propiedadActual");
+    return id === null || id === "3" ? CLAVE_PLAGAS : CLAVE_PLAGAS + "_prop" + id;
+}
+
 function obtener_plagas() {
-    const guardado = localStorage.getItem(CLAVE_PLAGAS);
+    const guardado = localStorage.getItem(clave_plagas());
 
     if (guardado === null) {
-        guardar_plagas(plagas_iniciales);
-        return plagas_iniciales;
+        // solo la propiedad principal trae plagas de ejemplo
+        const iniciales = clave_plagas() === CLAVE_PLAGAS ? plagas_iniciales : [];
+        guardar_plagas(iniciales);
+        return iniciales;
     }
 
     try {
@@ -41,7 +49,7 @@ function obtener_plagas() {
 
 // guarda la lista completa de plagas
 function guardar_plagas(lista) {
-    localStorage.setItem(CLAVE_PLAGAS, JSON.stringify(lista));
+    localStorage.setItem(clave_plagas(), JSON.stringify(lista));
 }
 
 // busca el siguiente id k esta libre
@@ -78,7 +86,9 @@ function llenar_select_cultivos() {
         return;
     }
 
-    const guardados = JSON.parse(localStorage.getItem("cultivos") || "[]");
+    const id = localStorage.getItem("propiedadActual");
+    const llave = id === null || id === "3" ? "cultivos" : "cultivos_prop" + id;
+    const guardados = JSON.parse(localStorage.getItem(llave) || "[]");
     let nombres = guardados.filter(function (c) { return c.habilitado; }).map(function (c) { return c.nombre; });
 
     if (nombres.length === 0) {

@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
     <!-- Estilos Personalizados Agro Verde -->
+    <link rel="stylesheet" href="../../assets/css/global.css">
     <link rel="stylesheet" href="../../assets/css/propiedad/ver-etapa.css">
 </head>
 
@@ -45,9 +46,9 @@
             <div class="d-flex justify-content-between align-items-start mb-3">
                 <div>
                     <span class="etiqueta-seccion">Descripción</span>
-                    <h2 class="titulo-lote m-0 mt-1">Maíz - Lote 1</h2>
+                    <h2 class="titulo-lote m-0 mt-1" id="etapaCultivo">Maíz - Lote 1</h2>
                 </div>
-                <span class="badge-optimo">Óptimo</span>
+                <span class="badge-optimo" id="etapaEstado">Óptimo</span>
             </div>
 
             <hr class="linea-divisora">
@@ -71,7 +72,7 @@
             <!-- Fila: Etapa -->
             <div class="d-flex justify-content-between align-items-center py-2">
                 <span class="etiqueta-campo">Etapa</span>
-                <span class="valor-campo">inicio</span>
+                <span class="valor-campo" id="etapaEtapa">inicio</span>
             </div>
 
             <hr class="linea-divisora">
@@ -96,6 +97,8 @@
             </div>
 
         </section>
+
+        <button type="button" id="botonUsarPropiedad" class="btn-agro-primary mt-4">Trabajar en esta propiedad</button>
 
     </main>
 
