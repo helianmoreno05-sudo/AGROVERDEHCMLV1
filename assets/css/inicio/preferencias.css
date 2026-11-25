@@ -40,9 +40,6 @@
   transform: rotate(180deg);
 }
 
-.agro-select option {
-  background-color: var(--bg-main);
-}
 
 /* Formularios centrados en computador */
 @media (min-width: 992px) {

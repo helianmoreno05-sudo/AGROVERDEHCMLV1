@@ -105,3 +105,20 @@ body {
 .boton_crear_cuenta:hover {
     opacity: 0.9;
 }
+/*OPCIONES DE LOS DESPLEGABLES (select)
+  Windows pinta la lista de opciones en blanco y el texto blanco no se ve:
+  se les pone el fondo oscuro de la app*/
+select option,
+select optgroup {
+    background-color: #163b29;
+    color: #ffffff;
+}
+
+select option:disabled {
+    color: #9ca3af;
+}
+
+select optgroup {
+    color: #22c55e;
+    font-weight: 700;
+}
