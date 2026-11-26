@@ -2,10 +2,20 @@
 // Clima real de la finca con la API gratuita de Open-Meteo (no necesita clave).
 // El último clima descargado se guarda en localStorage para mostrarlo si no hay internet.
 
-// Coordenadas de Finca el Manantial (las mismas del cultivo Maíz - Lote 1)
-const LATITUD_FINCA = 4.85921;
-const LONGITUD_FINCA = -74.05812;
+// El clima se busca con las coordenadas de la propiedad actual (se ponen al crearla o editarla)
 const CLAVE_CLIMA = "climaGuardado";
+
+// La propiedad actual con sus coordenadas (null si no tiene)
+function coordenadasDeLaPropiedad() {
+  let propiedades = leerListaGeneral("propiedades");
+  let propiedad = propiedades.find(function (p) { return p.id === idPropiedadActual(); });
+
+  if (!propiedad || propiedad.latitud === undefined || propiedad.latitud === null || propiedad.latitud === "") {
+    return null;
+  }
+
+  return { latitud: Number(propiedad.latitud), longitud: Number(propiedad.longitud), propiedadId: propiedad.id };
+}
 const CLAVE_EVENTOS_CAL = "eventosCalendario";
 const DIAS_SEMANA = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
 const MESES = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
@@ -32,13 +42,23 @@ function describirClima(codigo, deNoche) {
 
 // Trae el clima. Usa lo guardado si tiene menos de 30 minutos o si falla internet.
 async function obtenerClima() {
-  let guardado = JSON.parse(localStorage.getItem(CLAVE_CLIMA) || "null");
+  let coordenadas = coordenadasDeLaPropiedad();
 
-  if (guardado !== null && Date.now() - guardado.hora < 30 * 60 * 1000) {
+  // sin coordenadas no se sabe de dónde pedir el clima
+  if (coordenadas === null) {
+    return null;
+  }
+
+  // lo guardado es de esta propiedad y de estas coordenadas
+  let clave = CLAVE_CLIMA + "_prop" + coordenadas.propiedadId;
+  let guardado = JSON.parse(localStorage.getItem(clave) || "null");
+  let mismoLugar = guardado !== null && guardado.latitud === coordenadas.latitud && guardado.longitud === coordenadas.longitud;
+
+  if (mismoLugar && Date.now() - guardado.hora < 30 * 60 * 1000) {
     return guardado.datos;
   }
 
-  let direccion = "https://api.open-meteo.com/v1/forecast?latitude=" + LATITUD_FINCA + "&longitude=" + LONGITUD_FINCA +
+  let direccion = "https://api.open-meteo.com/v1/forecast?latitude=" + coordenadas.latitud + "&longitude=" + coordenadas.longitud +
     "&current=temperature_2m,relative_humidity_2m,weather_code" +
     "&hourly=temperature_2m,weather_code" +
     "&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,relative_humidity_2m_mean" +
@@ -47,11 +67,11 @@ async function obtenerClima() {
   try {
     let respuesta = await fetch(direccion);
     let datos = await respuesta.json();
-    localStorage.setItem(CLAVE_CLIMA, JSON.stringify({ hora: Date.now(), datos: datos }));
+    localStorage.setItem(clave, JSON.stringify({ hora: Date.now(), latitud: coordenadas.latitud, longitud: coordenadas.longitud, datos: datos }));
     return datos;
   } catch (error) {
-    // sin internet: usamos lo último que se guardó (aunque sea viejo)
-    return guardado !== null ? guardado.datos : null;
+    // sin internet: usamos lo último que se guardó de este lugar (aunque sea viejo)
+    return mismoLugar ? guardado.datos : null;
   }
 }
 
@@ -293,6 +313,24 @@ function revisarAlertasDeClima(clima) {
   }
 }
 
+// Aviso arriba del contenido cuando la propiedad no tiene coordenadas
+function avisoSinCoordenadas() {
+  let principal = document.querySelector("main");
+  let encabezado = principal ? principal.querySelector("header") : null;
+
+  if (encabezado === null) {
+    return;
+  }
+
+  let aviso = document.createElement("div");
+  aviso.className = "tarjeta p-3 rounded-4 mb-3";
+  aviso.style.borderColor = "rgba(234, 179, 8, 0.6)";
+  aviso.innerHTML = '<strong class="d-block text-warning"><i class="bi bi-geo-alt me-1"></i>Falta la ubicación de ' + textoSeguro(nombrePropiedadActual()) + '</strong>' +
+    '<span class="small texto_gris d-block mb-2">Para mostrar el clima real necesitamos las coordenadas de la propiedad. Lo que ves abajo es solo de ejemplo.</span>' +
+    '<a href="../propiedad/editar-propiedad.html?id=' + idPropiedadActual() + '" class="btn-agro-sm">Agregar coordenadas</a>';
+  encabezado.after(aviso);
+}
+
 // ================== ARRANQUE ==================
 async function iniciarClima() {
   activarCalendario();
@@ -305,6 +343,12 @@ async function iniciarClima() {
   }
 
   let clima = await obtenerClima();
+
+  // la propiedad no tiene coordenadas: se pide agregarlas
+  if (coordenadasDeLaPropiedad() === null) {
+    avisoSinCoordenadas();
+    return;
+  }
 
   // sin internet y sin nada guardado: se deja lo que trae el HTML
   if (clima === null || !clima.daily) {

@@ -73,7 +73,11 @@ async function mostrarResumen() {
 
   let clima = await obtenerClima();
 
+  // sin coordenadas o sin internet (y sin nada guardado): no se inventan datos
   if (clima === null || !clima.current) {
+    document.getElementById("inicioClima").textContent = coordenadasDeLaPropiedad() === null ? "Agrega las coordenadas de la propiedad" : "Sin datos de clima";
+    document.getElementById("inicioHumedad").textContent = "--";
+    document.getElementById("inicioRiesgo").textContent = "--";
     return;
   }
 

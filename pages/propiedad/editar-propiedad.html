@@ -78,6 +78,24 @@
                     placeholder="Ej. Fusagasugá, Cundinamarca" required>
             </div>
 
+            <!-- Campo: Coordenadas (el clima de la propiedad sale de aquí) -->
+            <div class="grupo-campo">
+                <label class="form-label label-personalizado">Coordenadas (para el clima de la propiedad)</label>
+                <div class="row g-2">
+                    <div class="col-6">
+                        <input type="number" step="any" id="latitudPropiedad" class="form-control campo-personalizado" placeholder="Latitud, ej. 5.7145" aria-label="Latitud" required>
+                    </div>
+                    <div class="col-6">
+                        <input type="number" step="any" id="longitudPropiedad" class="form-control campo-personalizado" placeholder="Longitud, ej. -72.9339" aria-label="Longitud" required>
+                    </div>
+                </div>
+                <div class="d-flex flex-wrap gap-2 mt-2">
+                    <button type="button" id="botonBuscarCoordenadas" class="btn btn-sm btn-outline-success"><i class="bi bi-search me-1"></i>Buscar por la ubicación</button>
+                    <button type="button" id="botonMiUbicacion" class="btn btn-sm btn-outline-success"><i class="bi bi-geo-alt me-1"></i>Usar mi ubicación actual</button>
+                </div>
+                <small id="ayudaCoordenadas" class="d-block mt-1" style="color: #9ca3af;">Escribe la ubicación y toca "Buscar por la ubicación", o usa la ubicación de tu celular si estás en la finca.</small>
+            </div>
+
             <!-- Campo: Notas -->
             <div class="grupo-campo">
                 <label for="notasPropiedad" class="form-label label-personalizado">Notas</label>

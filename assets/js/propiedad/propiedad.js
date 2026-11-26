@@ -106,6 +106,100 @@ function mostrarPropiedades() {
   });
 }
 
+// ================== COORDENADAS ==================
+// Botones para llenar latitud y longitud: buscando la ubicación escrita (Open-Meteo, gratis)
+// o con el GPS del dispositivo
+function activarCoordenadas() {
+  let latitud = document.getElementById("latitudPropiedad");
+  let longitud = document.getElementById("longitudPropiedad");
+  let ayuda = document.getElementById("ayudaCoordenadas");
+
+  if (latitud === null) {
+    return;
+  }
+
+  function poner(lat, lon, texto) {
+    latitud.value = Number(lat).toFixed(5);
+    longitud.value = Number(lon).toFixed(5);
+    ayuda.textContent = texto;
+    ayuda.style.color = "#22c55e";
+  }
+
+  document.getElementById("botonBuscarCoordenadas").addEventListener("click", async function () {
+    let ubicacion = document.getElementById("ubicacionPropiedad").value.trim();
+
+    if (ubicacion === "") {
+      alert("Primero escribe la ubicación (municipio o vereda), por ejemplo: Sogamoso, Boyacá");
+      return;
+    }
+
+    ayuda.textContent = "Buscando coordenadas...";
+    let resultado = await buscarCoordenadas(ubicacion);
+
+    if (resultado === null) {
+      ayuda.textContent = "No se encontró esa ubicación (o no hay internet). Escribe solo el municipio o pon las coordenadas a mano.";
+      ayuda.style.color = "#f87171";
+      return;
+    }
+
+    poner(resultado.latitud, resultado.longitud, "Encontrado: " + resultado.nombre);
+  });
+
+  document.getElementById("botonMiUbicacion").addEventListener("click", function () {
+    if (!navigator.geolocation) {
+      alert("Tu navegador no permite obtener la ubicación");
+      return;
+    }
+
+    ayuda.textContent = "Obteniendo tu ubicación...";
+    navigator.geolocation.getCurrentPosition(function (posicion) {
+      poner(posicion.coords.latitude, posicion.coords.longitude, "Ubicación tomada del dispositivo");
+    }, function () {
+      ayuda.textContent = "No se pudo obtener la ubicación. Revisa los permisos del navegador.";
+      ayuda.style.color = "#f87171";
+    });
+  });
+}
+
+// Busca las coordenadas de un lugar escrito ("Sogamoso, Boyacá"). Devuelve null si no lo encuentra.
+async function buscarCoordenadas(texto) {
+  // la búsqueda funciona mejor solo con el primer nombre (el municipio)
+  let nombre = texto.split(",")[0].trim();
+
+  try {
+    let respuesta = await fetch("https://geocoding-api.open-meteo.com/v1/search?count=5&language=es&name=" + encodeURIComponent(nombre));
+    let datos = await respuesta.json();
+
+    if (!datos.results || datos.results.length === 0) {
+      return null;
+    }
+
+    // si hay varios con el mismo nombre, se prefiere el de Colombia
+    let lugar = datos.results.find(function (r) { return r.country_code === "CO"; }) || datos.results[0];
+    return { latitud: lugar.latitude, longitud: lugar.longitude, nombre: lugar.name + (lugar.admin1 ? ", " + lugar.admin1 : "") + ", " + lugar.country };
+  } catch (error) {
+    return null;
+  }
+}
+
+// Lee y revisa las coordenadas del formulario. Devuelve null (y avisa) si están mal.
+function leerCoordenadas() {
+  let latitud = parseFloat(document.getElementById("latitudPropiedad").value);
+  let longitud = parseFloat(document.getElementById("longitudPropiedad").value);
+
+  if (isNaN(latitud) || isNaN(longitud)) {
+    alert("Faltan las coordenadas. Toca \"Buscar por la ubicación\" o \"Usar mi ubicación actual\".");
+    return null;
+  }
+
+  if (latitud < -90 || latitud > 90 || longitud < -180 || longitud > 180) {
+    alert("Las coordenadas no son válidas (latitud entre -90 y 90, longitud entre -180 y 180).");
+    return null;
+  }
+
+  return { latitud: latitud, longitud: longitud };
+}
+
 // ================== CREAR PROPIEDAD ==================
 // Viene de crear la cuenta (o no tiene ninguna propiedad todavía)
 function esPrimeraPropiedad() {
@@ -152,6 +246,12 @@ function activarCrearPropiedad() {
       return;
     }
 
+    let coordenadas = leerCoordenadas();
+
+    if (coordenadas === null) {
+      return;
+    }
+
     let lista = obtenerLista(CLAVE_PROPIEDADES, propiedadesDeEjemplo());
     lista.push({
       id: nuevoId(lista),
@@ -159,6 +259,8 @@ function activarCrearPropiedad() {
       tipo: document.getElementById("tipoPropiedad").value,
       zona: document.getElementById("zonaPropiedad").value,
       ubicacion: ubicacion,
+      latitud: coordenadas.latitud,
+      longitud: coordenadas.longitud,
       area: area,
       notas: document.getElementById("notasPropiedad").value.trim(),
       miembros: obtenerUsuarioActual() ? [obtenerUsuarioActual().correo] : [],
@@ -204,6 +306,10 @@ function activarEditarPropiedad() {
   document.getElementById("areaPropiedad").value = propiedad.area || "";
   document.getElementById("ubicacionPropiedad").value = propiedad.ubicacion;
   document.getElementById("notasPropiedad").value = propiedad.notas || "";
+  if (propiedad.latitud !== undefined) {
+    document.getElementById("latitudPropiedad").value = propiedad.latitud;
+    document.getElementById("longitudPropiedad").value = propiedad.longitud;
+  }
 
   formulario.addEventListener("submit", function (evento) {
     evento.preventDefault();
@@ -227,7 +333,15 @@ function activarEditarPropiedad() {
       return;
     }
 
+    let coordenadas = leerCoordenadas();
+
+    if (coordenadas === null) {
+      return;
+    }
+
     let guardada = buscarPorId(todas, propiedad.id);
+    guardada.latitud = coordenadas.latitud;
+    guardada.longitud = coordenadas.longitud;
     guardada.nombre = nombre;
     guardada.tipo = document.getElementById("tipoPropiedad").value;
     guardada.zona = document.getElementById("zonaPropiedad").value;
@@ -345,6 +459,7 @@ function mostrarEtapa() {
 
 activarBotonesComunes();
 mostrarPropiedades();
+activarCoordenadas();
 activarCrearPropiedad();
 activarEditarPropiedad();
 activarInhabilitarPropiedad();
