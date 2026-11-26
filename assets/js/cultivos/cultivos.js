@@ -300,6 +300,9 @@ function activarEditarCultivo() {
   let lista = obtenerCultivos();
   let c = cultivoDeLaPagina(lista);
 
+  // la flecha de volver regresa al detalle de este mismo cultivo
+  document.querySelector('a[aria-label="Volver"]').href = "ver-cultivo.html?id=" + c.id;
+
   // los terrenos del select salen de los terrenos registrados
   let terrenos = terrenosDisponibles();
   let selectTerreno = document.getElementById("editTerrenoLote");
