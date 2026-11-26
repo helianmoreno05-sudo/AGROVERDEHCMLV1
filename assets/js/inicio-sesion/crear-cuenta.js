@@ -11,7 +11,8 @@ formulario.addEventListener("submit", function (evento) {
   let nombre = document.getElementById("usuario").value.trim();
   let correo = document.getElementById("correo").value.trim().toLowerCase();
   let contrasena = document.getElementById("contrasena").value;
-  let rol = document.getElementById("rol").value;
+  // todas las cuentas tienen el mismo rol
+  let rol = "Usuario";
 
   // ----- validaciones -----
   if (nombre.length < 3) {
@@ -50,7 +51,7 @@ formulario.addEventListener("submit", function (evento) {
 
   // lo dejamos con la sesión iniciada y anotamos el evento en el historial
   localStorage.setItem("usuarioActual", correo);
-  registrarEvento("Usuario creado", nombre + " se registró como " + rol, "sistema", "bi-plus-circle", "success");
+  registrarEvento("Usuario creado", nombre + " creó su cuenta", "sistema", "bi-plus-circle", "success");
 
   alert("¡Cuenta creada con éxito!");
   window.location.href = "../inicio/inicio.html";

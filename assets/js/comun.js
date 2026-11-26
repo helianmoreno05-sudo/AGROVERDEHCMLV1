@@ -34,6 +34,11 @@ function obtenerUsuarios() {
     }
   }
 
+  // ya no hay roles distintos: todas las cuentas son "Usuario"
+  for (let i = 0; i < reales.length; i++) {
+    reales[i].rol = "Usuario";
+  }
+
   return reales;
 }
 
@@ -341,15 +346,34 @@ function contarSinLeer() {
 const PROPIEDAD_PRINCIPAL = 3;
 
 // Listas que son de toda la cuenta y no de una propiedad
-const LISTAS_GENERALES = ["propiedades", "usuarios", "mensajesSoporte"];
+const LISTAS_GENERALES = ["propiedades", "usuarios", "mensajesSoporte", "invitaciones"];
+
+// Cada usuario recuerda su propia propiedad actual
+function clavePropiedadActual() {
+  let correo = localStorage.getItem("usuarioActual");
+  return correo === null ? "propiedadActual" : "propiedadActual_" + correo;
+}
 
 function idPropiedadActual() {
-  let id = localStorage.getItem("propiedadActual");
-  return id === null ? PROPIEDAD_PRINCIPAL : Number(id);
+  let guardado = localStorage.getItem(clavePropiedadActual());
+  let id = guardado === null ? PROPIEDAD_PRINCIPAL : Number(guardado);
+
+  // si la persona no es miembro de esa propiedad, se usa la primera donde sí lo sea
+  let correo = localStorage.getItem("usuarioActual");
+  let propiedades = leerListaGeneral("propiedades").filter(function (p) { return p.habilitado; });
+  let puedeVer = function (p) { return !p.miembros || correo === null || p.miembros.includes(correo); };
+  let actual = propiedades.find(function (p) { return p.id === id; });
+
+  if (actual !== undefined && !puedeVer(actual)) {
+    let otra = propiedades.find(puedeVer);
+    return otra !== undefined ? otra.id : id;
+  }
+
+  return id;
 }
 
 function cambiarPropiedad(id) {
-  localStorage.setItem("propiedadActual", id);
+  localStorage.setItem(clavePropiedadActual(), id);
 }
 
 // Nombre de la propiedad en la que se está trabajando

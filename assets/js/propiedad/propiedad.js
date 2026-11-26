@@ -13,7 +13,19 @@ function propiedadesDeEjemplo() {
 
 // La lista de propiedades es de toda la cuenta (no cambia con la propiedad actual)
 function propiedadesHabilitadas() {
-  return obtenerLista(CLAVE_PROPIEDADES, propiedadesDeEjemplo()).filter(function (p) { return p.habilitado; });
+  return obtenerLista(CLAVE_PROPIEDADES, propiedadesDeEjemplo()).filter(function (p) { return p.habilitado && esMiembro(p); });
+}
+
+// La persona con sesión ve una propiedad si es miembro de ella.
+// Las propiedades de antes no tienen lista de miembros: esas las ven todos.
+function esMiembro(propiedad) {
+  let usuario = typeof obtenerUsuarioActual === "function" ? obtenerUsuarioActual() : null;
+
+  if (!propiedad.miembros || usuario === null) {
+    return true;
+  }
+
+  return propiedad.miembros.includes(usuario.correo);
 }
 
 // "sur" -> "badge-sur", "Casa" -> "badge-casa"
@@ -113,6 +125,7 @@ function activarCrearPropiedad() {
       ubicacion: ubicacion,
       area: area,
       notas: document.getElementById("notasPropiedad").value.trim(),
+      miembros: obtenerUsuarioActual() ? [obtenerUsuarioActual().correo] : [],
       habilitado: true
     });
 

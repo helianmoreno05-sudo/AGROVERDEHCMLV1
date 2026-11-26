@@ -1,9 +1,9 @@
 // perfil.js
 // Muestra los datos del usuario que inició sesión.
-// El rol decide qué ve: solo el Administrador ve la lista de usuarios del sistema.
+// Todos tienen el mismo rol ("Usuario") y pueden ver y quitar a los demás usuarios.
 
-// Crea la tarjeta de un usuario de la lista
-function crearTarjetaUsuario(usuario) {
+// Crea la tarjeta de un usuario de la lista (con botón "Quitar" si no es uno mismo)
+function crearTarjetaUsuario(usuario, esUnoMismo) {
   let tarjeta = document.createElement("div");
   tarjeta.className = "tarjeta p-3 rounded-4 d-flex align-items-center gap-3";
 
@@ -11,11 +11,6 @@ function crearTarjetaUsuario(usuario) {
   punto.className = "punto_verde_pequeno me-1";
   punto.style.width = "24px";
   punto.style.height = "24px";
-
-  // los administradores llevan el circulito azul, los demás verde
-  if (usuario.rol === "Administrador") {
-    punto.style.backgroundColor = "#06b6d4";
-  }
 
   let cajaTextos = document.createElement("div");
 
@@ -26,14 +21,48 @@ function crearTarjetaUsuario(usuario) {
   let rol = document.createElement("p");
   rol.className = "m-0 small texto_gris";
   rol.style.fontSize = "11px";
-  rol.textContent = usuario.rol;
+  rol.textContent = usuario.correo + (esUnoMismo ? " • tú" : "");
 
   cajaTextos.appendChild(nombre);
   cajaTextos.appendChild(rol);
   tarjeta.appendChild(punto);
   tarjeta.appendChild(cajaTextos);
 
+  if (!esUnoMismo) {
+    let quitar = document.createElement("button");
+    quitar.type = "button";
+    quitar.className = "btn btn-sm btn-outline-danger ms-auto";
+    quitar.innerHTML = '<i class="bi bi-person-dash me-1"></i>Quitar';
+    quitar.addEventListener("click", function () {
+      quitarUsuario(usuario);
+    });
+    tarjeta.appendChild(quitar);
+  }
+
   return tarjeta;
+}
+
+// Quita un usuario del sistema y de las propiedades donde era miembro
+async function quitarUsuario(usuario) {
+  let seguro = await preguntar("¿Estás seguro?", "Se va a quitar a " + usuario.nombre + " (" + usuario.correo + ") del sistema. Ya no podrá iniciar sesión.", "Quitar");
+
+  if (seguro === false) {
+    return;
+  }
+
+  let restantes = obtenerUsuarios().filter(function (u) { return u.correo !== usuario.correo; });
+  guardarUsuarios(restantes);
+
+  let propiedades = leerListaGeneral("propiedades");
+  for (let i = 0; i < propiedades.length; i++) {
+    if (propiedades[i].miembros) {
+      propiedades[i].miembros = propiedades[i].miembros.filter(function (correo) { return correo !== usuario.correo; });
+    }
+  }
+  localStorage.setItem("propiedades", JSON.stringify(propiedades));
+
+  registrarEvento("Usuario quitado", usuario.nombre + " fue quitado del sistema", "sistema", "bi-person-dash", "danger");
+  window.location.href = "perfil.html?mensaje=inhabilitado";
 }
 
 function mostrarPerfil() {
@@ -53,19 +82,13 @@ function mostrarPerfil() {
   let iniciales = partes[0].charAt(0) + (partes.length > 1 ? partes[partes.length - 1].charAt(0) : "");
   document.getElementById("avatar-usuario").textContent = iniciales.toUpperCase();
 
-  // ----- lista de usuarios: solo para el Administrador -----
-  if (usuario.rol !== "Administrador") {
-    // d-none es una clase de Bootstrap que esconde el elemento
-    document.getElementById("columna-usuarios").classList.add("d-none");
-    return;
-  }
-
+  // ----- lista de usuarios del sistema -----
   let usuarios = obtenerUsuarios();
   let lista = document.getElementById("lista-usuarios");
   lista.innerHTML = "";
 
   for (let i = 0; i < usuarios.length; i++) {
-    lista.appendChild(crearTarjetaUsuario(usuarios[i]));
+    lista.appendChild(crearTarjetaUsuario(usuarios[i], usuarios[i].correo === usuario.correo));
   }
 }
 

@@ -77,8 +77,14 @@ const catalogo = [
 
 // lee las plagas guardadas (si no hay ninguna, deja las de ejemplo)
 // cada propiedad tiene sus plagas: la principal (id 3) usa la llave normal
+// la propiedad actual se guarda por usuario: "propiedadActual_correo"
+function id_propiedad_actual() {
+    const correo = localStorage.getItem("usuarioActual");
+    return localStorage.getItem(correo === null ? "propiedadActual" : "propiedadActual_" + correo);
+}
+
 function clave_plagas() {
-    const id = localStorage.getItem("propiedadActual");
+    const id = typeof idPropiedadActual === "function" ? String(idPropiedadActual()) : id_propiedad_actual();
     return id === null || id === "3" ? CLAVE_PLAGAS : CLAVE_PLAGAS + "_prop" + id;
 }
 
@@ -138,7 +144,7 @@ function llenar_select_cultivos() {
         return;
     }
 
-    const id = localStorage.getItem("propiedadActual");
+    const id = typeof idPropiedadActual === "function" ? String(idPropiedadActual()) : id_propiedad_actual();
     const llave = id === null || id === "3" ? "cultivos" : "cultivos_prop" + id;
     const guardados = JSON.parse(localStorage.getItem(llave) || "[]");
     let nombres = guardados.filter(function (c) { return c.habilitado; }).map(function (c) { return c.nombre; });
