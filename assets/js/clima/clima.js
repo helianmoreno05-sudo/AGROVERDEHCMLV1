@@ -10,17 +10,24 @@ const CLAVE_EVENTOS_CAL = "eventosCalendario";
 const DIAS_SEMANA = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
 const MESES = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
 
-// Convierte el código del clima de Open-Meteo en un icono y una palabra
-function describirClima(codigo) {
-  if (codigo === 0) return { icono: "☀️", texto: "Soleado" };
-  if (codigo <= 2) return { icono: "🌤️", texto: "Parcialmente nublado" };
-  if (codigo === 3) return { icono: "☁️", texto: "Nublado" };
-  if (codigo <= 48) return { icono: "🌫️", texto: "Niebla" };
-  if (codigo <= 57) return { icono: "🌦️", texto: "Llovizna" };
-  if (codigo <= 67) return { icono: "🌧️", texto: "Lluvia" };
-  if (codigo <= 77) return { icono: "❄️", texto: "Nieve" };
-  if (codigo <= 82) return { icono: "🌧️", texto: "Aguaceros" };
-  return { icono: "⛈️", texto: "Tormenta" };
+// Convierte el código del clima de Open-Meteo en un ícono y una palabra.
+// Se usan los íconos de Bootstrap (los emojis de clima salen como cuadros blancos en Windows).
+// "deNoche" cambia el sol por la luna.
+function describirClima(codigo, deNoche) {
+  let clima;
+
+  if (codigo === 0) clima = { clase: deNoche ? "bi-moon-stars-fill" : "bi-sun-fill", color: deNoche ? "#cbd5e1" : "#facc15", texto: deNoche ? "Despejado" : "Soleado" };
+  else if (codigo <= 2) clima = { clase: deNoche ? "bi-cloud-moon-fill" : "bi-cloud-sun-fill", color: deNoche ? "#cbd5e1" : "#facc15", texto: "Parcialmente nublado" };
+  else if (codigo === 3) clima = { clase: "bi-cloud-fill", color: "#cbd5e1", texto: "Nublado" };
+  else if (codigo <= 48) clima = { clase: "bi-cloud-fog2-fill", color: "#94a3b8", texto: "Niebla" };
+  else if (codigo <= 57) clima = { clase: "bi-cloud-drizzle-fill", color: "#38bdf8", texto: "Llovizna" };
+  else if (codigo <= 67) clima = { clase: "bi-cloud-rain-fill", color: "#38bdf8", texto: "Lluvia" };
+  else if (codigo <= 77) clima = { clase: "bi-snow", color: "#e0f2fe", texto: "Nieve" };
+  else if (codigo <= 82) clima = { clase: "bi-cloud-rain-heavy-fill", color: "#0ea5e9", texto: "Aguaceros" };
+  else clima = { clase: "bi-cloud-lightning-rain-fill", color: "#a78bfa", texto: "Tormenta" };
+
+  clima.icono = '<i class="bi ' + clima.clase + '" style="color: ' + clima.color + ';" title="' + clima.texto + '" aria-label="' + clima.texto + '"></i>';
+  return clima;
 }
 
 // Trae el clima. Usa lo guardado si tiene menos de 30 minutos o si falla internet.
@@ -114,7 +121,9 @@ function calcularTemporadas(clima) {
 // ================== PANTALLA PRINCIPAL ==================
 function mostrarClimaPrincipal(clima) {
   let actual = describirClima(clima.current.weather_code);
-  document.getElementById("climaTemp").textContent = Math.round(clima.current.temperature_2m) + "°C";
+  let hora = new Date().getHours();
+  let ahoraClima = describirClima(clima.current.weather_code, hora < 6 || hora >= 18);
+  document.getElementById("climaTemp").innerHTML = ahoraClima.icono + " " + Math.round(clima.current.temperature_2m) + "°C";
   document.getElementById("climaDesc").textContent = actual.texto + " • Humedad " + clima.current.relative_humidity_2m + "%";
 
   // las próximas 5 horas desde la hora actual
@@ -128,7 +137,7 @@ function mostrarClimaPrincipal(clima) {
     html += `
       <div class="hora-item">
         <span class="texto_gris small">${texto}</span>
-        <span class="fs-5">${describirClima(clima.hourly.weather_code[i]).icono}</span>
+        <span class="fs-4">${describirClima(clima.hourly.weather_code[i], hora < 6 || hora >= 18).icono}</span>
         <span class="fw-semibold small">${Math.round(clima.hourly.temperature_2m[i])}°</span>
       </div>`;
   }
@@ -143,7 +152,7 @@ function mostrarClimaPrincipal(clima) {
     html += `
       <div class="dia-row">
         <span class="dia-nombre">${nombre}</span>
-        <span>${describirClima(clima.daily.weather_code[i]).icono}</span>
+        <span class="fs-5">${describirClima(clima.daily.weather_code[i]).icono}</span>
         <span><small class="texto_gris me-2">${Math.round(clima.daily.temperature_2m_min[i])}°</small><strong>${Math.round(clima.daily.temperature_2m_max[i])}°</strong></span>
       </div>`;
   }
