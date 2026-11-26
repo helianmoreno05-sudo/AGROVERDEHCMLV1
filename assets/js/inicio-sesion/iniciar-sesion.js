@@ -18,9 +18,17 @@ formulario.addEventListener("submit", function (evento) {
   let usuario = buscarUsuario(correo);
 
   // no decimos cuál de los dos está mal para no dar pistas
-  if (usuario === null || usuario.contrasena !== contrasena) {
+  if (usuario === null || contrasenaCorrecta(usuario, contrasena) === false) {
     alert("Correo o contraseña incorrectos");
     return;
+  }
+
+  // si era una cuenta de antes con la contraseña sin cifrar, se cifra ahora
+  if (!usuario.contrasenaHash) {
+    let usuarios = obtenerUsuarios();
+    let guardado = usuarios.find(function (u) { return u.correo === usuario.correo; });
+    ponerContrasena(guardado, contrasena);
+    guardarUsuarios(usuarios);
   }
 
   // dejamos la sesión iniciada y lo anotamos en el historial

@@ -90,4 +90,24 @@ modal_detalle.addEventListener("show.bs.modal", function (evento) {
         "nueva-plaga.html?nombre=" + encodeURIComponent(plaga.nombre) + "&cultivo=" + encodeURIComponent(plaga.cultivo);
 });
 
+// filtro "plagas por cultivo": los cultivos que aparecen en el catálogo
+const filtro_cultivo = document.getElementById("filtro_cultivo");
+const cultivos_catalogo = [];
+catalogo.forEach(function (plaga) {
+    plaga.cultivo.split("/").forEach(function (c) {
+        if (!cultivos_catalogo.includes(c.trim())) {
+            cultivos_catalogo.push(c.trim());
+        }
+    });
+});
+filtro_cultivo.innerHTML += cultivos_catalogo.map(function (c) {
+    return '<option value="' + c + '">Plagas de ' + c + '</option>';
+}).join("");
+
+// al elegir un cultivo se busca por su nombre (el buscador ya filtra por cultivo afectado)
+filtro_cultivo.addEventListener("change", function () {
+    buscador.value = filtro_cultivo.value;
+    mostrar_catalogo();
+});
+
 mostrar_catalogo();

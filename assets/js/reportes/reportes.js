@@ -175,9 +175,50 @@ function mostrarPdf() {
   }
 
   titulo.textContent = reporte.nombre;
+  mostrarResumenPdf();
   document.getElementById("pdfFecha").textContent = fechaCorta(reporte.fecha);
   document.getElementById("pdfTexto").textContent = reporte.notas || "Sin observaciones.";
   document.title = reporte.nombre + " - Agro Verde";
+}
+
+// Resumen de la propiedad que va dentro del PDF: cultivos, insumos, plagas y costos
+function mostrarResumenPdf() {
+  let caja = document.getElementById("pdfResumen");
+
+  if (caja === null) {
+    return;
+  }
+
+  let cultivos = leerLista("cultivos").filter(function (c) { return c.habilitado; });
+  let terrenos = leerLista("terrenos").filter(function (t) { return t.habilitado; });
+  let insumos = typeof insumosHabilitados === "function" ? insumosHabilitados() : [];
+  let plagas = typeof obtener_plagas === "function" ? obtener_plagas().filter(function (p) { return p.habilitada; }) : [];
+  let valorStock = insumos.reduce(function (total, i) { return total + i.cantidad * i.precio; }, 0);
+  let porAgotar = insumos.filter(function (i) { return i.cantidad <= i.minimo; });
+
+  let filasCultivos = cultivos.map(function (c) {
+    return "<tr><td>" + textoSeguro(c.nombre) + "</td><td>" + textoSeguro(c.etapa) + "</td><td>" + textoSeguro(c.terreno) + "</td><td>" + c.area + " ha</td></tr>";
+  }).join("") || '<tr><td colspan="4">Sin cultivos activos</td></tr>';
+
+  let filasPlagas = plagas.map(function (p) {
+    return "<tr><td>" + textoSeguro(p.nombre) + "</td><td>" + textoSeguro(p.ubicacion) + "</td><td>" + textoSeguro(p.estado) + "</td><td>" + fechaBonita(p.fecha) + "</td></tr>";
+  }).join("") || '<tr><td colspan="4">Sin plagas activas</td></tr>';
+
+  caja.innerHTML = `
+    <h6 class="mt-3">Resumen de ${textoSeguro(nombrePropiedadActual())} al ${fechaBonita(fechaDeHoy(0))}</h6>
+    <table class="table table-sm tabla-pdf">
+      <tbody>
+        <tr><td>Terrenos activos</td><td>${terrenos.length}</td></tr>
+        <tr><td>Cultivos activos</td><td>${cultivos.length}</td></tr>
+        <tr><td>Insumos en inventario</td><td>${insumos.length} (${porAgotar.length} por agotarse)</td></tr>
+        <tr><td>Valor del inventario</td><td>$${Math.round(valorStock).toLocaleString("es-CO")}</td></tr>
+        <tr><td>Plagas activas</td><td>${plagas.length}</td></tr>
+      </tbody>
+    </table>
+    <h6>Cultivos</h6>
+    <table class="table table-sm tabla-pdf"><thead><tr><th>Cultivo</th><th>Etapa</th><th>Terreno</th><th>Área</th></tr></thead><tbody>${filasCultivos}</tbody></table>
+    <h6>Plagas</h6>
+    <table class="table table-sm tabla-pdf mb-0"><thead><tr><th>Plaga</th><th>Cultivo</th><th>Estado</th><th>Desde</th></tr></thead><tbody>${filasPlagas}</tbody></table>`;
 }
 
 // ================== REPORTE DE CONSUMO ==================

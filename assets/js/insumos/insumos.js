@@ -62,8 +62,57 @@ function cambiarCantidad(texto, campo, unidad, cambio) {
 }
 
 // ================== BUSCADOR ==================
+// Buscador (por nombre, categoría o parte del código de barras) y filtro por categoría, juntos
 function activarBuscador() {
-  activarBuscadorDeLista("buscador", ".item-buscable");
+  let buscador = document.getElementById("buscador");
+
+  if (buscador === null) {
+    return;
+  }
+
+  let categoriaElegida = "Todas";
+  let cajaFiltros = document.getElementById("filtroCategorias");
+
+  function aplicar() {
+    let texto = buscador.value.trim().toLowerCase();
+    let items = document.querySelectorAll(".item-buscable");
+
+    for (let i = 0; i < items.length; i++) {
+      let contenido = (items[i].textContent + " " + (items[i].dataset.codigo || "")).toLowerCase();
+      let coincideCategoria = categoriaElegida === "Todas" || items[i].dataset.categoria === categoriaElegida;
+      items[i].classList.toggle("d-none", !(contenido.includes(texto) && coincideCategoria));
+    }
+  }
+
+  buscador.addEventListener("input", aplicar);
+
+  if (cajaFiltros !== null) {
+    // solo las categorías que tienen insumos
+    let presentes = [];
+    document.querySelectorAll(".item-buscable").forEach(function (item) {
+      if (item.dataset.categoria && !presentes.includes(item.dataset.categoria)) {
+        presentes.push(item.dataset.categoria);
+      }
+    });
+
+    let html = '<button type="button" class="chip-activo" data-categoria="Todas">Todas</button>';
+    for (let i = 0; i < presentes.length; i++) {
+      html += `<button type="button" class="chip" data-categoria="${presentes[i]}">${presentes[i]}</button>`;
+    }
+    cajaFiltros.innerHTML = presentes.length > 1 ? html : "";
+
+    cajaFiltros.addEventListener("click", function (evento) {
+      let boton = evento.target.closest("button[data-categoria]");
+      if (boton === null) {
+        return;
+      }
+      categoriaElegida = boton.dataset.categoria;
+      cajaFiltros.querySelectorAll("button").forEach(function (b) {
+        b.className = b === boton ? "chip-activo" : "chip";
+      });
+      aplicar();
+    });
+  }
 }
 
 // ================== INSUMOS (pantalla principal) ==================
@@ -86,7 +135,7 @@ function mostrarInventario() {
     let estado = bajo ? "bajo stock" : "disponible";
 
     html += `
-      <details class="insumo-desplegable item-buscable"${i === 0 ? " open" : ""}>
+      <details class="insumo-desplegable item-buscable" data-categoria="${textoSeguro(insumo.categoria || "Otro")}" data-codigo="${textoSeguro(insumo.codigo || "")}"${i === 0 ? " open" : ""}>
         <summary>
           <div class="d-flex align-items-center gap-3">
             <span class="punto-insumo punto-insumo--${bajo ? "rojo" : colorDelPunto(i)}"></span>
@@ -101,7 +150,7 @@ function mostrarInventario() {
           </div>
         </summary>
         <div class="descripcion">
-          <p class="titulo-seccion mb-1">Descripción</p>
+          <p class="titulo-seccion mb-1">${textoSeguro(insumo.categoria || "Sin categoría")} • Código ${textoSeguro(insumo.codigo || "----")}</p>
           ${textoSeguro(insumo.descripcion || "Sin descripción.")} Proveedor: ${textoSeguro(insumo.proveedor || "No especifica")}. Cantidad disponible: ${textoSeguro(textoCantidad(insumo))}. Estado: ${estado}.
         </div>
       </details>`;
@@ -121,6 +170,8 @@ function leerFormularioInsumo() {
   let cantidad = Number(document.getElementById("cantidad").value);
   let unidad = document.getElementById("medida").value;
   let precio = Number(document.getElementById("precio").value);
+  let categoria = document.getElementById("categoria").value;
+  let codigo = document.getElementById("codigoBarras").value.trim();
   let pesoUnidad = Number(document.getElementById("pesoUnidad").value);
   let contenidoCantidad = Number(document.getElementById("contenidoCantidad").value);
   let minimo = Number(document.getElementById("minimo").value);
@@ -152,6 +203,16 @@ function leerFormularioInsumo() {
     return null;
   }
 
+  if (categoria === "") {
+    alert("Selecciona la categoría del insumo (fertilizante, semilla, herbicida...)");
+    return null;
+  }
+
+  if (codigo !== "" && !/^[0-9A-Za-z-]{4,20}$/.test(codigo)) {
+    alert("El código de barras solo puede tener números, letras o guiones (entre 4 y 20)");
+    return null;
+  }
+
   if (isNaN(precio) || precio <= 0) {
     alert("Escribe el precio por unidad (sirve para calcular los costos)");
     return null;
@@ -174,7 +235,8 @@ function leerFormularioInsumo() {
 
   return { nombre: nombre, cantidad: cantidad, unidad: unidad, pesoUnidad: MEDIDAS_CON_PESO.includes(unidad) ? pesoUnidad : 0,
     contenido: unidad === "und" ? { cantidad: contenidoCantidad, medida: document.getElementById("contenidoMedida").value } : null,
-    proveedor: document.getElementById("proveedorInsumo").value, precio: precio, minimo: minimo, llegada: llegada, caducidad: caducidad };
+    proveedor: document.getElementById("proveedorInsumo").value, precio: precio,
+    categoria: categoria, codigo: codigo, minimo: minimo, llegada: llegada, caducidad: caducidad };
 }
 
 // Muestra el campo de peso solo para bultos y sacos y propone el peso según el nombre.
@@ -257,9 +319,16 @@ function activarCrearInsumo() {
       return;
     }
 
+    // el código de barras no se puede repetir; si no se escribió, se crea uno
+    if (datos.codigo !== "" && insumoPorCodigo(lista, datos.codigo, null) !== null) {
+      alert("Ese código de barras ya es de " + insumoPorCodigo(lista, datos.codigo, null).nombre + ". Revisa el código.");
+      return;
+    }
+
     datos.id = nuevoId(lista);
-    datos.categoria = datos.nombre.split(" ")[0];
-    datos.codigo = "770" + String(datos.id).padStart(10, "0");
+    if (datos.codigo === "") {
+      datos.codigo = "770" + String(idPropiedadActual()).padStart(3, "0") + String(datos.id).padStart(7, "0");
+    }
     datos.cultivo = selectCultivo.value;
     datos.descripcion = "";
     datos.habilitado = true;
@@ -314,6 +383,14 @@ function activarEditarInsumo() {
   activarPesoAproximado();
   document.getElementById("llegada").value = insumo.llegada;
   document.getElementById("caducidad").value = insumo.caducidad;
+  document.getElementById("codigoBarras").value = insumo.codigo || "";
+
+  // categoría: si era una de antes que no está en la lista, se agrega
+  let categoria = document.getElementById("categoria");
+  categoria.value = insumo.categoria;
+  if (categoria.value !== insumo.categoria && insumo.categoria) {
+    categoria.add(new Option(insumo.categoria, insumo.categoria, true, true));
+  }
 
   formulario.addEventListener("submit", function (evento) {
     evento.preventDefault();
@@ -322,6 +399,28 @@ function activarEditarInsumo() {
 
     if (datos === null) {
       return;
+    }
+
+    if (datos.codigo === "") {
+      datos.codigo = insumo.codigo;
+    }
+
+    if (insumoPorCodigo(lista, datos.codigo, insumo.id) !== null) {
+      alert("Ese código de barras ya es de " + insumoPorCodigo(lista, datos.codigo, insumo.id).nombre + ". Revisa el código.");
+      return;
+    }
+
+    // si cambia el nombre, los usos de este insumo se actualizan (el historial no se pierde)
+    let nombreAntes = insumo.nombre;
+    if (datos.nombre !== nombreAntes) {
+      let usos = obtenerUsosInsumos();
+      for (let i = 0; i < usos.length; i++) {
+        if (usoDelInsumo(usos[i], insumo)) {
+          usos[i].insumo = datos.nombre;
+          usos[i].insumoId = insumo.id;
+        }
+      }
+      guardarLista(CLAVE_USOS, usos);
     }
 
     Object.assign(insumo, datos);
@@ -373,6 +472,23 @@ function activarInhabilitarInsumo() {
     let todos = obtenerInsumos();
     let insumo = buscarPorId(todos, Number(elegido.value));
 
+    // no se inhabilita si está asociado a una siembra activa (cultivo habilitado)
+    let activos = leerLista("cultivos").filter(function (c) { return c.habilitado; }).map(function (c) { return c.nombre; });
+    let siembras = [];
+    obtenerUsosInsumos().forEach(function (u) {
+      if (usoDelInsumo(u, insumo) && activos.includes(u.cultivo) && !siembras.includes(u.cultivo)) {
+        siembras.push(u.cultivo);
+      }
+    });
+    if (insumo.cultivo && activos.includes(insumo.cultivo) && !siembras.includes(insumo.cultivo)) {
+      siembras.push(insumo.cultivo);
+    }
+
+    if (siembras.length > 0) {
+      alert(insumo.nombre + " está asociado a siembras activas (" + siembras.join(", ") + "). Se puede inhabilitar cuando esas siembras terminen.");
+      return;
+    }
+
     if (await preguntar("¿Estás seguro?", "Se va a inhabilitar " + insumo.nombre + ".", "Inhabilitar") === false) {
       return;
     }
@@ -386,9 +502,10 @@ function activarInhabilitarInsumo() {
 
 // ================== MOVIMIENTOS DE STOCK ==================
 // Suma (entrada) o resta (salida) cantidad a un insumo. Devuelve false si no alcanza.
-function moverStock(insumoId, tipo, cantidad, motivo) {
+function moverStock(insumoId, tipo, cantidad, motivo, extra) {
   let lista = obtenerInsumos();
   let insumo = buscarPorId(lista, insumoId);
+  extra = extra || {};
 
   if (tipo === "salida" && cantidad > insumo.cantidad) {
     alert("No hay suficiente " + insumo.nombre + ". Solo quedan " + insumo.cantidad + " " + insumo.unidad);
@@ -396,7 +513,28 @@ function moverStock(insumoId, tipo, cantidad, motivo) {
   }
 
   insumo.cantidad = tipo === "entrada" ? insumo.cantidad + cantidad : insumo.cantidad - cantidad;
+
+  // en una compra, el costo nuevo pasa a ser el precio del insumo
+  if (tipo === "entrada" && extra.costo > 0) {
+    insumo.precio = extra.costo;
+  }
   guardarLista(CLAVE_INSUMOS, lista);
+
+  // queda el movimiento con proveedor, costo y fecha (historial de entradas)
+  let movimientos = obtenerMovimientos();
+  movimientos.unshift({
+    id: nuevoId(movimientos),
+    insumoId: insumo.id,
+    insumo: insumo.nombre,
+    tipo: tipo,
+    cantidad: cantidad,
+    unidad: insumo.unidad,
+    proveedor: extra.proveedor || "",
+    costo: extra.costo || 0,
+    fecha: extra.fecha || fechaDeHoy(0),
+    motivo: motivo || ""
+  });
+  guardarLista(CLAVE_MOVIMIENTOS, movimientos);
 
   let signo = tipo === "entrada" ? "+" : "-";
   registrarEvento("Stock actualizado", insumo.nombre + " " + signo + cantidad + " " + insumo.unidad + (motivo ? " (" + motivo + ")" : ""), "insumos", "bi-arrow-repeat", "success");
@@ -459,6 +597,20 @@ function activarActualizarStock() {
       <button type="button" aria-label="Sumar">+</button>
       <input type="hidden" name="cantidad" value="5">
     </div>
+    <div id="datosEntrada">
+      <label for="proveedorEntrada" class="agro-label">Proveedor</label>
+      <select id="proveedorEntrada" class="agro-select"></select>
+      <div class="row g-2">
+        <div class="col-6">
+          <label for="costoEntrada" class="agro-label">Costo unitario ($)</label>
+          <input type="number" id="costoEntrada" class="agro-input" min="0" step="100" placeholder="Ej. 63000">
+        </div>
+        <div class="col-6">
+          <label for="fechaEntrada" class="agro-label">Fecha de recepción</label>
+          <input type="date" id="fechaEntrada" class="agro-input">
+        </div>
+      </div>
+    </div>
     <label for="motivo" class="agro-label">Motivo</label>
     <input type="text" id="motivo" name="motivo" class="agro-input" placeholder="Ej. Compra a proveedor">
     <button type="submit" class="btn-agro-primary">Actualizar stock</button>`;
@@ -486,6 +638,21 @@ function activarActualizarStock() {
     });
   }
 
+  // datos de la compra (solo para entradas): proveedores registrados, costo y fecha
+  let selectProveedor = document.getElementById("proveedorEntrada");
+  selectProveedor.innerHTML = '<option value="No especifica">No especifica</option>' + obtenerProveedores().map(function (p) {
+    return '<option value="' + textoSeguro(p.nombre) + '">' + textoSeguro(p.nombre) + "</option>";
+  }).join("");
+  document.getElementById("fechaEntrada").value = fechaDeHoy(0);
+  document.getElementById("fechaEntrada").max = fechaDeHoy(0);
+
+  function mostrarDatosEntrada() {
+    let tipoElegido = formulario.querySelector('input[name="movimiento"]:checked').value;
+    document.getElementById("datosEntrada").classList.toggle("d-none", tipoElegido !== "entrada");
+  }
+  formulario.addEventListener("change", mostrarDatosEntrada);
+  mostrarDatosEntrada();
+
   formulario.addEventListener("submit", function (evento) {
     evento.preventDefault();
 
@@ -494,7 +661,21 @@ function activarActualizarStock() {
     let cantidad = Number(formulario.elements["cantidad"].value);
     let motivo = document.getElementById("motivo").value.trim();
 
-    if (moverStock(Number(panel.dataset.id), tipo, cantidad, motivo)) {
+    let extra = {};
+    if (tipo === "entrada") {
+      extra = {
+        proveedor: selectProveedor.value,
+        costo: Number(document.getElementById("costoEntrada").value) || 0,
+        fecha: document.getElementById("fechaEntrada").value || fechaDeHoy(0)
+      };
+
+      if (extra.fecha > fechaDeHoy(0)) {
+        alert("La fecha de recepción no puede ser después de hoy");
+        return;
+      }
+    }
+
+    if (moverStock(Number(panel.dataset.id), tipo, cantidad, motivo, extra)) {
       window.location.href = "insumos.html?mensaje=guardado";
     }
   });
@@ -557,6 +738,7 @@ function activarUsoInsumo() {
     usos.unshift({
       id: nuevoId(usos),
       insumo: nombreInsumo,
+      insumoId: insumo.id,
       cultivo: cultivo,
       cantidad: cantidad,
       unidad: insumo.unidad,
@@ -674,6 +856,60 @@ function activarCamara(campo, alEncontrar) {
   });
 }
 
+// Botón de la cámara junto al campo "Código de barras" (crear y editar insumo)
+function activarLectorDeCodigo() {
+  let boton = document.getElementById("botonEscanearCodigo");
+
+  if (boton === null) {
+    return;
+  }
+
+  boton.addEventListener("click", async function () {
+    let campo = document.getElementById("codigoBarras");
+
+    if (!("BarcodeDetector" in window) || !navigator.mediaDevices) {
+      alert("Tu navegador no puede leer códigos con la cámara (funciona en Chrome para Android). Escribe el código a mano.");
+      campo.focus();
+      return;
+    }
+
+    let fondo = document.createElement("div");
+    fondo.className = "confirmacion-fondo";
+    fondo.innerHTML = '<div class="confirmacion-caja confirmacion-caja--pregunta"><h4 class="confirmacion-titulo">Apunta al código</h4><video playsinline style="width: 100%; border-radius: 12px;"></video><button type="button" class="confirmacion-cancelar mt-3">Cancelar</button></div>';
+    ponerEstilosVentana();
+    document.body.appendChild(fondo);
+
+    let video = fondo.querySelector("video");
+    let camara = null;
+    let revisar = null;
+
+    function cerrar() {
+      clearInterval(revisar);
+      if (camara) camara.getTracks().forEach(function (pista) { pista.stop(); });
+      fondo.remove();
+    }
+
+    fondo.querySelector("button").addEventListener("click", cerrar);
+
+    try {
+      camara = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+      video.srcObject = camara;
+      await video.play();
+      let detector = new BarcodeDetector();
+      revisar = setInterval(async function () {
+        let codigos = await detector.detect(video);
+        if (codigos.length > 0) {
+          campo.value = codigos[0].rawValue;
+          cerrar();
+        }
+      }, 400);
+    } catch (error) {
+      cerrar();
+      alert("No se pudo abrir la cámara. Revisa los permisos o escribe el código a mano.");
+    }
+  });
+}
+
 // ================== CATÁLOGO ==================
 function mostrarCatalogo() {
   if (document.title.indexOf("Catálogo") !== 0) {
@@ -687,7 +923,7 @@ function mostrarCatalogo() {
     let insumo = lista[i];
     let bajo = porAgotarse(insumo);
     html += `
-      <div class="tarjeta p-3 rounded-4 d-flex justify-content-between align-items-center item-buscable">
+      <div class="tarjeta p-3 rounded-4 d-flex justify-content-between align-items-center item-buscable" data-categoria="${textoSeguro(insumo.categoria || "Otro")}" data-codigo="${textoSeguro(insumo.codigo || "")}">
         <div class="d-flex align-items-center gap-3">
           <span class="punto-insumo punto-insumo--${bajo ? "rojo" : colorDelPunto(i)}"></span>
           <div>
@@ -744,7 +980,7 @@ function mostrarCostosPorInsumo() {
     // lo que se usó de este insumo en el mes
     let usado = 0;
     for (let j = 0; j < usos.length; j++) {
-      if (usos[j].insumo === insumo.nombre) {
+      if (usoDelInsumo(usos[j], insumo)) {
         usado += usos[j].cantidad;
       }
     }
@@ -1105,7 +1341,7 @@ function mostrarHistorialInsumos() {
   for (let i = 0; i < insumos.length; i++) {
     let ultimo = null;
     for (let j = 0; j < usos.length; j++) {
-      if (usos[j].insumo === insumos[i].nombre && (ultimo === null || usos[j].fecha > ultimo.fecha)) {
+      if (usoDelInsumo(usos[j], insumos[i]) && (ultimo === null || usos[j].fecha > ultimo.fecha)) {
         ultimo = usos[j];
       }
     }
@@ -1144,7 +1380,7 @@ function mostrarHistorialDeUnInsumo() {
     return;
   }
 
-  let usos = obtenerUsosInsumos().filter(function (u) { return u.insumo === insumo.nombre; });
+  let usos = obtenerUsosInsumos().filter(function (u) { return usoDelInsumo(u, insumo); });
   let meses = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
   let html = "";
 
@@ -1182,3 +1418,4 @@ mostrarHistorialInsumos();
 mostrarHistorialDeUnInsumo();
 activarContadores();
 activarBuscador();
+activarLectorDeCodigo();

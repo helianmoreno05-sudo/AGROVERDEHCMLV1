@@ -46,6 +46,105 @@ function guardarUsuarios(usuarios) {
   localStorage.setItem("usuarios", JSON.stringify(usuarios));
 }
 
+// ================== CONTRASEÑAS CIFRADAS ==================
+// Las contraseñas no se guardan tal cual: se guarda su huella SHA-256 con una "sal"
+// (texto al azar distinto para cada usuario). Para revisar una contraseña se calcula
+// la huella de lo escrito y se compara. Así nadie puede leerla en el navegador.
+
+// SHA-256 escrito en JavaScript (funciona igual en cualquier navegador, aun sin HTTPS)
+function sha256(texto) {
+  function rotar(n, x) { return (x >>> n) | (x << (32 - n)); }
+
+  let k = [];
+  let h = [];
+  let primo = 2;
+  let encontrados = 0;
+
+  // constantes: partes fraccionarias de raíces de los primeros números primos
+  while (encontrados < 64) {
+    let esPrimo = true;
+    for (let d = 2; d * d <= primo; d++) {
+      if (primo % d === 0) { esPrimo = false; break; }
+    }
+    if (esPrimo) {
+      if (encontrados < 8) h[encontrados] = (Math.pow(primo, 1 / 2) * 4294967296) | 0;
+      k[encontrados] = (Math.pow(primo, 1 / 3) * 4294967296) | 0;
+      encontrados++;
+    }
+    primo++;
+  }
+
+  let bytes = unescape(encodeURIComponent(texto));
+  let palabras = [];
+  let largoBits = bytes.length * 8;
+
+  for (let i = 0; i < bytes.length; i++) {
+    palabras[i >> 2] |= bytes.charCodeAt(i) << ((3 - i) % 4) * 8;
+  }
+  palabras[largoBits >> 5] |= 0x80 << (24 - largoBits % 32);
+  palabras[((largoBits + 64 >> 9) << 4) + 15] = largoBits;
+
+  for (let j = 0; j < palabras.length; j += 16) {
+    let w = [];
+    let a = h.slice(0);
+
+    for (let i = 0; i < 64; i++) {
+      if (i < 16) {
+        w[i] = palabras[j + i] | 0;
+      } else {
+        let s0 = rotar(7, w[i - 15]) ^ rotar(18, w[i - 15]) ^ (w[i - 15] >>> 3);
+        let s1 = rotar(17, w[i - 2]) ^ rotar(19, w[i - 2]) ^ (w[i - 2] >>> 10);
+        w[i] = (w[i - 16] + s0 + w[i - 7] + s1) | 0;
+      }
+
+      let t1 = a[7] + (rotar(6, a[4]) ^ rotar(11, a[4]) ^ rotar(25, a[4])) + ((a[4] & a[5]) ^ (~a[4] & a[6])) + k[i] + w[i];
+      let t2 = (rotar(2, a[0]) ^ rotar(13, a[0]) ^ rotar(22, a[0])) + ((a[0] & a[1]) ^ (a[0] & a[2]) ^ (a[1] & a[2]));
+      a = [(t1 + t2) | 0].concat(a);
+      a[4] = (a[4] + t1) | 0;
+      a.pop();
+    }
+
+    for (let i = 0; i < 8; i++) {
+      h[i] = (h[i] + a[i]) | 0;
+    }
+  }
+
+  let resultado = "";
+  for (let i = 0; i < 8; i++) {
+    for (let b = 3; b >= 0; b--) {
+      resultado += ((h[i] >>> (b * 8)) & 255).toString(16).padStart(2, "0");
+    }
+  }
+  return resultado;
+}
+
+// Sal al azar para un usuario nuevo
+function crearSal() {
+  let letras = "abcdefghijklmnopqrstuvwxyz0123456789";
+  let sal = "";
+  for (let i = 0; i < 16; i++) {
+    sal += letras.charAt(Math.floor(Math.random() * letras.length));
+  }
+  return sal;
+}
+
+// Pone la contraseña cifrada en el usuario (y borra la que estuviera sin cifrar)
+function ponerContrasena(usuario, contrasena) {
+  usuario.sal = crearSal();
+  usuario.contrasenaHash = sha256(usuario.sal + contrasena);
+  delete usuario.contrasena;
+}
+
+// ¿La contraseña escrita es la del usuario?
+function contrasenaCorrecta(usuario, contrasena) {
+  if (usuario.contrasenaHash) {
+    return sha256(usuario.sal + contrasena) === usuario.contrasenaHash;
+  }
+
+  // cuentas de antes (contraseña sin cifrar): se comparan y luego se cifran al entrar
+  return usuario.contrasena === contrasena;
+}
+
 // Busca un usuario por su correo. Si no existe devuelve null.
 function buscarUsuario(correo) {
   let usuarios = obtenerUsuarios();

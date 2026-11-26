@@ -62,7 +62,7 @@ async function obtenerClima() {
     "&current=temperature_2m,relative_humidity_2m,weather_code" +
     "&hourly=temperature_2m,weather_code" +
     "&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,relative_humidity_2m_mean" +
-    "&past_days=7&forecast_days=6&timezone=America%2FBogota";
+    "&past_days=31&forecast_days=6&timezone=America%2FBogota";
 
   try {
     let respuesta = await fetch(direccion);
@@ -331,9 +331,52 @@ function avisoSinCoordenadas() {
   encabezado.after(aviso);
 }
 
+// ================== PLAGAS POR TEMPORADA Y TIPO DE CULTIVO ==================
+// En lluvias se favorecen hongos y bacterias; en tiempo seco, insectos y ácaros.
+const PLAGAS_DE_TEMPORADA = { lluviosa: ["Hongo", "Bacteria"], seca: ["Insecto", "Ácaro"] };
+
+function mostrarPlagasDeTemporada() {
+  let caja = document.getElementById("listaPlagasTemporada");
+
+  if (caja === null || typeof catalogo === "undefined" || typeof guiaDelCultivo !== "function") {
+    return;
+  }
+
+  let temporada = temporadaActual();
+  let favorecidas = PLAGAS_DE_TEMPORADA[temporada];
+  let cultivos = leerLista("cultivos").filter(function (c) { return c.habilitado; });
+  let html = "";
+
+  document.getElementById("tituloPlagasTemporada").textContent = "Plagas a vigilar en " + NOMBRES_TEMPORADA[temporada].toLowerCase();
+
+  for (let i = 0; i < cultivos.length; i++) {
+    let guia = guiaDelCultivo(cultivos[i]);
+
+    // plagas del cultivo (según la guía y el catálogo) que la temporada favorece
+    let plagas = catalogo.filter(function (p) {
+      let delCultivo = guia.plagas.includes(p.nombre) || textoSinTildes(p.cultivo).includes(textoSinTildes(guia.nombre));
+      return delCultivo && favorecidas.includes(p.tipo);
+    });
+
+    for (let j = 0; j < plagas.length; j++) {
+      let color = plagas[j].riesgo === "Alto" ? "rojo" : plagas[j].riesgo === "Medio" ? "amarillo" : "verde";
+      html += filaClima(color, textoSeguro(plagas[j].nombre) + " • " + textoSeguro(cultivos[i].nombre),
+        plagas[j].tipo + " favorecido por la " + NOMBRES_TEMPORADA[temporada].toLowerCase() + ". " + textoSeguro(plagas[j].control),
+        `<span class="${color === "rojo" ? "text-danger" : color === "amarillo" ? "text-warning" : "text-success"} fw-semibold small text-nowrap">Riesgo ${plagas[j].riesgo.toLowerCase()}</span>`);
+
+      if (alertaActiva("alertaPlagas")) {
+        crearNotificacion("Plaga de temporada", "Vigila " + plagas[j].nombre + " en " + cultivos[i].nombre + " (" + NOMBRES_TEMPORADA[temporada].toLowerCase() + ")", "temporada_" + idPropiedadActual() + "_" + cultivos[i].id + "_" + plagas[j].nombre + "_" + temporada);
+      }
+    }
+  }
+
+  caja.innerHTML = html || '<p class="texto_gris small">' + (cultivos.length === 0 ? "Registra cultivos para ver qué plagas vigilar en esta temporada." : "Ninguno de tus cultivos tiene plagas favorecidas por esta temporada.") + "</p>";
+}
+
 // ================== ARRANQUE ==================
 async function iniciarClima() {
   activarCalendario();
+  mostrarPlagasDeTemporada();
 
   let necesitaClima = document.getElementById("climaTemp") || document.getElementById("listaRiesgos") ||
     document.getElementById("listaTemporadas") || document.getElementById("listaHistorialClima");
@@ -378,16 +421,129 @@ async function iniciarClima() {
   // historial: los 7 días anteriores a hoy, del más reciente al más viejo
   let historial = document.getElementById("listaHistorialClima");
   if (historial !== null) {
-    let hoy = posicionDeHoy(clima);
-    let html = "";
-    for (let i = hoy - 1; i >= 0; i--) {
-      let fecha = new Date(clima.daily.time[i] + "T00:00:00");
-      let lluvia = clima.daily.precipitation_sum[i];
-      let detalle = describirClima(clima.daily.weather_code[i]).texto + " • " + (lluvia > 0 ? "Lluvia " + lluvia + "mm" : "Sin lluvia");
-      html += filaClima(lluvia > 10 ? "azul" : "verde", fecha.getDate() + " " + MESES[fecha.getMonth()].slice(0, 3) + " " + fecha.getFullYear(), detalle, `<span class="fw-bold">${Math.round(clima.daily.temperature_2m_max[i])}°C</span>`);
-    }
-    historial.innerHTML = html;
+    activarGraficasClima(clima);
   }
+}
+
+// ================== GRÁFICAS DE TENDENCIA ==================
+// Dibuja con SVG (sin librerías) la temperatura, la humedad y la lluvia de los últimos días
+const ANCHO_GRAFICA = 600;
+const ALTO_GRAFICA = 180;
+
+// Gráfica de líneas. series: [{ valores, color }]
+function graficaDeLineas(fechas, series, unidad) {
+  let todos = [];
+  series.forEach(function (s) { todos = todos.concat(s.valores.filter(function (v) { return v !== null; })); });
+  let minimo = Math.floor(Math.min.apply(null, todos)) - 1;
+  let maximo = Math.ceil(Math.max.apply(null, todos)) + 1;
+  let x = function (i) { return 40 + i * (ANCHO_GRAFICA - 50) / Math.max(1, fechas.length - 1); };
+  let y = function (v) { return 10 + (maximo - v) * (ALTO_GRAFICA - 40) / Math.max(1, maximo - minimo); };
+
+  let svg = '<svg viewBox="0 0 ' + ANCHO_GRAFICA + " " + ALTO_GRAFICA + '" width="100%" role="img" aria-label="Gráfica">';
+
+  // líneas guía con su valor
+  for (let k = 0; k <= 3; k++) {
+    let valor = minimo + (maximo - minimo) * k / 3;
+    svg += '<line x1="40" x2="' + (ANCHO_GRAFICA - 10) + '" y1="' + y(valor) + '" y2="' + y(valor) + '" stroke="rgba(255,255,255,0.1)"/>';
+    svg += '<text x="34" y="' + (y(valor) + 4) + '" fill="#9ca3af" font-size="11" text-anchor="end">' + Math.round(valor) + unidad + "</text>";
+  }
+
+  // fechas abajo (algunas, para que no se amontonen)
+  let paso = Math.ceil(fechas.length / 7);
+  for (let i = 0; i < fechas.length; i += paso) {
+    svg += '<text x="' + x(i) + '" y="' + (ALTO_GRAFICA - 8) + '" fill="#9ca3af" font-size="11" text-anchor="middle">' + fechas[i] + "</text>";
+  }
+
+  series.forEach(function (s) {
+    let puntos = s.valores.map(function (v, i) { return v === null ? null : x(i) + "," + y(v); }).filter(Boolean).join(" ");
+    svg += '<polyline points="' + puntos + '" fill="none" stroke="' + s.color + '" stroke-width="2.5" stroke-linejoin="round"/>';
+    s.valores.forEach(function (v, i) {
+      if (v !== null) {
+        svg += '<circle cx="' + x(i) + '" cy="' + y(v) + '" r="3" fill="' + s.color + '"><title>' + fechas[i] + ": " + v + unidad + "</title></circle>";
+      }
+    });
+  });
+
+  return svg + "</svg>";
+}
+
+// Gráfica de barras (lluvia)
+function graficaDeBarras(fechas, valores, color) {
+  let maximo = Math.max.apply(null, valores.concat([5]));
+  let ancho = (ANCHO_GRAFICA - 50) / fechas.length;
+  let svg = '<svg viewBox="0 0 ' + ANCHO_GRAFICA + " " + ALTO_GRAFICA + '" width="100%" role="img" aria-label="Lluvia por día">';
+
+  for (let k = 0; k <= 3; k++) {
+    let valor = maximo * k / 3;
+    let yv = ALTO_GRAFICA - 30 - (valor / maximo) * (ALTO_GRAFICA - 40);
+    svg += '<line x1="40" x2="' + (ANCHO_GRAFICA - 10) + '" y1="' + yv + '" y2="' + yv + '" stroke="rgba(255,255,255,0.1)"/>';
+    svg += '<text x="34" y="' + (yv + 4) + '" fill="#9ca3af" font-size="11" text-anchor="end">' + Math.round(valor) + "</text>";
+  }
+
+  let paso = Math.ceil(fechas.length / 7);
+  for (let i = 0; i < fechas.length; i++) {
+    let alto = (valores[i] / maximo) * (ALTO_GRAFICA - 40);
+    let xb = 40 + i * ancho + ancho * 0.15;
+    svg += '<rect x="' + xb + '" y="' + (ALTO_GRAFICA - 30 - alto) + '" width="' + (ancho * 0.7) + '" height="' + alto + '" rx="2" fill="' + color + '"><title>' + fechas[i] + ": " + valores[i] + " mm</title></rect>";
+    if (i % paso === 0) {
+      svg += '<text x="' + (xb + ancho * 0.35) + '" y="' + (ALTO_GRAFICA - 8) + '" fill="#9ca3af" font-size="11" text-anchor="middle">' + fechas[i] + "</text>";
+    }
+  }
+
+  return svg + "</svg>";
+}
+
+function activarGraficasClima(clima) {
+  let botones = document.querySelectorAll("#rangoClima button");
+
+  function dibujar(dias) {
+    let hoy = posicionDeHoy(clima);
+    let desde = Math.max(0, hoy - dias);
+    let indices = [];
+    for (let i = desde; i < hoy; i++) {
+      indices.push(i);
+    }
+
+    let fechas = indices.map(function (i) {
+      let f = new Date(clima.daily.time[i] + "T00:00:00");
+      return f.getDate() + "/" + (f.getMonth() + 1);
+    });
+    let tomar = function (lista) { return indices.map(function (i) { return lista[i] === null ? null : Math.round(lista[i] * 10) / 10; }); };
+    let lluvia = tomar(clima.daily.precipitation_sum).map(function (v) { return v || 0; });
+
+    document.getElementById("graficaTemperatura").innerHTML = graficaDeLineas(fechas, [
+      { valores: tomar(clima.daily.temperature_2m_max), color: "#f97316" },
+      { valores: tomar(clima.daily.temperature_2m_min), color: "#38bdf8" }
+    ], "°");
+    document.getElementById("graficaHumedad").innerHTML = graficaDeLineas(fechas, [{ valores: tomar(clima.daily.relative_humidity_2m_mean), color: "#22c55e" }], "%");
+    document.getElementById("graficaLluvia").innerHTML = graficaDeBarras(fechas, lluvia, "#38bdf8");
+
+    let total = Math.round(lluvia.reduce(function (a, b) { return a + b; }, 0));
+    let conLluvia = lluvia.filter(function (v) { return v > 0; }).length;
+    document.getElementById("resumenLluvia").textContent = "Total: " + total + " mm en los últimos " + dias + " días • llovió " + conLluvia + " día(s)";
+
+    // la lista de días también sigue el rango elegido (del más reciente al más viejo)
+    let html = "";
+    for (let i = hoy - 1; i >= desde; i--) {
+      let fecha = new Date(clima.daily.time[i] + "T00:00:00");
+      let mm = clima.daily.precipitation_sum[i];
+      let detalle = describirClima(clima.daily.weather_code[i]).texto + " • " + (mm > 0 ? "Lluvia " + mm + "mm" : "Sin lluvia");
+      html += filaClima(mm > 10 ? "azul" : "verde", fecha.getDate() + " " + MESES[fecha.getMonth()].slice(0, 3) + " " + fecha.getFullYear(), detalle, '<span class="fw-bold">' + Math.round(clima.daily.temperature_2m_max[i]) + "°C</span>");
+    }
+    document.getElementById("listaHistorialClima").innerHTML = html;
+  }
+
+  for (let i = 0; i < botones.length; i++) {
+    botones[i].addEventListener("click", function () {
+      for (let j = 0; j < botones.length; j++) {
+        botones[j].className = "chip";
+      }
+      botones[i].className = "chip-activo";
+      dibujar(Number(botones[i].dataset.dias));
+    });
+  }
+
+  dibujar(7);
 }
 
 iniciarClima();

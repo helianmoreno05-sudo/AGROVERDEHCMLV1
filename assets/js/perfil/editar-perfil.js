@@ -52,7 +52,7 @@ function activarEditarPerfil() {
 
     // la contraseña solo se cambia si se escribió una nueva
     if (nueva !== "" || actual !== "") {
-      if (actual !== usuario.contrasena) {
+      if (contrasenaCorrecta(usuario, actual) === false) {
         alert("La contraseña actual no es correcta");
         return;
       }
@@ -74,7 +74,7 @@ function activarEditarPerfil() {
         usuarios[i].nombre = nombre;
         usuarios[i].correo = correo;
         if (nueva !== "") {
-          usuarios[i].contrasena = nueva;
+          ponerContrasena(usuarios[i], nueva);
         }
       }
     }

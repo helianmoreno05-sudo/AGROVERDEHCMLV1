@@ -69,6 +69,7 @@
                         <option value="germinacion">Germinación</option>
                         <option value="crecimiento">Crecimiento</option>
                         <option value="floracion" selected>Floración</option>
+                        <option value="fructificacion">Fructificación</option>
                         <option value="maduracion">Maduración</option>
                     </select>
                 </div>
@@ -82,6 +83,21 @@
                     <div class="col-6">
                         <label for="editArea" class="agro-label">Área sembrada (ha)</label>
                         <input type="number" step="0.1" id="editArea" name="area" class="agro-input mb-0" value="2.5">
+                    </div>
+                </div>
+
+                <div class="row g-2 mb-3">
+                    <div class="col-6">
+                        <label for="editFechaCosecha" class="agro-label">Fecha estimada de cosecha</label>
+                        <input type="date" id="editFechaCosecha" name="fechaCosecha" class="agro-input mb-0">
+                    </div>
+                    <div class="col-6">
+                        <label for="editTemporada" class="agro-label">Temporada de siembra</label>
+                        <select id="editTemporada" name="temporada" class="agro-select mb-0">
+                            <option value="lluviosa">Lluviosa</option>
+                            <option value="seca">Seca</option>
+                            <option value="todo">Todo el año</option>
+                        </select>
                     </div>
                 </div>
 
@@ -165,6 +181,8 @@
     <script src="../../assets/js/comun.js"></script>
     <script src="../../assets/js/permisos.js"></script>
     <script src="../../assets/js/terreno/terreno.js"></script>
+    <script src="../../assets/js/cultivos/guia-cultivos.js"></script>
+    <script src="../../assets/js/plagas/datos-plagas.js"></script>
     <script src="../../assets/js/cultivos/cultivos.js"></script>
   <script src="../../assets/js/conexion.js"></script>
   <script src="../../assets/js/logo.js"></script>

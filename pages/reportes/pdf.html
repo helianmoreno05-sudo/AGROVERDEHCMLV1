@@ -30,14 +30,20 @@
                     <span class="text-muted" style="font-size: 0.7rem;" id="pdfFecha">15 Ago 2026</span>
                 </div>
                 <h6 id="pdfTitulo">Comportamiento del cultivo en condiciones naturales</h6>
-                <p class="mb-0" id="pdfTexto"></p>
+                <p id="pdfTexto"></p>
+
+                <!-- Resumen de la propiedad al día del reporte (lo llena reportes.js) -->
+                <div id="pdfResumen"></div>
             </article>
 
-            <button type="button" class="btn-agro-primary" onclick="window.print()">Exportar PDF</button>
+            <button type="button" class="btn-agro-primary no-imprimir" onclick="window.print()"><i class="bi bi-file-earmark-pdf me-1"></i> Exportar PDF</button>
+            <p class="small texto_gris mt-2 no-imprimir">Se abre la ventana de impresión: en "Destino" elige <strong>Guardar como PDF</strong>.</p>
         </div>
     </main>
     <script src="../../assets/js/comun.js"></script>
     <script src="../../assets/js/permisos.js"></script>
+    <script src="../../assets/js/insumos/datos-insumos.js"></script>
+    <script src="../../assets/js/plagas/datos-plagas.js"></script>
     <script src="../../assets/js/reportes/reportes.js"></script>
   <script src="../../assets/js/conexion.js"></script>
   <script src="../../assets/js/logo.js"></script>

@@ -81,3 +81,12 @@ if (alertaActiva("alertaPlagas")) {
 }
 
 mostrar_plagas();
+
+// buscador: esconde las tarjetas que no coinciden con lo escrito
+const buscador_plagas = document.getElementById("buscador_plagas");
+buscador_plagas.addEventListener("input", function () {
+    const texto = buscador_plagas.value.trim().toLowerCase();
+    lista_plagas.querySelectorAll(".col-12").forEach(function (tarjeta) {
+        tarjeta.classList.toggle("d-none", !tarjeta.textContent.toLowerCase().includes(texto));
+    });
+});

@@ -30,6 +30,7 @@
 
             <!-- Botón Editar hacia editar-cultivo.html -->
             <div class="d-flex justify-content-end mb-3">
+                <button type="button" class="btn-agro-sm me-2 no-imprimir" id="botonPdfCultivo"><i class="bi bi-file-earmark-pdf me-1"></i> Exportar PDF</button>
                 <a href="editar-cultivo.html" class="btn-agro-sm" id="enlaceEditar">
                     <i class="bi bi-pencil-square me-1"></i> Editar
                 </a>
@@ -112,6 +113,9 @@
 
             </section>
 
+            <!-- Guía del cultivo: cosecha, abono, riego, fertilización, cuidados y plagas (la llena cultivos.js) -->
+            <section class="card tarjeta-cultivo mb-4" id="guiaCultivo"></section>
+
         </div>
     </main>
 
@@ -127,6 +131,8 @@
     <script src="../../assets/vendor/bootstrap/bootstrap.bundle.min.js"></script>
     <script src="../../assets/js/comun.js"></script>
     <script src="../../assets/js/permisos.js"></script>
+    <script src="../../assets/js/cultivos/guia-cultivos.js"></script>
+    <script src="../../assets/js/plagas/datos-plagas.js"></script>
     <script src="../../assets/js/cultivos/cultivos.js"></script>
   <script src="../../assets/js/conexion.js"></script>
   <script src="../../assets/js/logo.js"></script>

@@ -51,8 +51,52 @@ function todosLosProveedores() {
   return obtenerLista(CLAVE_PROVEEDORES, proveedoresDeEjemplo());
 }
 
+// Cada uso guarda el id del insumo (insumoId). Los usos viejos solo tenían el nombre:
+// se les pone el id buscando por nombre, así cambiar el nombre no borra el historial.
 function obtenerUsosInsumos() {
-  return obtenerLista(CLAVE_USOS, usosDeEjemplo());
+  let usos = obtenerLista(CLAVE_USOS, usosDeEjemplo());
+  let insumos = obtenerInsumos();
+  let cambio = false;
+
+  for (let i = 0; i < usos.length; i++) {
+    if (usos[i].insumoId === undefined) {
+      let insumo = insumoPorNombre(insumos, usos[i].insumo);
+      usos[i].insumoId = insumo !== null ? insumo.id : null;
+      cambio = true;
+    }
+  }
+
+  if (cambio) {
+    guardarLista(CLAVE_USOS, usos);
+  }
+
+  return usos;
+}
+
+// ¿Este uso es de este insumo? (por id; si no tiene id, por nombre)
+function usoDelInsumo(uso, insumo) {
+  return uso.insumoId !== undefined && uso.insumoId !== null ? uso.insumoId === insumo.id : uso.insumo === insumo.nombre;
+}
+
+// Categorías de insumos (se eligen al crear y sirven para filtrar)
+const CATEGORIAS_INSUMO = ["Fertilizante", "Abono orgánico", "Herbicida", "Fungicida", "Insecticida", "Semilla", "Herramienta", "Otro"];
+
+// Entradas de stock (compras a proveedores y ajustes)
+const CLAVE_MOVIMIENTOS = "movimientosInsumos";
+
+function obtenerMovimientos() {
+  return obtenerLista(CLAVE_MOVIMIENTOS, []);
+}
+
+// Busca un insumo por su código de barras (null si no hay)
+function insumoPorCodigo(lista, codigo, idQueNoCuenta) {
+  for (let i = 0; i < lista.length; i++) {
+    if (lista[i].codigo === codigo && lista[i].id !== idQueNoCuenta) {
+      return lista[i];
+    }
+  }
+
+  return null;
 }
 
 // Busca un insumo por su nombre (los usos guardan el nombre)

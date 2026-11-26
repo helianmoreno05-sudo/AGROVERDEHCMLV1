@@ -55,6 +55,24 @@
         <input type="date" id="fecha" name="fecha" class="form-control campo" required>
       </div>
 
+      <!-- Fecha estimada de cosecha -->
+      <div class="mb-3">
+        <label for="fechaCosecha" class="form-label">Fecha estimada de cosecha</label>
+        <input type="date" id="fechaCosecha" name="fechaCosecha" class="form-control campo">
+        <small class="texto_gris" id="ayudaCosecha">Se calcula sola con el tipo de cultivo y la fecha de siembra; puedes cambiarla.</small>
+      </div>
+
+      <!-- Temporada -->
+      <div class="mb-3">
+        <label for="temporada" class="form-label">Temporada de siembra</label>
+        <select id="temporada" name="temporada" class="form-select campo">
+          <option value="lluviosa">Temporada lluviosa</option>
+          <option value="seca">Temporada seca</option>
+          <option value="todo">Todo el año</option>
+        </select>
+      </div>
+
+
       <!-- Área -->
       <div class="mb-3">
         <label for="area" class="form-label">Área sembrada (ha)</label>
@@ -85,31 +103,10 @@
         </details>
       </div>
 
-      <!-- Cultivos recomendados -->
-      <p class="form-label mb-2">Cultivos recomendados</p>
-      <div class="row g-2 mb-3">
-        <div class="col-4">
-          <div class="card-reco">
-            <span class="punto"></span>
-            <strong class="nombre-reco">Maíz</strong>
-            <small class="compat">94% compatibilidad</small>
-          </div>
-        </div>
-        <div class="col-4">
-          <div class="card-reco">
-            <span class="punto"></span>
-            <strong class="nombre-reco">Fríjol</strong>
-            <small class="compat">89% compatibilidad</small>
-          </div>
-        </div>
-        <div class="col-4">
-          <div class="card-reco">
-            <span class="punto"></span>
-            <strong class="nombre-reco">Papa</strong>
-            <small class="compat">85% compatibilidad</small>
-          </div>
-        </div>
-      </div>
+      <!-- Cultivos recomendados para la temporada actual (los pone cultivos.js) -->
+      <p class="form-label mb-1">Recomendados para sembrar ahora</p>
+      <p class="small texto_gris mb-2" id="textoTemporada"></p>
+      <div class="row g-2 mb-3" id="recomendados"></div>
 
       <!-- Notas -->
       <div class="mb-4">
@@ -128,6 +125,8 @@
     <script src="../../assets/js/comun.js"></script>
     <script src="../../assets/js/permisos.js"></script>
     <script src="../../assets/js/terreno/terreno.js"></script>
+    <script src="../../assets/js/cultivos/guia-cultivos.js"></script>
+    <script src="../../assets/js/plagas/datos-plagas.js"></script>
     <script src="../../assets/js/cultivos/cultivos.js"></script>
   <script src="../../assets/js/conexion.js"></script>
   <script src="../../assets/js/logo.js"></script>

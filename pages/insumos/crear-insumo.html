@@ -28,6 +28,24 @@
                 <input type="hidden" name="mensaje" value="guardado">
                 <label for="nombre" class="agro-label">Nombre del insumo</label>
                 <input type="text" id="nombre" name="nombre" class="agro-input" placeholder="Ej. fertilizante">
+                <label for="categoria" class="agro-label">Categoría</label>
+                <select id="categoria" name="categoria" class="agro-select">
+                    <option value="" selected disabled>Seleccionar categoría</option>
+                    <option value="Fertilizante">Fertilizante</option>
+                    <option value="Abono orgánico">Abono orgánico</option>
+                    <option value="Herbicida">Herbicida</option>
+                    <option value="Fungicida">Fungicida</option>
+                    <option value="Insecticida">Insecticida</option>
+                    <option value="Semilla">Semilla</option>
+                    <option value="Herramienta">Herramienta</option>
+                    <option value="Otro">Otro</option>
+                </select>
+
+                <label for="codigoBarras" class="agro-label">Código de barras (opcional)</label>
+                <div class="d-flex gap-2">
+                    <input type="text" id="codigoBarras" name="codigoBarras" class="agro-input" inputmode="numeric" placeholder="Si lo dejas vacío se crea uno">
+                    <button type="button" id="botonEscanearCodigo" class="btn-agro-outline mb-3" style="width: auto;" title="Leer con la cámara"><i class="bi bi-upc-scan"></i></button>
+                </div>
                 <label for="cantidad" class="agro-label">Cantidad insumo</label>
                 <input type="number" id="cantidad" name="cantidad" class="agro-input" placeholder="Ej. 5">
                 <label for="medida" class="agro-label">Medida del insumo</label>

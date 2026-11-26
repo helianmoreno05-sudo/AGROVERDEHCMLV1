@@ -21,6 +21,37 @@
             </div>
         </header>
 
+        <!-- Gráficas de tendencia (las dibuja clima.js) -->
+        <div class="d-flex gap-2 mb-3" id="rangoClima">
+            <button type="button" class="chip-activo" data-dias="7">7 días</button>
+            <button type="button" class="chip" data-dias="14">14 días</button>
+            <button type="button" class="chip" data-dias="30">30 días</button>
+        </div>
+        <div class="row g-3 mb-4">
+            <div class="col-12 col-lg-6">
+                <div class="tarjeta p-3 rounded-4">
+                    <p class="small fw-semibold mb-1">Temperatura (°C)</p>
+                    <p class="small texto_gris mb-2"><span style="color: #f97316;">● máxima</span> &nbsp; <span style="color: #38bdf8;">● mínima</span></p>
+                    <div id="graficaTemperatura"></div>
+                </div>
+            </div>
+            <div class="col-12 col-lg-6">
+                <div class="tarjeta p-3 rounded-4">
+                    <p class="small fw-semibold mb-1">Humedad promedio (%)</p>
+                    <p class="small texto_gris mb-2"><span style="color: #22c55e;">● humedad</span></p>
+                    <div id="graficaHumedad"></div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="tarjeta p-3 rounded-4">
+                    <p class="small fw-semibold mb-1">Lluvia (mm por día)</p>
+                    <p class="small texto_gris mb-2" id="resumenLluvia"></p>
+                    <div id="graficaLluvia"></div>
+                </div>
+            </div>
+        </div>
+
+        <p class="texto_gris small fw-semibold mb-2">Día por día</p>
         <div class="d-flex flex-column gap-2" id="listaHistorialClima">
             <div class="tarjeta p-3 rounded-4 d-flex justify-content-between align-items-center">
                 <div class="d-flex align-items-center gap-3">

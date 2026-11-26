@@ -156,6 +156,7 @@ function leerTerreno(formulario, ids) {
     ubicacion: document.getElementById(ids.ubicacion).value.trim(),
     area: area,
     suelo: suelo,
+    usoAnterior: document.getElementById(ids.usoAnterior).value.trim(),
     zona: document.getElementById(ids.zona).value,
     fuente: formulario.querySelector('input[name="fuenteHidrica"]:checked').value,
     caudal: Number(document.getElementById(ids.caudal).value)
@@ -169,7 +170,7 @@ function activarNuevoTerreno() {
     return;
   }
 
-  let ids = { nombre: "nombreTerreno", ubicacion: "ubicacionTerreno", area: "areaTerreno", suelo: "tipoSuelo", caudal: "caudalEstimado", zona: "zonaTerreno" };
+  let ids = { nombre: "nombreTerreno", ubicacion: "ubicacionTerreno", area: "areaTerreno", suelo: "tipoSuelo", caudal: "caudalEstimado", zona: "zonaTerreno", usoAnterior: "usoAnterior" };
   activarUbicacion(ids.ubicacion);
   activarAsociarFuente(formulario, ids.caudal);
 
@@ -215,7 +216,7 @@ function activarEditarTerreno() {
     window.location.href = "terreno.html";
     return;
   }
-  let ids = { nombre: "nombreTerrenoEdit", ubicacion: "ubicacionTerrenoEdit", area: "areaTerrenoEdit", suelo: "tipoSueloEdit", caudal: "caudalEstimadoEdit", zona: "zonaTerrenoEdit" };
+  let ids = { nombre: "nombreTerrenoEdit", ubicacion: "ubicacionTerrenoEdit", area: "areaTerrenoEdit", suelo: "tipoSueloEdit", caudal: "caudalEstimadoEdit", zona: "zonaTerrenoEdit", usoAnterior: "usoAnteriorEdit" };
 
   // llenamos el formulario con lo guardado
   document.getElementById(ids.nombre).value = terreno.nombre;
@@ -224,6 +225,14 @@ function activarEditarTerreno() {
   document.getElementById(ids.suelo).value = terreno.suelo;
   document.getElementById(ids.caudal).value = terreno.caudal;
   document.getElementById(ids.zona).value = terreno.zona;
+  document.getElementById(ids.usoAnterior).value = terreno.usoAnterior || "";
+
+  // cultivos que ya tuvo este terreno (se anotan solos)
+  let anteriores = terreno.cultivosAnteriores || [];
+  document.getElementById("cultivosAnteriores").innerHTML = anteriores.length === 0 ? "" :
+    '<p class="agro-label mb-1">Cultivos que tuvo este terreno</p>' + anteriores.map(function (c) {
+      return '<div class="tarjeta p-2 px-3 rounded-3 mb-1 small"><strong>' + textoSeguro(c.cultivo) + "</strong> <span class=\"texto_gris\">• " + fechaBonita(c.desde) + " a " + fechaBonita(c.hasta) + "</span></div>";
+    }).join("");
   formulario.querySelector('input[name="fuenteHidrica"][value="' + terreno.fuente + '"]').checked = true;
 
   activarUbicacion(ids.ubicacion);

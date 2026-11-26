@@ -42,9 +42,11 @@ formulario.addEventListener("submit", function (evento) {
   let usuarioNuevo = {
     nombre: nombre,
     correo: correo,
-    contrasena: contrasena,
     rol: rol
   };
+
+  // la contraseña se guarda cifrada, nunca tal cual
+  ponerContrasena(usuarioNuevo, contrasena);
 
   usuarios.push(usuarioNuevo);
   guardarUsuarios(usuarios);

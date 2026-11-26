@@ -20,7 +20,7 @@
         <header class="app-header encabezado-insumos">
             <a href="../inicio/inicio.html" class="btn-back" aria-label="Volver"><i class="bi bi-arrow-left"></i></a>
             <h3 class="m-0 fw-bold">Insumos</h3>
-            <input type="search" id="buscador" class="agro-input buscador-insumos" placeholder="Buscar insumo">
+            <input type="search" id="buscador" class="agro-input buscador-insumos" placeholder="Buscar por nombre, categoría o código">
             <a href="crear-insumo.html" class="btn-agro-sm">+ Nuevo</a>
         </header>
 
@@ -49,6 +49,7 @@
                 <h5 class="fw-bold m-0">Inventario</h5>
                 <a href="consultar-catalogo.html" class="link-editar">Ver catálogo</a>
             </div>
+            <div class="d-flex gap-2 mb-2 overflow-auto pb-1" id="filtroCategorias"></div>
             <div id="listaPrincipal" class="lista-insumos d-flex flex-column gap-2 mb-3">
                 <details class="insumo-desplegable item-buscable" open>
                     <summary>

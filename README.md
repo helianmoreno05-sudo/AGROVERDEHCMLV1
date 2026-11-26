@@ -50,7 +50,6 @@ Estos módulos ya están desarrollados y estandarizados en HTML y CSS. Cada uno 
 - Inhabilitar cultivo (`inhabilitar-cultivo.html`)
 - Fase fenológica (`fase-fenologica.html`)
 - Día de cosecha estimado (`dia-cosecha.html`)
-- Comparar cultivos (`comparar-cultivo.html`)
 
 ### Plagas
 

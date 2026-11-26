@@ -545,3 +545,85 @@ header h1 {
     white-space: normal;
     overflow-wrap: anywhere;
 }
+
+
+/*IMPRESIÓN / EXPORTAR A PDF
+  Al imprimir (o "Guardar como PDF") la página sale en blanco y negro, sin menús ni botones*/
+@media print {
+    body,
+    .pantalla,
+    main {
+        background: #ffffff !important;
+        color: #000000 !important;
+        padding-bottom: 0 !important;
+    }
+
+    .pantalla *,
+    main * {
+        color: #000000 !important;
+        background-color: transparent !important;
+        box-shadow: none !important;
+        border-color: #bbbbbb !important;
+    }
+
+    .navegacion_inferior,
+    .contenedor_menu_flotante,
+    .aviso-conexion,
+    .confirmacion-fondo,
+    .no-imprimir,
+    .btn-back,
+    .btn-volver,
+    .boton_atras,
+    .btn-agro-sm,
+    .btn-agro-primary,
+    .btn-agro-outline,
+    .btn-agro-danger {
+        display: none !important;
+    }
+
+    .tarjeta,
+    .tarjeta-cultivo,
+    .card {
+        border: 1px solid #bbbbbb !important;
+        break-inside: avoid;
+    }
+
+    .tabla-pdf td,
+    .tabla-pdf th {
+        border-bottom: 1px solid #dddddd !important;
+        padding: 4px 6px;
+    }
+
+    a {
+        text-decoration: none !important;
+    }
+}
+
+/*BOTONES DE FILTRO (chips): rango del clima, categorías de insumos*/
+.chip,
+.chip-activo {
+    border-radius: 50px;
+    padding: 6px 14px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+    min-height: 36px;
+    cursor: pointer;
+}
+
+.chip {
+    background-color: transparent;
+    border: 1px solid var(--border-subtle);
+    color: var(--text-muted);
+}
+
+.chip:hover {
+    border-color: var(--green-primary);
+    color: var(--green-primary);
+}
+
+.chip-activo {
+    background-color: var(--green-primary);
+    border: 1px solid var(--green-primary);
+    color: var(--text-dark);
+}

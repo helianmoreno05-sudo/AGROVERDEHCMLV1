@@ -79,11 +79,12 @@ function mostrarListaCultivos() {
   for (let i = 0; i < lista.length; i++) {
     let c = lista[i];
     html += `
-      <div class="col-12 col-md-6 col-lg-3 tarjeta-buscable">
+      <div class="col-12 col-md-6 col-lg-3 tarjeta-buscable" data-temporada="${temporadaDe(c)}">
         <a href="ver-cultivo.html?id=${c.id}" class="tarjeta p-3 rounded-4 d-flex justify-content-between align-items-center text-decoration-none h-100">
           <div>
             <h6 class="m-0 text-white fw-bold">${textoSeguro(c.nombre)}</h6>
             <p class="m-0 small texto_gris">Etapa: ${textoSeguro(c.etapa)}</p>
+            <p class="m-0 texto_gris" style="font-size: 0.75rem;"><i class="bi bi-cloud-drizzle me-1"></i>${NOMBRES_TEMPORADA[temporadaDe(c)]}</p>
           </div>
           <span class="insignia ${claseInsignia(c.estado)}">${textoSeguro(c.estado)}</span>
         </a>
@@ -95,7 +96,79 @@ function mostrarListaCultivos() {
   }
 
   contenedor.innerHTML = html;
-  activarBuscadorDeLista("buscadorCultivos", ".tarjeta-buscable");
+
+  // buscador y filtro por temporada se aplican juntos
+  let temporadaElegida = "todas";
+  let buscador = document.getElementById("buscadorCultivos");
+
+  function aplicarFiltros() {
+    let texto = buscador.value.toLowerCase();
+    let tarjetas = contenedor.querySelectorAll(".tarjeta-buscable");
+
+    for (let i = 0; i < tarjetas.length; i++) {
+      let coincideTexto = tarjetas[i].textContent.toLowerCase().includes(texto);
+      let coincideTemporada = temporadaElegida === "todas" || tarjetas[i].dataset.temporada === temporadaElegida;
+      tarjetas[i].classList.toggle("d-none", !(coincideTexto && coincideTemporada));
+    }
+  }
+
+  buscador.addEventListener("input", aplicarFiltros);
+
+  let botones = document.querySelectorAll("#filtrosTemporada button");
+  for (let i = 0; i < botones.length; i++) {
+    botones[i].addEventListener("click", function () {
+      temporadaElegida = botones[i].dataset.temporada;
+      for (let j = 0; j < botones.length; j++) {
+        botones[j].className = "boton_acceso border-0 py-1 px-3 rounded-4";
+      }
+      botones[i].className = "btn_nuevo border-0 py-1 px-3";
+      aplicarFiltros();
+    });
+  }
+}
+
+// ================== TEMPORADA, COSECHA, RIEGO Y FERTILIZACIÓN ==================
+// Temporada del cultivo: la que se eligió o la que dice la guía
+function temporadaDe(cultivo) {
+  return cultivo.temporada || guiaDelCultivo(cultivo).temporada;
+}
+
+// Días del ciclo (siembra -> cosecha) según la guía del cultivo
+function cicloDe(cultivo) {
+  return guiaDelCultivo(cultivo).ciclo || CICLOS[tipoDelCultivo(cultivo)] || 120;
+}
+
+// Suma días a una fecha "2026-11-01" y devuelve otra en el mismo formato
+function sumarDias(fecha, dias) {
+  let d = new Date(fecha + "T00:00:00");
+  d.setDate(d.getDate() + dias);
+  return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+}
+
+// Fecha estimada de cosecha: la escrita a mano o la calculada
+function fechaCosechaDe(cultivo) {
+  return cultivo.fechaCosecha || sumarDias(cultivo.fechaSiembra, cicloDe(cultivo));
+}
+
+// Próxima fertilización según la guía (días desde la siembra). null si ya pasaron todas.
+function proximaFertilizacion(cultivo) {
+  let dias = guiaDelCultivo(cultivo).fertilizacion || [];
+
+  for (let i = 0; i < dias.length; i++) {
+    let fecha = sumarDias(cultivo.fechaSiembra, dias[i]);
+    if (fecha >= fechaDeHoy(0) && fecha > (cultivo.ultimaFertilizacion || "")) {
+      return fecha;
+    }
+  }
+
+  return null;
+}
+
+// Próximo riego: cada N días desde el último riego registrado (o desde la siembra)
+function proximoRiego(cultivo) {
+  let base = cultivo.ultimoRiego || cultivo.fechaSiembra;
+  let proximo = sumarDias(base, guiaDelCultivo(cultivo).riegoCada || 3);
+  return proximo < fechaDeHoy(0) ? fechaDeHoy(0) : proximo;
 }
 
 // ================== CREAR CULTIVO ==================
@@ -153,6 +226,8 @@ function activarCrearCultivo() {
   }
 
   document.getElementById("fecha").max = fechaDeHoy(0);
+  activarSugerenciasDeCultivo("nombre", "tipo", "fecha", "temporada", "fechaCosecha");
+  mostrarRecomendados();
 
   // la lista de terrenos sale de los terrenos registrados
   let terrenos = terrenosDisponibles();
@@ -245,6 +320,8 @@ function activarCrearCultivo() {
       notas: document.getElementById("notas").value.trim(),
       fuente: { rio: "Río", pozo: "Pozo", acueducto: "Acueducto" }[datosTerreno.fuente] || "Río",
       caudal: datosTerreno.caudal || 0,
+      temporada: document.getElementById("temporada").value,
+      fechaCosecha: document.getElementById("fechaCosecha").value,
       latitud: coordenadasDe(datosTerreno.ubicacion).latitud,
       longitud: coordenadasDe(datosTerreno.ubicacion).longitud,
       habilitado: true
@@ -253,6 +330,78 @@ function activarCrearCultivo() {
     guardarLista(CLAVE_CULTIVOS, lista);
     registrarEvento("Cultivo registrado", "Se agregó " + nombre + " en " + nombreTerreno, "cultivos", "bi-plus-circle", "success");
     window.location.href = "cultivos.html?mensaje=guardado";
+  });
+}
+
+// Llena solas la temporada y la fecha de cosecha según el cultivo (se pueden cambiar a mano)
+function activarSugerenciasDeCultivo(idNombre, idTipo, idSiembra, idTemporada, idCosecha) {
+  let nombre = document.getElementById(idNombre);
+  let tipo = document.getElementById(idTipo);
+  let siembra = document.getElementById(idSiembra);
+  let temporada = document.getElementById(idTemporada);
+  let cosecha = document.getElementById(idCosecha);
+  let cosechaAMano = cosecha.value !== "";
+
+  cosecha.addEventListener("input", function () {
+    cosechaAMano = cosecha.value !== "";
+  });
+
+  function sugerir() {
+    let cultivo = { nombre: nombre.value, tipo: tipo.value };
+    let guia = guiaDelCultivo(cultivo);
+    temporada.value = guia.temporada;
+
+    if (!cosechaAMano && siembra.value !== "") {
+      cosecha.value = sumarDias(siembra.value, cicloDe(cultivo));
+    }
+
+    let ayuda = document.getElementById("ayudaCosecha");
+    if (ayuda !== null) {
+      ayuda.textContent = "Ciclo aproximado de " + (guia.nombre || "este cultivo") + ": " + cicloDe(cultivo) + " días. Puedes cambiar la fecha si la conoces.";
+    }
+  }
+
+  nombre.addEventListener("change", sugerir);
+  tipo.addEventListener("change", sugerir);
+  siembra.addEventListener("change", sugerir);
+}
+
+// Tarjetas de cultivos recomendados para la temporada actual; al tocar una se llena el formulario
+function mostrarRecomendados() {
+  let caja = document.getElementById("recomendados");
+
+  if (caja === null) {
+    return;
+  }
+
+  let temporada = temporadaActual();
+  document.getElementById("textoTemporada").textContent = "Estamos en " + NOMBRES_TEMPORADA[temporada].toLowerCase() + ". Toca uno para llenar el formulario.";
+
+  let lista = cultivosRecomendados().slice(0, 6);
+  let html = "";
+  for (let i = 0; i < lista.length; i++) {
+    html += `
+      <div class="col-4 col-md-2">
+        <button type="button" class="card-reco w-100 border-0" data-indice="${GUIA_CULTIVOS.indexOf(lista[i])}">
+          <span class="punto"></span>
+          <strong class="nombre-reco">${lista[i].nombre}</strong>
+          <small class="compat">${lista[i].ciclo} días • ${NOMBRES_TEMPORADA[lista[i].temporada]}</small>
+        </button>
+      </div>`;
+  }
+  caja.innerHTML = html;
+
+  caja.addEventListener("click", function (evento) {
+    let boton = evento.target.closest("[data-indice]");
+
+    if (boton === null) {
+      return;
+    }
+
+    let guia = GUIA_CULTIVOS[Number(boton.dataset.indice)];
+    document.getElementById("nombre").value = guia.nombre;
+    document.getElementById("tipo").value = guia.tipo;
+    document.getElementById("nombre").dispatchEvent(new Event("change"));
   });
 }
 
@@ -286,6 +435,72 @@ function mostrarCultivo() {
   ponerTexto("verLongitud", isNaN(lon) ? "----" : Math.abs(lon) + "° " + (lon >= 0 ? "E" : "O"));
 
   document.getElementById("enlaceEditar").href = "editar-cultivo.html?id=" + c.id;
+  mostrarGuiaDelCultivo(c);
+
+  // Exportar PDF: la impresión del navegador (elegir "Guardar como PDF")
+  document.getElementById("botonPdfCultivo").addEventListener("click", function () {
+    document.title = c.nombre + " - Agro Verde";
+    window.print();
+  });
+}
+
+// Cosecha, abono, riego, fertilización, cuidados de la fase y plagas frecuentes del cultivo
+function mostrarGuiaDelCultivo(c) {
+  let caja = document.getElementById("guiaCultivo");
+  let guia = guiaDelCultivo(c);
+  let fase = FASES[c.etapa] || FASES["Siembra"];
+  let fertilizacion = proximaFertilizacion(c);
+  let plagas = (typeof catalogo !== "undefined" ? catalogo : []).filter(function (p) {
+    return guia.plagas.includes(p.nombre) || textoSinTildes(p.cultivo).includes(textoSinTildes(guia.nombre));
+  });
+
+  let consejos = fase.consejos.map(function (consejo) { return "<li>" + consejo + "</li>"; }).join("");
+  let listaPlagas = plagas.map(function (p) {
+    return `
+      <div class="fila d-block">
+        <span class="d-flex justify-content-between"><strong class="text-white">${p.nombre}</strong><span class="small">Riesgo ${p.riesgo.toLowerCase()}</span></span>
+        <small class="texto_gris d-block">${p.descripcion}</small>
+        <small class="d-block mt-1"><strong class="text-success">Cómo controlarla:</strong> ${p.control}</small>
+      </div>`;
+  }).join("") || '<p class="texto_gris small">No hay plagas frecuentes registradas para este cultivo.</p>';
+
+  caja.innerHTML = `
+    <h5 class="fw-bold mb-3"><i class="bi bi-journal-text text-success me-2"></i>Guía del cultivo</h5>
+
+    <div class="fila"><span>Fecha estimada de cosecha</span><span class="valor">${fechaBonita(fechaCosechaDe(c))}${c.fechaCosecha ? "" : " (calculada)"}</span></div>
+    <div class="fila"><span>Temporada de siembra</span><span class="valor">${NOMBRES_TEMPORADA[temporadaDe(c)]}</span></div>
+    <div class="fila"><span>Rendimiento de referencia</span><span class="valor">${guia.rendimiento.toLocaleString("es-CO")} kg/ha</span></div>
+
+    <p class="titulo-seccion">Abono recomendado</p>
+    <p class="descripcion">${guia.abono}</p>
+
+    <p class="titulo-seccion">Riego y fertilización</p>
+    <div class="fila"><span>Riego</span><span class="valor">Cada ${guia.riegoCada} días • próximo: ${fechaBonita(proximoRiego(c))}</span></div>
+    <div class="fila"><span>Próxima fertilización</span><span class="valor">${fertilizacion ? fechaBonita(fertilizacion) : "Sin fertilizaciones pendientes"}</span></div>
+    <div class="row g-2 mt-1 mb-2 no-imprimir">
+      <div class="col-6"><button type="button" class="btn-agro-outline w-100 py-2" id="botonRegue"><i class="bi bi-droplet me-1"></i> Regué hoy</button></div>
+      <div class="col-6"><button type="button" class="btn-agro-outline w-100 py-2" id="botonFertilice"><i class="bi bi-bucket me-1"></i> Fertilicé hoy</button></div>
+    </div>
+
+    <p class="titulo-seccion">Cuidados en la fase de ${c.etapa.toLowerCase()}</p>
+    <ul class="descripcion ps-3">${consejos}</ul>
+
+    <p class="titulo-seccion">Plagas frecuentes de este cultivo</p>
+    ${listaPlagas}
+    <a href="../plagas/catalogo-plagas.html" class="btn-agro-sm mt-2 no-imprimir">Ver catálogo de plagas</a>`;
+
+  // registrar riego o fertilización de hoy (mueve los recordatorios)
+  function registrar(campo, titulo) {
+    let lista = obtenerCultivos();
+    let guardado = buscarPorId(lista, c.id);
+    guardado[campo] = fechaDeHoy(0);
+    guardarLista(CLAVE_CULTIVOS, lista);
+    registrarEvento(titulo, c.nombre, "cultivos", campo === "ultimoRiego" ? "bi-droplet" : "bi-bucket", "success");
+    window.location.href = "ver-cultivo.html?id=" + c.id + "&mensaje=guardado";
+  }
+
+  document.getElementById("botonRegue").addEventListener("click", function () { registrar("ultimoRiego", "Riego registrado"); });
+  document.getElementById("botonFertilice").addEventListener("click", function () { registrar("ultimaFertilizacion", "Fertilización registrada"); });
 }
 
 // ================== EDITAR CULTIVO ==================
@@ -339,6 +554,8 @@ function activarEditarCultivo() {
   document.getElementById("editArea").value = c.area;
   document.getElementById("editRendimiento").value = c.rendimiento;
   document.getElementById("editNotas").value = c.notas;
+  document.getElementById("editTemporada").value = temporadaDe(c);
+  document.getElementById("editFechaCosecha").value = fechaCosechaDe(c);
   document.getElementById("editCaudal").value = c.caudal;
   formulario.elements["latitud"].value = c.latitud;
   formulario.elements["longitud"].value = c.longitud;
@@ -390,6 +607,13 @@ function activarEditarCultivo() {
     c.area = Number(document.getElementById("editArea").value);
     c.rendimiento = Number(document.getElementById("editRendimiento").value);
     c.notas = document.getElementById("editNotas").value.trim();
+    c.temporada = document.getElementById("editTemporada").value;
+    c.fechaCosecha = document.getElementById("editFechaCosecha").value;
+
+    if (c.fechaCosecha !== "" && c.fechaCosecha <= c.fechaSiembra) {
+      alert("La fecha de cosecha debe ser después de la fecha de siembra");
+      return;
+    }
     c.caudal = Number(document.getElementById("editCaudal").value);
     c.latitud = formulario.elements["latitud"].value.trim();
     c.longitud = formulario.elements["longitud"].value.trim();
@@ -452,6 +676,7 @@ function activarInhabilitarCultivo() {
     for (let i = 0; i < marcados.length; i++) {
       let cultivo = buscarPorId(todos, Number(marcados[i].value));
       marcarInhabilitado(cultivo);
+      anotarUsoAnterior(cultivo);
       registrarEvento("Cultivo inhabilitado", "Se inhabilitó " + cultivo.nombre, "cultivos", "bi-slash-circle", "danger");
     }
 
@@ -460,13 +685,28 @@ function activarInhabilitarCultivo() {
   });
 }
 
+// Cuando un cultivo termina (se inhabilita), su terreno guarda que lo tuvo: cultivo, desde y hasta
+function anotarUsoAnterior(cultivo) {
+  let terrenos = leerLista("terrenos");
+  let terreno = terrenos.find(function (t) { return t.nombre === cultivo.terreno; });
+
+  if (terreno === undefined) {
+    return;
+  }
+
+  terreno.cultivosAnteriores = terreno.cultivosAnteriores || [];
+  terreno.cultivosAnteriores.unshift({ cultivo: cultivo.nombre, desde: cultivo.fechaSiembra, hasta: fechaDeHoy(0) });
+  guardarLista("terrenos", terrenos);
+}
+
 // ================== FASE FENOLÓGICA ==================
 // Recomendaciones y próxima etapa según la etapa del cultivo
 const FASES = {
   "Siembra": { siguiente: "Germinación", dias: 10, consejos: ["Mantener el suelo húmedo para la germinación", "Revisar que no haya hormigas ni pájaros en el lote", "Evitar encharcamientos", "Aplicar fertilización de arranque"] },
   "Germinación": { siguiente: "Crecimiento", dias: 15, consejos: ["Riego ligero y frecuente", "Vigilar plagas de plántulas", "Controlar malezas alrededor", "Reponer las plantas que no nacieron"] },
   "Crecimiento": { siguiente: "Floración", dias: 30, consejos: ["Aumentar el riego según el clima", "Vigilar plagas del follaje", "Aporcar las plantas", "Aplicar fertilización nitrogenada"] },
-  "Floración": { siguiente: "Maduración", dias: 18, consejos: ["Mantener un riego constante, la floración es sensible al estrés hídrico", "Vigilar aparición de plagas del follaje durante esta etapa", "Evitar labores mecánicas cerca de la raíz", "Aplicar fertilización de refuerzo"] },
+  "Floración": { siguiente: "Fructificación", dias: 18, consejos: ["Mantener un riego constante, la floración es sensible al estrés hídrico", "Vigilar aparición de plagas del follaje durante esta etapa", "Evitar labores mecánicas cerca de la raíz", "Aplicar fertilización de refuerzo"] },
+  "Fructificación": { siguiente: "Maduración", dias: 20, consejos: ["Mantener el riego parejo para que los frutos no se rajen", "Aplicar potasio para mejorar el llenado y el sabor", "Revisar frutos dañados por insectos y retirarlos", "Tutorar o sostener las ramas cargadas"] },
   "Maduración": { siguiente: "Cosecha", dias: 25, consejos: ["Reducir el riego poco a poco", "Vigilar hongos en frutos", "Preparar herramientas de cosecha", "Revisar el punto de madurez"] }
 };
 
@@ -549,7 +789,8 @@ function mostrarDiaCosecha() {
     return;
   }
 
-  let ciclo = CICLOS[tipoDelCultivo(c)] || 120;
+  // la fecha de cosecha escrita a mano manda; si no hay, se calcula
+  let ciclo = Math.max(1, Math.round((new Date(fechaCosechaDe(c) + "T00:00:00") - new Date(c.fechaSiembra + "T00:00:00")) / 86400000));
   let meses = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
 
   let siembra = new Date(c.fechaSiembra + "T00:00:00");
@@ -581,12 +822,23 @@ function revisarCosechasProximas() {
   let lista = cultivosHabilitados();
 
   for (let i = 0; i < lista.length; i++) {
-    let cosecha = new Date(lista[i].fechaSiembra + "T00:00:00");
-    cosecha.setDate(cosecha.getDate() + (CICLOS[tipoDelCultivo(lista[i])] || 120));
-    let faltan = Math.ceil((cosecha - new Date()) / 86400000);
+    let c = lista[i];
+    let fechaCosecha = fechaCosechaDe(c);
+    let faltan = Math.ceil((new Date(fechaCosecha + "T00:00:00") - new Date(fechaDeHoy(0) + "T00:00:00")) / 86400000);
 
     if (faltan >= 0 && faltan <= aviso) {
-      crearNotificacion("Cosecha próxima", lista[i].nombre + " se cosecha en " + faltan + " día(s) (" + fechaBonita(cosecha.toISOString().slice(0, 10)) + ")", "cosecha_" + idPropiedadActual() + "_" + lista[i].id);
+      crearNotificacion("Cosecha próxima", c.nombre + " se cosecha en " + faltan + " día(s) (" + fechaBonita(fechaCosecha) + ")", "cosecha_" + idPropiedadActual() + "_" + c.id);
+    }
+
+    // riego: el día que toca (o si ya pasó)
+    if (proximoRiego(c) <= fechaDeHoy(0)) {
+      crearNotificacion("Toca regar", c.nombre + ": riego cada " + guiaDelCultivo(c).riegoCada + " días. Márcalo en el detalle del cultivo cuando riegues.", "riego_" + idPropiedadActual() + "_" + c.id + "_" + fechaDeHoy(0));
+    }
+
+    // fertilización: 3 días antes
+    let fertilizacion = proximaFertilizacion(c);
+    if (fertilizacion !== null && fertilizacion <= sumarDias(fechaDeHoy(0), 3)) {
+      crearNotificacion("Fertilización próxima", c.nombre + " el " + fechaBonita(fertilizacion) + ": " + guiaDelCultivo(c).abono, "fertilizacion_" + idPropiedadActual() + "_" + c.id + "_" + fertilizacion);
     }
   }
 }
