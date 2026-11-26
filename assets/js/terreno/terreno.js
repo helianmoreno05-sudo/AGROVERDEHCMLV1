@@ -202,7 +202,13 @@ function activarEditarTerreno() {
   }
 
   let lista = obtenerTerrenos();
-  let terreno = buscarPorId(lista, idDeLaDireccion()) || lista[0];
+  let habilitados = lista.filter(function (t) { return t.habilitado; });
+
+  if (pedirElegir("¿Qué terreno quieres editar?", habilitados.map(function (t) { return { id: t.id, nombre: t.nombre, detalle: t.area + " ha • Zona " + t.zona }; }), "terreno.html")) {
+    return;
+  }
+
+  let terreno = buscarPorId(habilitados, idDeLaDireccion()) || habilitados[0];
 
   if (terreno === undefined) {
     alert("No hay terrenos registrados todavía");

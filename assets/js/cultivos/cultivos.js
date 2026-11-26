@@ -28,6 +28,13 @@ function cultivosHabilitados() {
 // El cultivo del ?id= de la dirección, o el primero si no viene ninguno
 // Si no hay ningún cultivo guardado se vuelve a la lista
 function cultivoDeLaPagina(lista) {
+  // fase fenológica tiene su propio selector; las demás piden elegir si no viene el ?id=
+  let habilitados = lista.filter(function (c) { return c.habilitado; });
+  if (document.getElementById("detalleCultivoFase") === null &&
+      pedirElegir("¿Qué cultivo?", habilitados.map(function (c) { return { id: c.id, nombre: c.nombre, detalle: "Etapa: " + c.etapa + " • " + c.terreno }; }), "cultivos.html")) {
+    return null;
+  }
+
   let cultivo = buscarPorId(lista, idDeLaDireccion());
 
   if (cultivo === null) {

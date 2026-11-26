@@ -9,11 +9,17 @@ const id_plaga = Number(parametros.get("id"));
 
 // se busca la plaga en la lista guardada
 const lista = obtener_plagas();
-const plaga = lista.find(function (p) {
-    return p.id === id_plaga && p.habilitada;
-});
+const habilitadas_mod = lista.filter(function (p) { return p.habilitada; });
 
-if (!plaga) {
+// si no viene el id y hay varias, se pide elegir cuál modificar (si hay una sola, se usa esa)
+const pidio_elegir = !parametros.get("id") && typeof pedirElegir === "function" &&
+    pedirElegir("¿Qué plaga quieres modificar?", habilitadas_mod.map(function (p) { return { id: p.id, nombre: p.nombre, detalle: p.ubicacion + " • " + p.estado }; }), "plagas.html");
+
+const plaga = parametros.get("id") ? lista.find(function (p) { return p.id === id_plaga && p.habilitada; }) : habilitadas_mod[0];
+
+if (pidio_elegir) {
+    // la ventana para elegir ya está en pantalla
+} else if (!plaga) {
     // si no existe (o ya esta inhabilitada) se avisa y se ofrece volver
     contenido.innerHTML = `
     <p class="text-center mb-3">No se encontró la plaga que quieres modificar.</p>

@@ -175,6 +175,45 @@ function preguntar(titulo, detalle, textoBoton, icono) {
   });
 }
 
+// ================== ELEGIR CUÁL ==================
+// Si una pantalla de editar o ver se abre sin decir cuál (sin ?id=) y hay varios,
+// muestra una ventana con la lista para que la persona elija.
+// Devuelve true si mostró la ventana (la pantalla no debe seguir cargando).
+// opciones: [{ id, nombre, detalle }]
+function pedirElegir(titulo, opciones, volverA) {
+  if (idDeLaDireccion() !== null || opciones.length <= 1) {
+    return false;
+  }
+
+  ponerEstilosVentana();
+
+  let lista = "";
+  for (let i = 0; i < opciones.length; i++) {
+    lista += `
+      <a href="?id=${opciones[i].id}" class="elegir-opcion">
+        <span><strong>${textoSeguro(opciones[i].nombre)}</strong>${opciones[i].detalle ? '<small>' + textoSeguro(opciones[i].detalle) + "</small>" : ""}</span>
+        <i class="bi bi-chevron-right"></i>
+      </a>`;
+  }
+
+  let fondo = document.createElement("div");
+  fondo.className = "confirmacion-fondo";
+  fondo.innerHTML = `
+    <div class="confirmacion-caja confirmacion-caja--pregunta" role="dialog" aria-modal="true">
+      <h4 class="confirmacion-titulo">${textoSeguro(titulo)}</h4>
+      <p class="confirmacion-detalle">Elige uno de la lista</p>
+      <div class="elegir-lista">${lista}</div>
+      <button type="button" class="confirmacion-cancelar mt-3">Cancelar</button>
+    </div>`;
+  document.body.appendChild(fondo);
+
+  fondo.querySelector(".confirmacion-cancelar").addEventListener("click", function () {
+    window.location.href = volverA;
+  });
+
+  return true;
+}
+
 // Algunas pantallas no cargan global.css: los estilos de las ventanas se agregan desde aquí
 function ponerEstilosVentana() {
   if (document.getElementById("estilos-ventana") !== null) {
@@ -199,6 +238,11 @@ function ponerEstilosVentana() {
     .confirmacion-ok:hover { background-color: #a27350; }
     .confirmacion-aceptar:hover { background-color: #853c38; }
     .confirmacion-cancelar:hover { background-color: rgba(255, 255, 255, 0.18); }
+    .elegir-lista { display: flex; flex-direction: column; gap: 8px; max-height: 50vh; overflow-y: auto; text-align: left; }
+    .elegir-opcion { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 12px; background-color: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.12); color: #ffffff; text-decoration: none; }
+    .elegir-opcion:hover { border-color: #22c55e; color: #ffffff; }
+    .elegir-opcion small { display: block; color: #9ca3af; font-size: 0.8rem; }
+    .elegir-opcion .bi { color: #22c55e; }
   `;
   document.head.appendChild(estilos);
 }

@@ -279,7 +279,12 @@ function activarEditarInsumo() {
   }
 
   let lista = obtenerInsumos();
-  let insumo = buscarPorId(lista, idDeLaDireccion()) || lista[0];
+
+  if (pedirElegir("¿Qué insumo quieres editar?", insumosHabilitados().map(function (i) { return { id: i.id, nombre: i.nombre, detalle: textoCantidad(i) }; }), "insumos.html")) {
+    return;
+  }
+
+  let insumo = buscarPorId(lista, idDeLaDireccion()) || insumosHabilitados()[0];
 
   if (insumo === undefined) {
     alert("No hay insumos registrados todavía");
@@ -980,6 +985,10 @@ function mostrarProveedor() {
   }
 
   let lista = todosLosProveedores();
+  if (pedirElegir("¿Qué proveedor?", obtenerProveedores().map(function (p) { return { id: p.id, nombre: p.nombre, detalle: p.insumos }; }), "proveedores-insumos.html")) {
+    return;
+  }
+
   let proveedor = buscarPorId(obtenerProveedores(), idDeLaDireccion()) || obtenerProveedores()[0];
 
   if (proveedor === undefined) {
@@ -1123,6 +1132,11 @@ function mostrarHistorialDeUnInsumo() {
   }
 
   let insumos = obtenerInsumos();
+
+  if (pedirElegir("¿Historial de qué insumo?", insumos.map(function (i) { return { id: i.id, nombre: i.nombre, detalle: textoCantidad(i) }; }), "historial-insumo.html")) {
+    return;
+  }
+
   let insumo = buscarPorId(insumos, idDeLaDireccion()) || insumos[0];
 
   if (insumo === undefined) {

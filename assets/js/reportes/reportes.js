@@ -160,7 +160,13 @@ function mostrarPdf() {
   }
 
   let lista = obtenerReportes();
-  let reporte = buscarPorId(lista, idDeLaDireccion()) || lista[0];
+  let activos = lista.filter(function (r) { return r.habilitado; });
+
+  if (pedirElegir("¿Qué reporte quieres exportar?", activos.map(function (r) { return { id: r.id, nombre: r.nombre, detalle: "Generado " + fechaCorta(r.fecha) }; }), "reportes.html")) {
+    return;
+  }
+
+  let reporte = buscarPorId(lista, idDeLaDireccion()) || activos[0];
 
   if (reporte === undefined) {
     titulo.textContent = "No hay reportes";

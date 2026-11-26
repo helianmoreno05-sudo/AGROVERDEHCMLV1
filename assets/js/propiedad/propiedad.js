@@ -185,6 +185,10 @@ function activarEditarPropiedad() {
 
   let todas = obtenerLista(CLAVE_PROPIEDADES, propiedadesDeEjemplo());
   let visibles = propiedadesHabilitadas();
+  if (pedirElegir("¿Qué propiedad quieres editar?", visibles.map(function (p) { return { id: p.id, nombre: p.nombre, detalle: p.tipo + " • " + p.ubicacion }; }), "ver-propiedad.html")) {
+    return;
+  }
+
   let propiedad = buscarPorId(visibles, idDeLaDireccion()) || buscarPorId(visibles, idPropiedadActual());
 
   if (propiedad === null || propiedad === undefined) {
@@ -303,6 +307,10 @@ function mostrarEtapa() {
   }
 
   let lista = propiedadesHabilitadas();
+  if (pedirElegir("¿Qué propiedad?", lista.map(function (p) { return { id: p.id, nombre: p.nombre, detalle: p.tipo + " • " + p.ubicacion }; }), "ver-propiedad.html")) {
+    return;
+  }
+
   let propiedad = buscarPorId(lista, idDeLaDireccion()) || lista[0];
 
   titulo.textContent = propiedad.nombre;
