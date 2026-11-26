@@ -489,3 +489,24 @@ select optgroup {
     text-align: left;
     color: var(--text-main);
 }
+
+/*BUSCADOR OSCURO (.caja_busqueda) para las pantallas que no tienen su propio estilo
+  (historial e inhabilitados)*/
+.caja_busqueda {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    color: var(--text-main);
+    padding: 10px 14px;
+}
+
+.caja_busqueda::placeholder {
+    color: #6c8778;
+}
+
+.caja_busqueda:focus {
+    background-color: var(--bg-card);
+    border-color: var(--green-primary);
+    color: var(--text-main);
+    box-shadow: none;
+}
