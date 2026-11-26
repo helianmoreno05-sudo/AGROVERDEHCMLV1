@@ -341,9 +341,9 @@ function contarSinLeer() {
   return total;
 }
 // ================== PROPIEDAD ACTUAL ==================
-// La persona trabaja en una propiedad a la vez (Finca el manantial es la 3).
-// Cada propiedad tiene sus propios cultivos, terrenos, insumos, reportes y plagas.
-const PROPIEDAD_PRINCIPAL = 3;
+// La persona trabaja en una propiedad a la vez.
+// Cada propiedad tiene sus propios cultivos, terrenos, insumos, reportes y plagas,
+// y solo la ven sus miembros (quien la creó y quienes se unieron con un código).
 
 // Listas que son de toda la cuenta y no de una propiedad
 const LISTAS_GENERALES = ["propiedades", "usuarios", "mensajesSoporte", "invitaciones"];
@@ -354,22 +354,25 @@ function clavePropiedadActual() {
   return correo === null ? "propiedadActual" : "propiedadActual_" + correo;
 }
 
-function idPropiedadActual() {
-  let guardado = localStorage.getItem(clavePropiedadActual());
-  let id = guardado === null ? PROPIEDAD_PRINCIPAL : Number(guardado);
-
-  // si la persona no es miembro de esa propiedad, se usa la primera donde sí lo sea
+// Propiedades habilitadas de las que la persona con sesión es miembro
+function propiedadesDelUsuario() {
   let correo = localStorage.getItem("usuarioActual");
-  let propiedades = leerListaGeneral("propiedades").filter(function (p) { return p.habilitado; });
-  let puedeVer = function (p) { return !p.miembros || correo === null || p.miembros.includes(correo); };
-  let actual = propiedades.find(function (p) { return p.id === id; });
 
-  if (actual !== undefined && !puedeVer(actual)) {
-    let otra = propiedades.find(puedeVer);
-    return otra !== undefined ? otra.id : id;
+  return leerListaGeneral("propiedades").filter(function (p) {
+    return p.habilitado && p.miembros && p.miembros.includes(correo);
+  });
+}
+
+// Id de la propiedad actual (0 si la persona todavía no tiene ninguna)
+function idPropiedadActual() {
+  let propias = propiedadesDelUsuario();
+  let guardado = Number(localStorage.getItem(clavePropiedadActual()));
+
+  if (propias.some(function (p) { return p.id === guardado; })) {
+    return guardado;
   }
 
-  return id;
+  return propias.length > 0 ? propias[0].id : 0;
 }
 
 function cambiarPropiedad(id) {
@@ -378,23 +381,22 @@ function cambiarPropiedad(id) {
 
 // Nombre de la propiedad en la que se está trabajando
 function nombrePropiedadActual() {
-  let propiedades = leerListaGeneral("propiedades");
+  let propias = propiedadesDelUsuario();
 
-  for (let i = 0; i < propiedades.length; i++) {
-    if (propiedades[i].id === idPropiedadActual()) {
-      return propiedades[i].nombre;
+  for (let i = 0; i < propias.length; i++) {
+    if (propias[i].id === idPropiedadActual()) {
+      return propias[i].nombre;
     }
   }
 
-  return "Finca el manantial";
+  return "Sin propiedad";
 }
 
-// La propiedad principal usa la llave normal (así no se pierde lo que ya estaba guardado);
-// las demás le agregan su id: "cultivos_prop4"
+// Cada propiedad guarda sus listas con su id: "cultivos_prop4"
 function claveDePropiedad(clave, idPropiedad) {
   let id = idPropiedad === undefined ? idPropiedadActual() : idPropiedad;
 
-  if (LISTAS_GENERALES.includes(clave) || id === PROPIEDAD_PRINCIPAL) {
+  if (LISTAS_GENERALES.includes(clave)) {
     return clave;
   }
 
@@ -421,13 +423,13 @@ document.addEventListener("DOMContentLoaded", mostrarNombrePropiedad);
 // Cada módulo (cultivos, terrenos, reportes...) guarda su lista en localStorage
 // con estas funciones. Cuando esté la API solo hay que cambiar estas dos primeras.
 
-// Trae una lista guardada de la propiedad actual. Si todavía no existe, guarda la de ejemplo
-// (solo la propiedad principal trae ejemplos; una propiedad nueva empieza vacía).
+// Trae una lista guardada de la propiedad actual. Si todavía no existe empieza vacía:
+// cada propiedad se llena con lo que registra la persona (no hay datos de ejemplo).
 function obtenerLista(clave, ejemplo) {
   let guardado = localStorage.getItem(claveDePropiedad(clave));
 
   if (guardado === null) {
-    let inicial = idPropiedadActual() === PROPIEDAD_PRINCIPAL || LISTAS_GENERALES.includes(clave) ? ejemplo : [];
+    let inicial = [];
     guardarLista(clave, inicial);
     return inicial;
   }
@@ -520,3 +522,22 @@ function activarBuscadorDeLista(idBuscador, selectorTarjetas) {
     }
   });
 }
+
+// ================== PRIMERA PROPIEDAD ==================
+// Toda cuenta necesita una propiedad para trabajar. Si la persona no tiene ninguna,
+// se le lleva a crearla (o a unirse con un código de invitación).
+function exigirPropiedad() {
+  let correo = localStorage.getItem("usuarioActual");
+  let ruta = window.location.pathname;
+  let permitidas = ["/inicio-sesion/", "crear-propiedad.html", "unirse-propiedad.html", "index.html"];
+
+  if (correo === null || buscarUsuario(correo) === null || permitidas.some(function (p) { return ruta.includes(p); }) || !ruta.includes("/pages/")) {
+    return;
+  }
+
+  if (propiedadesDelUsuario().length === 0) {
+    window.location.replace("../propiedad/crear-propiedad.html?primera=1");
+  }
+}
+
+exigirPropiedad();

@@ -37,7 +37,7 @@ function cultivoDeLaPagina(lista) {
   if (cultivo === undefined) {
     alert("No hay cultivos registrados todavía");
     window.location.href = "cultivos.html";
-    throw new Error("sin cultivos");
+    return null;
   }
 
   return cultivo;
@@ -257,6 +257,10 @@ function mostrarCultivo() {
 
   let c = cultivoDeLaPagina(obtenerCultivos());
 
+  if (c === null) {
+    return;
+  }
+
   ponerTexto("verNombre", c.nombre);
   ponerTexto("verEstado", c.estado);
   ponerTexto("verUbicacion", c.ubicacion);
@@ -299,6 +303,10 @@ function activarEditarCultivo() {
 
   let lista = obtenerCultivos();
   let c = cultivoDeLaPagina(lista);
+
+  if (c === null) {
+    return;
+  }
 
   // la flecha de volver regresa al detalle de este mismo cultivo
   document.querySelector('a[aria-label="Volver"]').href = "ver-cultivo.html?id=" + c.id;
@@ -480,7 +488,11 @@ function activarFaseFenologica() {
     });
   }
 
-  mostrarFase(cultivoDeLaPagina(lista));
+  let cultivo = cultivoDeLaPagina(lista);
+
+  if (cultivo !== null) {
+    mostrarFase(cultivo);
+  }
 }
 
 function mostrarFase(cultivo) {
@@ -525,6 +537,11 @@ function mostrarDiaCosecha() {
   }
 
   let c = cultivoDeLaPagina(cultivosHabilitados());
+
+  if (c === null) {
+    return;
+  }
+
   let ciclo = CICLOS[tipoDelCultivo(c)] || 120;
   let meses = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
 

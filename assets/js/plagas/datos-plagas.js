@@ -85,15 +85,15 @@ function id_propiedad_actual() {
 
 function clave_plagas() {
     const id = typeof idPropiedadActual === "function" ? String(idPropiedadActual()) : id_propiedad_actual();
-    return id === null || id === "3" ? CLAVE_PLAGAS : CLAVE_PLAGAS + "_prop" + id;
+    return CLAVE_PLAGAS + "_prop" + id;
 }
 
 function obtener_plagas() {
     const guardado = localStorage.getItem(clave_plagas());
 
     if (guardado === null) {
-        // solo la propiedad principal trae plagas de ejemplo
-        const iniciales = clave_plagas() === CLAVE_PLAGAS ? plagas_iniciales : [];
+        // cada propiedad empieza sin plagas registradas
+        const iniciales = [];
         guardar_plagas(iniciales);
         return iniciales;
     }
@@ -145,12 +145,12 @@ function llenar_select_cultivos() {
     }
 
     const id = typeof idPropiedadActual === "function" ? String(idPropiedadActual()) : id_propiedad_actual();
-    const llave = id === null || id === "3" ? "cultivos" : "cultivos_prop" + id;
+    const llave = "cultivos_prop" + id;
     const guardados = JSON.parse(localStorage.getItem(llave) || "[]");
     let nombres = guardados.filter(function (c) { return c.habilitado; }).map(function (c) { return c.nombre; });
 
     if (nombres.length === 0) {
-        nombres = ["Maíz - Lote 1", "Café - Lote 2", "Fríjol - Lote 3", "Tomate - Lote 4"];
+        nombres = ["Sin cultivos registrados"];
     }
 
     obtener_plagas().forEach(function (plaga) {

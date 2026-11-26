@@ -3,12 +3,9 @@
 
 const CLAVE_PROPIEDADES = "propiedades";
 
+// Ya no hay propiedades de ejemplo: cada cuenta crea las suyas
 function propiedadesDeEjemplo() {
-  return [
-    { id: 1, nombre: "Santandercito", tipo: "Finca", zona: "sur", ubicacion: "Santander", area: 3.2, notas: "Finca en zona de ladera con buena disponibilidad de agua.", habilitado: true },
-    { id: 2, nombre: "Reserva", tipo: "Lote", zona: "Casa", ubicacion: "Cundinamarca", area: 1.1, notas: "Lote junto a la casa principal.", habilitado: true },
-    { id: 3, nombre: "Finca el manantial", tipo: "Finca", zona: "Norte", ubicacion: "valle del cauca", area: 0.8, notas: "1.750 metros sobre el nivel del mar, en zona rural del municipio del valle del cauca.", habilitado: true }
-  ];
+  return [];
 }
 
 // La lista de propiedades es de toda la cuenta (no cambia con la propiedad actual)
@@ -16,16 +13,10 @@ function propiedadesHabilitadas() {
   return obtenerLista(CLAVE_PROPIEDADES, propiedadesDeEjemplo()).filter(function (p) { return p.habilitado && esMiembro(p); });
 }
 
-// La persona con sesión ve una propiedad si es miembro de ella.
-// Las propiedades de antes no tienen lista de miembros: esas las ven todos.
+// La persona con sesión ve una propiedad solo si es miembro de ella
 function esMiembro(propiedad) {
   let usuario = typeof obtenerUsuarioActual === "function" ? obtenerUsuarioActual() : null;
-
-  if (!propiedad.miembros || usuario === null) {
-    return true;
-  }
-
-  return propiedad.miembros.includes(usuario.correo);
+  return usuario !== null && Array.isArray(propiedad.miembros) && propiedad.miembros.includes(usuario.correo);
 }
 
 // "sur" -> "badge-sur", "Casa" -> "badge-casa"
@@ -86,11 +77,27 @@ function mostrarPropiedades() {
 }
 
 // ================== CREAR PROPIEDAD ==================
+// Viene de crear la cuenta (o no tiene ninguna propiedad todavía)
+function esPrimeraPropiedad() {
+  return new URLSearchParams(window.location.search).get("primera") === "1";
+}
+
 function activarCrearPropiedad() {
   let formulario = document.getElementById("formNuevaPropiedad");
 
   if (formulario === null) {
     return;
+  }
+
+  // primera propiedad: no hay a dónde volver, y se ofrece unirse con un código
+  if (esPrimeraPropiedad()) {
+    document.querySelector(".boton-volver").classList.add("d-none");
+    document.querySelector(".titulo-pagina").textContent = "Crea tu propiedad";
+    let aviso = document.createElement("p");
+    aviso.className = "texto_gris small";
+    aviso.style.color = "#9ca3af";
+    aviso.innerHTML = 'Para empezar a usar Agro Verde necesitas una propiedad (finca, lote o parcela). ¿Te invitaron? <a href="../inicio/unirse-propiedad.html" style="color: #22c55e;">Únete con un código</a>.';
+    formulario.prepend(aviso);
   }
 
   formulario.addEventListener("submit", function (evento) {
@@ -132,7 +139,10 @@ function activarCrearPropiedad() {
 
     guardarLista(CLAVE_PROPIEDADES, lista);
     registrarEvento("Propiedad creada", nombre + " en " + ubicacion, "inventario", "bi-house-add", "success");
-    window.location.href = "../perfil/perfil.html?mensaje=guardado";
+
+    // la propiedad nueva pasa a ser en la que se trabaja
+    cambiarPropiedad(lista[lista.length - 1].id);
+    window.location.href = esPrimeraPropiedad() ? "../inicio/inicio.html?mensaje=guardado" : "../perfil/perfil.html?mensaje=guardado";
   });
 }
 

@@ -162,6 +162,12 @@ function mostrarPdf() {
   let lista = obtenerReportes();
   let reporte = buscarPorId(lista, idDeLaDireccion()) || lista[0];
 
+  if (reporte === undefined) {
+    titulo.textContent = "No hay reportes";
+    document.getElementById("pdfTexto").textContent = "Crea un reporte en Reportes con \"+ Nuevo\" para poder exportarlo.";
+    return;
+  }
+
   titulo.textContent = reporte.nombre;
   document.getElementById("pdfFecha").textContent = fechaCorta(reporte.fecha);
   document.getElementById("pdfTexto").textContent = reporte.notas || "Sin observaciones.";

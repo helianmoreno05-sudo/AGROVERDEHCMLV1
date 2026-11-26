@@ -203,6 +203,12 @@ function activarEditarTerreno() {
 
   let lista = obtenerTerrenos();
   let terreno = buscarPorId(lista, idDeLaDireccion()) || lista[0];
+
+  if (terreno === undefined) {
+    alert("No hay terrenos registrados todavía");
+    window.location.href = "terreno.html";
+    return;
+  }
   let ids = { nombre: "nombreTerrenoEdit", ubicacion: "ubicacionTerrenoEdit", area: "areaTerrenoEdit", suelo: "tipoSueloEdit", caudal: "caudalEstimadoEdit", zona: "zonaTerrenoEdit" };
 
   // llenamos el formulario con lo guardado

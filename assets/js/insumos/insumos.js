@@ -281,6 +281,12 @@ function activarEditarInsumo() {
   let lista = obtenerInsumos();
   let insumo = buscarPorId(lista, idDeLaDireccion()) || lista[0];
 
+  if (insumo === undefined) {
+    alert("No hay insumos registrados todavía");
+    window.location.href = "insumos.html";
+    return;
+  }
+
   document.getElementById("nombre").value = insumo.nombre;
   document.getElementById("cantidad").value = insumo.cantidad;
   document.getElementById("precio").value = insumo.precio;
@@ -403,6 +409,11 @@ function activarActualizarStock() {
   let lista = insumosHabilitados();
   let elegido = buscarPorId(lista, idDeLaDireccion()) || lista[0];
   let html = "";
+
+  if (elegido === undefined) {
+    document.getElementById("listaPrincipal").innerHTML = '<p class="texto_gris">No hay insumos registrados. Crea uno en Insumos con "+ Nuevo".</p>';
+    return;
+  }
 
   for (let i = 0; i < lista.length; i++) {
     let insumo = lista[i];
@@ -1111,6 +1122,12 @@ function mostrarHistorialDeUnInsumo() {
 
   let insumos = obtenerInsumos();
   let insumo = buscarPorId(insumos, idDeLaDireccion()) || insumos[0];
+
+  if (insumo === undefined) {
+    document.getElementById("listaPrincipal").innerHTML = '<p class="texto_gris">No hay insumos registrados.</p>';
+    return;
+  }
+
   let usos = obtenerUsosInsumos().filter(function (u) { return u.insumo === insumo.nombre; });
   let meses = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
   let html = "";

@@ -54,5 +54,6 @@ formulario.addEventListener("submit", function (evento) {
   registrarEvento("Usuario creado", nombre + " creó su cuenta", "sistema", "bi-plus-circle", "success");
 
   alert("¡Cuenta creada con éxito!");
-  window.location.href = "../inicio/inicio.html";
+  // toda cuenta nueva debe crear su propiedad (o unirse a una con un código)
+  window.location.href = "../propiedad/crear-propiedad.html?primera=1";
 });
