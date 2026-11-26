@@ -26,10 +26,36 @@ function claseZona(zona) {
 
 // Los botones de volver de estas pantallas son <button>: regresan a la página anterior
 function activarBotonesComunes() {
+  // A dónde lleva la flecha de cada pantalla si no hay una página anterior
+  let destinos = {
+    "crear-propiedad": "ver-propiedad.html",
+    "inhabilitar-propiedad": "ver-propiedad.html",
+    "ver-etapa": "ver-propiedad.html",
+    "ver-propiedad": "../inicio/inicio.html"
+  };
+
   let volver = document.querySelector(".boton-volver");
   if (volver !== null) {
-    volver.addEventListener("click", function () {
-      window.history.back();
+    volver.addEventListener("click", async function () {
+      // primera propiedad: sin ella no se puede usar la app, así que volver es salir de la cuenta
+      if (esPrimeraPropiedad()) {
+        let salir = await preguntar("¿Estás seguro?", "Sin una propiedad no puedes usar Agro Verde. Vas a salir de tu cuenta; puedes crearla cuando vuelvas a entrar.", "Salir");
+
+        if (salir) {
+          localStorage.removeItem("usuarioActual");
+          window.location.href = "../inicio-sesion/iniciar-sesion.html";
+        }
+        return;
+      }
+
+      let pagina = window.location.pathname.split("/").pop().replace(".html", "");
+      let vieneDeLaApp = document.referrer !== "" && window.history.length > 1;
+
+      if (vieneDeLaApp) {
+        window.history.back();
+      } else {
+        window.location.href = destinos[pagina] || "../inicio/inicio.html";
+      }
     });
   }
 
@@ -91,7 +117,6 @@ function activarCrearPropiedad() {
 
   // primera propiedad: no hay a dónde volver, y se ofrece unirse con un código
   if (esPrimeraPropiedad()) {
-    document.querySelector(".boton-volver").classList.add("d-none");
     document.querySelector(".titulo-pagina").textContent = "Crea tu propiedad";
     let aviso = document.createElement("p");
     aviso.className = "texto_gris small";

@@ -287,6 +287,10 @@ function activarUnirse() {
     return;
   }
 
+  if (propiedadesDelUsuario().length === 0) {
+    document.querySelector('a[aria-label="Volver"]').href = "../propiedad/crear-propiedad.html?primera=1";
+  }
+
   formulario.addEventListener("submit", function (evento) {
     evento.preventDefault();
 
