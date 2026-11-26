@@ -5,28 +5,36 @@
 
 // ================== USUARIOS ==================
 
-// Usuarios que ya existen la primera vez que se abre la página (solo para probar)
-function usuariosDeEjemplo() {
-  return [
-    { nombre: "July Riaño", correo: "july@agroverde.com", contrasena: "123456", rol: "Administrador" },
-    { nombre: "Dayan Combita", correo: "dayan@agroverde.com", contrasena: "123456", rol: "Administrador" },
-    { nombre: "Derlin Caro", correo: "derlin@agroverde.com", contrasena: "123456", rol: "Administrador" },
-    { nombre: "Helian Moreno", correo: "helian@agroverde.com", contrasena: "123456", rol: "Agricultor" }
-  ];
+// Usuarios de prueba que traía la app antes. Ya no se crean, y si quedaron
+// guardados en el navegador se borran: solo quedan las cuentas creadas de verdad.
+const USUARIOS_DE_PRUEBA = ["july@agroverde.com", "dayan@agroverde.com", "derlin@agroverde.com", "helian@agroverde.com"];
+
+function esUsuarioDePrueba(usuario) {
+  return USUARIOS_DE_PRUEBA.includes(usuario.correo) && usuario.contrasena === "123456";
 }
 
-// Trae la lista de usuarios guardados.
-// Si todavía no hay ninguna, guarda los de ejemplo.
+// Trae la lista de usuarios guardados (sin los de prueba)
 function obtenerUsuarios() {
   let guardado = localStorage.getItem("usuarios");
 
   if (guardado === null) {
-    let ejemplo = usuariosDeEjemplo();
-    guardarUsuarios(ejemplo);
-    return ejemplo;
+    return [];
   }
 
-  return JSON.parse(guardado);
+  let usuarios = JSON.parse(guardado);
+  let reales = usuarios.filter(function (usuario) { return !esUsuarioDePrueba(usuario); });
+
+  // si había usuarios de prueba guardados se borran (y su sesión también)
+  if (reales.length !== usuarios.length) {
+    guardarUsuarios(reales);
+
+    let actual = localStorage.getItem("usuarioActual");
+    if (actual !== null && USUARIOS_DE_PRUEBA.includes(actual) && !reales.some(function (u) { return u.correo === actual; })) {
+      localStorage.removeItem("usuarioActual");
+    }
+  }
+
+  return reales;
 }
 
 function guardarUsuarios(usuarios) {
