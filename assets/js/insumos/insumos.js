@@ -349,7 +349,7 @@ function activarInhabilitarInsumo() {
 
   document.getElementById("listaPrincipal").innerHTML = html;
 
-  formulario.addEventListener("submit", function (evento) {
+  formulario.addEventListener("submit", async function (evento) {
     evento.preventDefault();
 
     let elegido = formulario.querySelector('input[name="insumo"]:checked');
@@ -362,7 +362,7 @@ function activarInhabilitarInsumo() {
     let todos = obtenerInsumos();
     let insumo = buscarPorId(todos, Number(elegido.value));
 
-    if (confirm("¿Seguro que quieres inhabilitar " + insumo.nombre + "?") === false) {
+    if (await preguntar("¿Estás seguro?", "Se va a inhabilitar " + insumo.nombre + ".", "Inhabilitar") === false) {
       return;
     }
 
@@ -1001,8 +1001,8 @@ function mostrarProveedor() {
     }
   });
 
-  document.getElementById("proveedorEliminar").addEventListener("click", function () {
-    if (confirm("¿Seguro que quieres eliminar a " + proveedor.nombre + "?") === false) {
+  document.getElementById("proveedorEliminar").addEventListener("click", async function () {
+    if (await preguntar("¿Estás seguro?", "Se va a eliminar a " + proveedor.nombre + ".", "Eliminar") === false) {
       return;
     }
 

@@ -258,7 +258,7 @@ function activarEditarTerreno() {
     window.location.href = "terreno.html?mensaje=guardado";
   });
 
-  document.getElementById("botonInhabilitarTerreno").addEventListener("click", function (evento) {
+  document.getElementById("botonInhabilitarTerreno").addEventListener("click", async function (evento) {
     evento.preventDefault();
 
     let ocupado = leerLista("cultivos").some(function (c) { return c.habilitado && c.terreno === terreno.nombre; });
@@ -268,7 +268,7 @@ function activarEditarTerreno() {
       return;
     }
 
-    if (confirm("¿Seguro que quieres inhabilitar " + terreno.nombre + "?") === false) {
+    if (await preguntar("¿Estás seguro?", "Se va a inhabilitar " + terreno.nombre + ".", "Inhabilitar") === false) {
       return;
     }
 

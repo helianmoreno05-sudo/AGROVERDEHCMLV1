@@ -123,7 +123,7 @@ function activarInhabilitarReporte() {
 
   contenedor.innerHTML = html;
 
-  document.getElementById("botonInhabilitarReporte").addEventListener("click", function (evento) {
+  document.getElementById("botonInhabilitarReporte").addEventListener("click", async function (evento) {
     evento.preventDefault();
 
     let marcados = document.querySelectorAll('input[name="reportesSeleccionados"]:checked');
@@ -133,7 +133,7 @@ function activarInhabilitarReporte() {
       return;
     }
 
-    if (confirm("¿Seguro que quieres inhabilitar " + marcados.length + " reporte(s)?") === false) {
+    if (await preguntar("¿Estás seguro?", "Se van a inhabilitar " + marcados.length + " reporte(s).", "Inhabilitar") === false) {
       return;
     }
 

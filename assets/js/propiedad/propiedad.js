@@ -150,7 +150,7 @@ function activarInhabilitarPropiedad() {
 
   document.getElementById("listaPropiedades").innerHTML = html;
 
-  boton.addEventListener("click", function (evento) {
+  boton.addEventListener("click", async function (evento) {
     evento.preventDefault();
 
     let elegida = document.querySelector('input[name="propiedadSeleccionada"]:checked');
@@ -168,7 +168,7 @@ function activarInhabilitarPropiedad() {
       return;
     }
 
-    if (confirm("¿Seguro que quieres inhabilitar " + propiedad.nombre + "?") === false) {
+    if (await preguntar("¿Estás seguro?", "Se va a inhabilitar " + propiedad.nombre + ".", "Inhabilitar") === false) {
       return;
     }
 

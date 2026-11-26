@@ -77,13 +77,117 @@ function protegerPagina() {
 
 // Los botones de cerrar sesión son enlaces <a>, por eso primero frenamos
 // el enlace (preventDefault) y solo salimos si la persona confirma.
-function preguntarCerrarSesion(evento) {
+async function preguntarCerrarSesion(evento) {
   evento.preventDefault();
 
-  if (confirm("¿Seguro que quieres cerrar sesión?") === true) {
+  let salir = await preguntar("¿Estás seguro?", "Vas a cerrar sesión en Agro Verde.", "Cerrar sesión", "bi-box-arrow-right");
+
+  if (salir === true) {
     localStorage.removeItem("usuarioActual");
     window.location.href = "../inicio-sesion/iniciar-sesion.html";
   }
+}
+
+// ================== VENTANA DE PREGUNTA ==================
+// Igual a la de "Guardado correctamente" pero con dos botones: Cancelar y el de la acción.
+// Devuelve una promesa: true si la persona acepta, false si cancela.
+// Uso: if (await preguntar("¿Estás seguro?", "Se inhabilitará el Lote 1") === false) { return; }
+function preguntar(titulo, detalle, textoBoton, icono) {
+  ponerEstilosVentana();
+
+  return new Promise(function (responder) {
+    let fondo = document.createElement("div");
+    fondo.className = "confirmacion-fondo";
+
+    let caja = document.createElement("div");
+    caja.className = "confirmacion-caja confirmacion-caja--pregunta";
+    caja.setAttribute("role", "dialog");
+    caja.setAttribute("aria-modal", "true");
+
+    let circulo = document.createElement("div");
+    circulo.className = "confirmacion-icono confirmacion-icono--pregunta";
+    circulo.textContent = "?";
+
+    let textoTitulo = document.createElement("h4");
+    textoTitulo.className = "confirmacion-titulo";
+    textoTitulo.textContent = titulo;
+
+    let textoDetalle = document.createElement("p");
+    textoDetalle.className = "confirmacion-detalle";
+    textoDetalle.textContent = detalle || "";
+
+    let botones = document.createElement("div");
+    botones.className = "confirmacion-botones";
+
+    let cancelar = document.createElement("button");
+    cancelar.type = "button";
+    cancelar.className = "confirmacion-cancelar";
+    cancelar.textContent = "Cancelar";
+
+    let aceptar = document.createElement("button");
+    aceptar.type = "button";
+    aceptar.className = "confirmacion-aceptar";
+    aceptar.textContent = textoBoton || "Sí, continuar";
+
+    botones.appendChild(cancelar);
+    botones.appendChild(aceptar);
+    caja.appendChild(circulo);
+    caja.appendChild(textoTitulo);
+    caja.appendChild(textoDetalle);
+    caja.appendChild(botones);
+    fondo.appendChild(caja);
+    document.body.appendChild(fondo);
+    cancelar.focus();
+
+    function cerrar(respuesta) {
+      fondo.remove();
+      document.removeEventListener("keydown", conTeclado);
+      responder(respuesta);
+    }
+
+    function conTeclado(evento) {
+      if (evento.key === "Escape") {
+        cerrar(false);
+      }
+    }
+
+    cancelar.addEventListener("click", function () { cerrar(false); });
+    aceptar.addEventListener("click", function () { cerrar(true); });
+    fondo.addEventListener("click", function (evento) {
+      if (evento.target === fondo) {
+        cerrar(false);
+      }
+    });
+    document.addEventListener("keydown", conTeclado);
+  });
+}
+
+// Algunas pantallas no cargan global.css: los estilos de las ventanas se agregan desde aquí
+function ponerEstilosVentana() {
+  if (document.getElementById("estilos-ventana") !== null) {
+    return;
+  }
+
+  let estilos = document.createElement("style");
+  estilos.id = "estilos-ventana";
+  estilos.textContent = `
+    .confirmacion-fondo { position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.55); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 2000; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    .confirmacion-caja { width: 100%; max-width: 340px; background-color: #2f9e5b; border-radius: 18px; padding: 28px 20px 20px 20px; text-align: center; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4); }
+    .confirmacion-caja--pregunta { background-color: #163b29; border: 1px solid #1d734e; }
+    .confirmacion-icono { width: 90px; height: 90px; margin: 0 auto 10px auto; border-radius: 50%; border: 6px solid #22c55e; color: #22c55e; background-color: rgba(255, 255, 255, 0.12); display: flex; align-items: center; justify-content: center; font-size: 3rem; font-weight: 800; }
+    .confirmacion-icono--pregunta { border-color: #eab308; color: #eab308; }
+    .confirmacion-titulo { color: #091c12; font-weight: 800; font-size: 1.5rem; margin: 0 0 18px 0; }
+    .confirmacion-caja--pregunta .confirmacion-titulo { color: #ffffff; margin-bottom: 6px; }
+    .confirmacion-detalle { color: #9ca3af; font-size: 0.9rem; margin: 0 0 18px 0; }
+    .confirmacion-botones { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .confirmacion-ok, .confirmacion-aceptar { width: 100%; background-color: #b5835a; color: #091c12; font-weight: 700; border: none; border-radius: 10px; padding: 10px 20px; cursor: pointer; }
+    .confirmacion-cancelar { width: 100%; background-color: rgba(255, 255, 255, 0.1); color: #ffffff; font-weight: 700; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 10px; padding: 10px 12px; cursor: pointer; }
+    .confirmacion-aceptar { background-color: #9c4a46; color: #ffffff; padding: 10px 12px; }
+    .confirmacion-ok:hover { background-color: #a27350; }
+    .confirmacion-aceptar:hover { background-color: #853c38; }
+    .confirmacion-cancelar:hover { background-color: rgba(255, 255, 255, 0.18); }
+  `;
+  document.head.appendChild(estilos);
 }
 
 // ================== HISTORIAL ==================

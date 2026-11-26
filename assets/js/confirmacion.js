@@ -26,6 +26,11 @@ function mostrarConfirmacion() {
     return;
   }
 
+  // si la página no tiene global.css, los estilos los pone comun.js
+  if (typeof ponerEstilosVentana === "function") {
+    ponerEstilosVentana();
+  }
+
   // fondo oscuro que tapa la pantalla
   let fondo = document.createElement("div");
   fondo.className = "confirmacion-fondo";

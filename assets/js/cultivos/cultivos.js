@@ -418,7 +418,7 @@ function activarInhabilitarCultivo() {
   contenedor.innerHTML = html;
   activarBuscadorDeLista("buscadorInhabilitar", ".tarjeta-buscable");
 
-  document.getElementById("botonInhabilitar").addEventListener("click", function (evento) {
+  document.getElementById("botonInhabilitar").addEventListener("click", async function (evento) {
     evento.preventDefault();
 
     let marcados = document.querySelectorAll('input[name="cultivosEliminar"]:checked');
@@ -428,7 +428,7 @@ function activarInhabilitarCultivo() {
       return;
     }
 
-    if (confirm("¿Seguro que quieres inhabilitar " + marcados.length + " cultivo(s)?") === false) {
+    if (await preguntar("¿Estás seguro?", "Se van a inhabilitar " + marcados.length + " cultivo(s).", "Inhabilitar") === false) {
       return;
     }
 
