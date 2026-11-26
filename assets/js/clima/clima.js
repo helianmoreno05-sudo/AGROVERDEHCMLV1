@@ -247,6 +247,11 @@ function activarCalendario() {
       return;
     }
 
+    if (typeof puedeModificar === "function" && !puedeModificar("clima")) {
+      alert("El dueño de la propiedad no te dio permiso para agregar eventos al calendario.");
+      return;
+    }
+
     let titulo = prompt("Evento para el " + fechaBonita(dia.dataset.fecha) + " (ej. Fumigación Lote 2):");
 
     if (titulo === null || titulo.trim() === "") {

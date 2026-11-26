@@ -126,6 +126,7 @@ function activarCrearPropiedad() {
       area: area,
       notas: document.getElementById("notasPropiedad").value.trim(),
       miembros: obtenerUsuarioActual() ? [obtenerUsuarioActual().correo] : [],
+      dueno: obtenerUsuarioActual() ? obtenerUsuarioActual().correo : "",
       habilitado: true
     });
 

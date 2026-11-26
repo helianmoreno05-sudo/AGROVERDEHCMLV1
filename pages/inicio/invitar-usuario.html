@@ -31,8 +31,17 @@
                 <input type="email" id="correoInvitado" class="agro-input" placeholder="Ej. ana@correo.com">
                 <p class="small texto_gris mt-n2">Si lo escribes, solo esa persona podrá usar el código.</p>
 
+                <p class="mb-2 texto_subtitulo small text-uppercase">¿Qué podrá modificar?</p>
+                <p class="small texto_gris mb-2">Lo que dejes apagado lo podrá ver, pero no cambiar.</p>
+                <div class="d-flex flex-column gap-2 mb-3" id="opcionesPermisos"></div>
+
                 <button type="submit" class="btn-agro-primary"><i class="bi bi-person-plus me-1"></i> Crear invitación</button>
             </form>
+
+            <div id="avisoNoDueno" class="tarjeta p-4 rounded-4 mb-3 text-center d-none" style="max-width: 640px; margin: 0 auto;">
+                <i class="bi bi-lock display-6 text-warning"></i>
+                <p class="mt-2 mb-0" id="textoNoDueno">Solo el dueño de la propiedad puede invitar usuarios.</p>
+            </div>
 
             <section id="invitacionCreada" class="tarjeta p-4 rounded-4 mb-3 text-center d-none" style="max-width: 640px; margin: 0 auto;">
                 <p class="texto_gris small mb-1">Código de invitación</p>
@@ -64,6 +73,7 @@
 
     <script src="../../assets/vendor/bootstrap/bootstrap.bundle.min.js"></script>
     <script src="../../assets/js/comun.js"></script>
+    <script src="../../assets/js/permisos.js"></script>
     <script src="../../assets/js/propiedad/propiedad.js"></script>
     <script src="../../assets/js/inicio/miembros.js"></script>
     <script src="../../assets/js/confirmacion.js"></script>
