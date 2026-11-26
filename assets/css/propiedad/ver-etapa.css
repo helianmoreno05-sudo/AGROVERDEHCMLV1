@@ -125,3 +125,17 @@ body {
     color: var(--color-porcentaje-azul);
     font-size: 1.1rem;
 }
+/* Celulares pequeños: el logo y el título se achican para que no se salgan de la pantalla */
+@media (max-width: 400px) {
+    .logo-agroverde img {
+        max-width: 70px;
+    }
+
+    .titulo-pagina {
+        font-size: 1.35rem !important;
+    }
+
+    header.d-flex {
+        gap: 8px;
+    }
+}

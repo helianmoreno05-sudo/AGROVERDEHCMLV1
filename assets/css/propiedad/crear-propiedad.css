@@ -128,3 +128,18 @@ select optgroup {
     color: #22c55e;
     font-weight: 700;
 }
+
+/* Celulares pequeños: el logo y el título se achican para que no se salgan de la pantalla */
+@media (max-width: 400px) {
+    .logo-agroverde img {
+        max-width: 70px;
+    }
+
+    .titulo-pagina {
+        font-size: 1.35rem !important;
+    }
+
+    header.d-flex {
+        gap: 8px;
+    }
+}

@@ -510,3 +510,38 @@ select optgroup {
     color: var(--text-main);
     box-shadow: none;
 }
+
+/*AJUSTES PARA CELULAR (que todo sea cómodo de tocar)*/
+/* Las flechas de volver no se encogen cuando el título es largo */
+.btn-back,
+.btn-volver,
+.boton_atras,
+.boton-volver {
+    flex-shrink: 0;
+}
+
+/* Botones de filtro (historial, catálogo) con altura mínima para el dedo */
+[data-filtro],
+.filtro_tipo {
+    min-height: 36px;
+    white-space: nowrap;
+}
+
+/* Los títulos largos bajan de línea en vez de empujar los botones */
+.app-header h3,
+.app-header h4,
+header h4,
+header h1 {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+/* Menús desplegables: nunca más anchos que la pantalla y los nombres largos bajan de línea */
+.dropdown-menu {
+    max-width: calc(100vw - 32px);
+}
+
+.dropdown-menu .dropdown-item {
+    white-space: normal;
+    overflow-wrap: anywhere;
+}

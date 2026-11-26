@@ -15,7 +15,7 @@ function ponerEstilosConexion() {
     .aviso-conexion__icono { font-size: 1.3rem; line-height: 1; }
     .aviso-conexion__texto { flex: 1; }
     .aviso-conexion__texto strong { display: block; }
-    .aviso-conexion__cerrar { background: none; border: none; color: inherit; font-size: 1.3rem; line-height: 1; cursor: pointer; padding: 0 4px; }
+    .aviso-conexion__cerrar { background: none; border: none; color: inherit; font-size: 1.4rem; line-height: 1; cursor: pointer; min-width: 40px; min-height: 40px; }
   `;
   document.head.appendChild(estilos);
 }
