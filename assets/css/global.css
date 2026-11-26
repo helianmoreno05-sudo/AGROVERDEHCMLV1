@@ -452,3 +452,40 @@ select optgroup {
   background-color: rgba(34, 197, 94, 0.12);
   color: var(--green-primary);
 }
+
+/*VENTANAS DE BOOTSTRAP (notas de plagas, ficha del catálogo, confirmar)
+  Bootstrap las pinta blancas y el texto de la app es blanco: se ponen oscuras*/
+.ventana_notas {
+    background-color: #163b29;
+    color: var(--text-main);
+    border: 1px solid #1d734e;
+    border-radius: 18px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+}
+
+.ventana_notas .modal-header,
+.ventana_notas .modal-footer {
+    border-color: var(--border-subtle);
+}
+
+.ventana_notas .modal-title {
+    color: var(--text-main);
+    font-weight: 700;
+}
+
+.ventana_notas p,
+.ventana_notas .modal-body {
+    color: #d1d5db;
+}
+
+.ventana_notas .fw-bold {
+    color: var(--text-main);
+}
+
+/* Tarjetas del catálogo de plagas: ocupan toda la columna y el texto no se monta en la insignia */
+.tarjeta_catalogo {
+    width: 100%;
+    gap: 12px;
+    text-align: left;
+    color: var(--text-main);
+}
