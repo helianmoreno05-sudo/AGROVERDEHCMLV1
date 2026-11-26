@@ -4,46 +4,35 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Crear Cuenta - AgroVerde</title>
-  <link rel="stylesheet" href="../../assets/vendor/bootstrap/bootstrap.min.css">
-  <link rel="stylesheet" href="../../assets/css/inicio-sesion/crear-cuenta.css">
-  <link rel="stylesheet" href="../../assets/js/inicio-sesion/crear-cuenta.js">
+  <title>Crear cuenta - Agro Verde</title>
+  <link rel="stylesheet" href="../../assets/css/inicio-sesion/acceso.css">
 </head>
 
 <body>
-  <main class="tarjeta_cuenta">
-
+  <main class="tarjeta-acceso">
     <header class="encabezado">
-      <h1>Crear Cuenta</h1>
-      <img src="../../assets/img/agro-verde-con-texto.png" width="90" height="80" alt="Logo AgroVerde">
-      <p>Ingresa tus datos para continuar</p>
+      <img src="../../assets/img/agro-verde-con-texto.png" alt="Agro Verde">
+      <h1>Crear cuenta</h1>
+      <p>Crea tu cuenta con unos simples pasos</p>
     </header>
 
     <form class="formulario_cuenta" action="../inicio/inicio.html">
-
-      <label class="usuario">Nombre de usuario
-        <input type="text" id="usuario" placeholder="Tu nombre" required>
+      <label class="campo-acceso">Nombre de usuario
+        <input type="text" id="usuario" placeholder="Ej. Ana Ruiz" autocomplete="name" required>
+      </label>
+      <label class="campo-acceso">Correo electrónico
+        <input type="email" id="correo" placeholder="tu@correo.com" autocomplete="email" required>
+      </label>
+      <label class="campo-acceso">Contraseña
+        <input type="password" id="contrasena" placeholder="Mínimo 6 caracteres" autocomplete="new-password" required>
       </label>
 
-      <label class="correo">Correo electrónico
-        <input type="email" id="correo" placeholder="tu@correo.com" required>
-      </label>
-
-      <label class="contraseña">Contraseña
-        <input type="password" id="contrasena" placeholder="••••••••" required>
-      </label>
-
-      <button type="submit" class="boton_crear_cuenta">Crear cuenta</button>
-
+      <button type="submit" class="boton-acceso">Crear cuenta</button>
     </form>
 
-    <p class="registro">¿Ya tienes cuenta?
-      <a href="iniciar-sesion.html" class="iniciar_sesion">Inicia sesión</a>
-    </p>
-
+    <p class="texto-pie">¿Ya tienes cuenta? <a href="iniciar-sesion.html">Inicia sesión</a></p>
   </main>
 
-  <script src="../../assets/vendor/bootstrap/bootstrap.bundle.min.js"></script>
   <script src="../../assets/js/comun.js"></script>
   <script src="../../assets/js/inicio-sesion/crear-cuenta.js"></script>
   <script src="../../assets/js/conexion.js"></script>

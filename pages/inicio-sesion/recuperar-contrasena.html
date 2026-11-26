@@ -2,31 +2,31 @@
 <html lang="es">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recuperar contraseña</title>
-    <link rel="stylesheet" href="../../assets/css/inicio-sesion/recuperar-contrasena.css">
-      <link rel="stylesheet" href="../../assets/js/inicio-sesion/recuperar-contrasena.js">
-
-      
-<script src="../../assets/js/comun.js" defer></script>
-<script src="../../assets/js/inicio-sesion/recuperar-contrasena.js" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recuperar contraseña - Agro Verde</title>
+  <link rel="stylesheet" href="../../assets/css/inicio-sesion/acceso.css">
 </head>
 
 <body>
-    <div class="contenedor">
-        <img src="../../assets/img/agro-verde-con-texto.png" alt="Agro verde" width="350" height="200">
-        <h2>Recuperar contraseña</h2>
-        <p>Te enviaremos un enlace a tu correo para restablecer tu contraseña</p>
+  <main class="tarjeta-acceso">
+    <header class="encabezado">
+      <img src="../../assets/img/agro-verde-con-texto.png" alt="Agro Verde">
+      <h1>Recuperar contraseña</h1>
+      <p>Te enviaremos un enlace a tu correo para restablecer tu contraseña</p>
+    </header>
 
-        <span class="label-correo">Correo electrónico</span>
-       <input type="email" id="correo" placeholder="tu@correo.com">
-<button id="boton-enviar">Enviar enlace</button>
+      <label class="campo-acceso">Correo electrónico
+        <input type="email" id="correo" placeholder="tu@correo.com" autocomplete="email" required>
+      </label>
 
-        
+    <button type="button" id="boton-enviar" class="boton-acceso">Enviar enlace</button>
 
-        <p class="footer-text">¿Ya la recordaste? <a href="iniciar-sesion.html">Volver a iniciar sesión</a></p>
-    </div>
+    <p class="texto-pie">¿Ya la recordaste? <a href="iniciar-sesion.html">Volver a iniciar sesión</a></p>
+  </main>
+
+  <script src="../../assets/js/comun.js"></script>
+  <script src="../../assets/js/inicio-sesion/recuperar-contrasena.js"></script>
   <script src="../../assets/js/conexion.js"></script>
 </body>
 
