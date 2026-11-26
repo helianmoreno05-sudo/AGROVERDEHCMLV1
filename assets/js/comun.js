@@ -227,15 +227,9 @@ function fechaDeHoy(diasAtras) {
 }
 
 // Eventos que ya existen la primera vez (son los mismos de la pantalla de Figma)
+// El historial empieza vacío: solo guarda lo que de verdad hace cada persona
 function eventosDeEjemplo() {
-  return [
-    { titulo: "Cultivo registrado", detalle: "Helian Moreno agregó un nuevo lote", tipo: "cultivos", icono: "bi-plus-circle", color: "success", fecha: fechaDeHoy(0) },
-    { titulo: "Plaga reportada", detalle: "Helian marcó \"Roya\" en Finca El Manantial", tipo: "cultivos", icono: "bi-exclamation-triangle", color: "danger", fecha: fechaDeHoy(0) },
-    { titulo: "Inicio de sesión", detalle: "Dayan Combita accedió al sistema", tipo: "sistema", icono: "bi-box-arrow-in-right", color: "info", fecha: fechaDeHoy(0) },
-    { titulo: "Insumo actualizado", detalle: "Derlin cambió stock de \"Fertilizante\"", tipo: "insumos", icono: "bi-file-earmark-text", color: "success", fecha: fechaDeHoy(1) },
-    { titulo: "Terreno inhabilitado", detalle: "Daniela inhabilitó el Lote 1", tipo: "inventario", icono: "bi-slash-circle", color: "danger", fecha: fechaDeHoy(1) },
-    { titulo: "Usuario creado", detalle: "Fue creado un nuevo usuario", tipo: "sistema", icono: "bi-person-plus", color: "success", fecha: fechaDeHoy(1) }
-  ];
+  return [];
 }
 
 // Trae el historial (el más nuevo va primero)
@@ -257,18 +251,45 @@ function obtenerHistorial() {
 // color: success (verde), danger (rojo) o info (azul)
 function registrarEvento(titulo, detalle, tipo, icono, color) {
   let historial = obtenerHistorial();
+  let correo = localStorage.getItem("usuarioActual");
+  let usuario = correo !== null ? buscarUsuario(correo) : null;
+  let ahora = new Date();
 
   let evento = {
     titulo: titulo,
     detalle: detalle,
     tipo: tipo,
+    modulo: moduloDelEvento(),
     icono: icono,
     color: color,
-    fecha: fechaDeHoy(0)
+    fecha: fechaDeHoy(0),
+    hora: String(ahora.getHours()).padStart(2, "0") + ":" + String(ahora.getMinutes()).padStart(2, "0"),
+    usuario: usuario !== null ? usuario.nombre : "",
+    correo: correo || "",
+    propiedadId: typeof idPropiedadActual === "function" ? idPropiedadActual() : 0
   };
 
   historial.unshift(evento);
   localStorage.setItem("historial", JSON.stringify(historial));
+}
+
+// Módulo donde pasó la acción, según la carpeta de la página (cultivos, terreno, insumos...)
+function moduloDelEvento() {
+  let partes = window.location.pathname.split("/");
+  let carpeta = partes[partes.length - 2];
+  let modulos = { cultivos: "cultivos", terreno: "terrenos", insumos: "insumos", plagas: "plagas", reportes: "reportes", propiedad: "propiedades", clima: "clima" };
+  return modulos[carpeta] || "cuenta";
+}
+
+// Marca algo como inhabilitado guardando cuándo y quién lo hizo
+// (sirve para la pantalla "Inhabilitados")
+function marcarInhabilitado(objeto, campo) {
+  let correo = localStorage.getItem("usuarioActual");
+  let usuario = correo !== null ? buscarUsuario(correo) : null;
+
+  objeto[campo || "habilitado"] = false;
+  objeto.fechaInhabilitado = fechaDeHoy(0);
+  objeto.inhabilitadoPor = usuario !== null ? usuario.nombre : "";
 }
 
 // ================== NOTIFICACIONES ==================

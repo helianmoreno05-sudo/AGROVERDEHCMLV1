@@ -1,5 +1,6 @@
 // historial.js
-// Muestra los eventos del historial (Hoy / Ayer) y filtra por tipo
+// Historial de acciones: todo lo que se hace en la propiedad actual (y en la cuenta),
+// agrupado por día, con quién lo hizo y a qué hora. Se puede filtrar por módulo y buscar.
 
 // Color de fondo del circulito de cada evento
 let fondos = {
@@ -8,107 +9,111 @@ let fondos = {
   info: "rgba(6, 182, 212, 0.15)"
 };
 
-// Filtro que está elegido ahora: todos, cultivos, insumos o inventario
+const NOMBRES_MODULO = { cultivos: "Cultivos", terrenos: "Terrenos", insumos: "Insumos", plagas: "Plagas", reportes: "Reportes", propiedades: "Propiedades", clima: "Clima", cuenta: "Cuenta" };
+const MESES_HISTORIAL = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+
+// Filtro que está elegido ahora
 let filtroActual = "todos";
 
-// Crea la tarjeta de un evento
-function crearTarjetaEvento(evento) {
-  let tarjeta = document.createElement("div");
-  tarjeta.className = "tarjeta p-3 rounded-4 d-flex align-items-center gap-3";
-
-  // circulito con el icono
-  let circulo = document.createElement("div");
-  circulo.className = "d-flex align-items-center justify-content-center rounded-circle p-2";
-  circulo.style.backgroundColor = fondos[evento.color];
-  circulo.style.width = "42px";
-  circulo.style.height = "42px";
-
-  let icono = document.createElement("i");
-  icono.className = "bi " + evento.icono + " fs-5 text-" + evento.color;
-  circulo.appendChild(icono);
-
-  // textos del evento (textContent para que no se ejecute código raro)
-  let cajaTextos = document.createElement("div");
-
-  let titulo = document.createElement("p");
-  titulo.className = "m-0 fw-bold text-white";
-  titulo.textContent = evento.titulo;
-
-  let detalle = document.createElement("p");
-  detalle.className = "m-0 small texto_gris";
-  detalle.textContent = evento.detalle;
-
-  cajaTextos.appendChild(titulo);
-  cajaTextos.appendChild(detalle);
-  tarjeta.appendChild(circulo);
-  tarjeta.appendChild(cajaTextos);
-
-  return tarjeta;
+// Los eventos viejos no tenían "modulo": se deduce de su tipo
+function moduloDe(evento) {
+  if (evento.modulo) return evento.modulo;
+  if (evento.tipo === "insumos") return "insumos";
+  if (evento.tipo === "cultivos") return "cultivos";
+  if (evento.tipo === "inventario") return "terrenos";
+  return "cuenta";
 }
 
-// Si una columna se quedó sin eventos, ponemos un texto de aviso
-function avisarSiEstaVacia(columna) {
-  if (columna.children.length === 0) {
-    let aviso = document.createElement("p");
-    aviso.className = "small texto_gris";
-    aviso.textContent = "Sin eventos";
-    columna.appendChild(aviso);
+// "Hoy", "Ayer" o "15 de agosto de 2026"
+function tituloDelDia(fecha) {
+  if (fecha === fechaDeHoy(0)) return "Hoy";
+  if (fecha === fechaDeHoy(1)) return "Ayer";
+
+  let partes = fecha.split("-");
+  return Number(partes[2]) + " de " + MESES_HISTORIAL[Number(partes[1]) - 1] + " de " + partes[0];
+}
+
+// Solo se muestra lo de la propiedad actual y lo de la propia cuenta
+function eventoVisible(evento) {
+  let correo = localStorage.getItem("usuarioActual");
+
+  if (evento.propiedadId === undefined) {
+    return true;
   }
+
+  return evento.propiedadId === idPropiedadActual() || (evento.propiedadId === 0 && evento.correo === correo);
 }
 
-// Dibuja el historial en las dos columnas
+function crearTarjetaEvento(evento) {
+  let modulo = moduloDe(evento);
+  let quien = evento.usuario ? "por " + evento.usuario : "";
+  let cuando = evento.hora ? evento.hora : "";
+
+  return `
+    <div class="tarjeta p-3 rounded-4 d-flex align-items-center gap-3">
+      <div class="d-flex align-items-center justify-content-center rounded-circle flex-shrink-0" style="background-color: ${fondos[evento.color] || fondos.info}; width: 42px; height: 42px;">
+        <i class="bi ${textoSeguro(evento.icono)} fs-5 text-${textoSeguro(evento.color)}"></i>
+      </div>
+      <div class="flex-grow-1">
+        <p class="m-0 fw-bold text-white">${textoSeguro(evento.titulo)}</p>
+        <p class="m-0 small texto_gris">${textoSeguro(evento.detalle)}</p>
+        <p class="m-0 texto_gris" style="font-size: 0.75rem;">${textoSeguro(NOMBRES_MODULO[modulo])}${quien ? " • " + textoSeguro(quien) : ""}</p>
+      </div>
+      <span class="texto_gris small flex-shrink-0">${cuando}</span>
+    </div>`;
+}
+
 function mostrarHistorial() {
-  // si no hay sesión, protegerPagina nos manda al login y paramos aquí
   if (protegerPagina() === false) {
     return;
   }
 
-  let historial = obtenerHistorial();
-  let hoy = fechaDeHoy(0);
+  let texto = document.getElementById("buscarEvento").value.trim().toLowerCase();
+  let eventos = obtenerHistorial().filter(function (evento) {
+    if (!eventoVisible(evento)) return false;
+    if (filtroActual !== "todos" && moduloDe(evento) !== filtroActual) return false;
+    if (texto === "") return true;
+    return (evento.titulo + " " + evento.detalle + " " + (evento.usuario || "")).toLowerCase().includes(texto);
+  });
 
-  let columnaHoy = document.getElementById("eventos-hoy");
-  let columnaAyer = document.getElementById("eventos-ayer");
-  columnaHoy.innerHTML = "";
-  columnaAyer.innerHTML = "";
+  // agrupados por día (el historial ya viene del más nuevo al más viejo)
+  let html = "";
+  let diaAnterior = "";
 
-  for (let i = 0; i < historial.length; i++) {
-    let evento = historial[i];
-
-    // solo dibujamos el evento si coincide con el filtro elegido
-    if (filtroActual === "todos" || evento.tipo === filtroActual) {
-      let tarjeta = crearTarjetaEvento(evento);
-
-      // lo de hoy va a la izquierda; todo lo demás lo mandamos a "Ayer"
-      if (evento.fecha === hoy) {
-        columnaHoy.appendChild(tarjeta);
-      } else {
-        columnaAyer.appendChild(tarjeta);
+  for (let i = 0; i < eventos.length; i++) {
+    if (eventos[i].fecha !== diaAnterior) {
+      if (diaAnterior !== "") {
+        html += "</div>";
       }
+      diaAnterior = eventos[i].fecha;
+      html += `<p class="mb-2 mt-3 text-white fw-bold small">${tituloDelDia(diaAnterior)}</p><div class="d-flex flex-column gap-2">`;
     }
+    html += crearTarjetaEvento(eventos[i]);
   }
 
-  avisarSiEstaVacia(columnaHoy);
-  avisarSiEstaVacia(columnaAyer);
+  if (diaAnterior !== "") {
+    html += "</div>";
+  }
+
+  document.getElementById("listaHistorial").innerHTML = html || '<p class="texto_gris">Todavía no hay acciones registradas' + (filtroActual !== "todos" ? " en " + NOMBRES_MODULO[filtroActual] : "") + ".</p>";
 }
 
-// ----- botones de filtro -----
+// ----- filtros por módulo -----
 let botones = document.querySelectorAll("button[data-filtro]");
 
 for (let i = 0; i < botones.length; i++) {
   botones[i].addEventListener("click", function () {
-    // guardamos cuál filtro eligió (viene en el atributo data-filtro del botón)
     filtroActual = this.getAttribute("data-filtro");
 
-    // dejamos todos los botones "apagados"...
     for (let j = 0; j < botones.length; j++) {
       botones[j].className = "boton_acceso border-0 py-1 px-3 rounded-4";
     }
-
-    // ...y prendemos solo el que eligió
     this.className = "btn_nuevo border-0 py-1 px-3";
 
     mostrarHistorial();
   });
 }
+
+document.getElementById("buscarEvento").addEventListener("input", mostrarHistorial);
 
 mostrarHistorial();

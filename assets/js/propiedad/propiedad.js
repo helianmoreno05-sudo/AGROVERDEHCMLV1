@@ -287,7 +287,7 @@ function activarInhabilitarPropiedad() {
       return;
     }
 
-    propiedad.habilitado = false;
+    marcarInhabilitado(propiedad);
     guardarLista(CLAVE_PROPIEDADES, todas);
     registrarEvento("Propiedad inhabilitada", propiedad.nombre, "inventario", "bi-slash-circle", "danger");
     window.location.href = "ver-propiedad.html?mensaje=inhabilitado";

@@ -46,6 +46,7 @@ function activarIdioma() {
       moneda: document.getElementById("moneda").value
     });
 
+    registrarEvento("Idioma y región actualizados", "Se cambiaron las preferencias", "sistema", "bi-gear", "info");
     window.location.href = "configuracion.html?mensaje=guardado";
   });
 }
@@ -97,6 +98,7 @@ function activarUnidades() {
 
     localStorage.setItem("unidades", formulario.querySelector('input[name="sistema"]:checked').value);
     guardarPreferencia("unidadesDetalle", nuevo);
+    registrarEvento("Unidades de medida actualizadas", "Se cambiaron las preferencias", "sistema", "bi-gear", "info");
     window.location.href = "configuracion.html?mensaje=guardado";
   });
 }
@@ -141,6 +143,7 @@ function activarAlertas() {
     }
 
     guardarPreferencia("configAlertas", nuevo);
+    registrarEvento("Configuración de alertas actualizada", "Se cambiaron las preferencias", "sistema", "bi-gear", "info");
     window.location.href = "configuracion.html?mensaje=guardado";
   });
 }

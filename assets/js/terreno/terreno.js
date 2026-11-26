@@ -278,7 +278,7 @@ function activarEditarTerreno() {
       return;
     }
 
-    terreno.habilitado = false;
+    marcarInhabilitado(terreno);
     guardarLista(CLAVE_TERRENOS, lista);
     anotarCambioTerreno(terreno.nombre, "Terreno inhabilitado", "rojo");
     window.location.href = "terreno.html?mensaje=inhabilitado";

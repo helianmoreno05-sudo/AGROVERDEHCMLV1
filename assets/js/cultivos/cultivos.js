@@ -444,7 +444,7 @@ function activarInhabilitarCultivo() {
 
     for (let i = 0; i < marcados.length; i++) {
       let cultivo = buscarPorId(todos, Number(marcados[i].value));
-      cultivo.habilitado = false;
+      marcarInhabilitado(cultivo);
       registrarEvento("Cultivo inhabilitado", "Se inhabilitó " + cultivo.nombre, "cultivos", "bi-slash-circle", "danger");
     }
 

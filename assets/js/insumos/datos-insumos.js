@@ -42,7 +42,12 @@ function insumosHabilitados() {
   return obtenerInsumos().filter(function (insumo) { return insumo.habilitado; });
 }
 
+// Solo los proveedores activos (los eliminados quedan en "Inhabilitados")
 function obtenerProveedores() {
+  return todosLosProveedores().filter(function (p) { return p.habilitado !== false; });
+}
+
+function todosLosProveedores() {
   return obtenerLista(CLAVE_PROVEEDORES, proveedoresDeEjemplo());
 }
 

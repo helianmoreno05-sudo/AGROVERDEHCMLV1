@@ -141,7 +141,7 @@ function activarInhabilitarReporte() {
 
     for (let i = 0; i < marcados.length; i++) {
       let reporte = buscarPorId(todos, Number(marcados[i].value));
-      reporte.habilitado = false;
+      marcarInhabilitado(reporte);
       registrarEvento("Reporte inhabilitado", reporte.nombre, "sistema", "bi-slash-circle", "danger");
     }
 

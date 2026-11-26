@@ -55,6 +55,7 @@ function iniciar_pantalla() {
         plaga.notas = document.getElementById("notas").value.trim();
 
         guardar_plagas(lista);
+        registrarEvento("Plaga modificada", plaga.nombre + " en " + plaga.ubicacion + " (" + plaga.estado + ")", "cultivos", "bi-pencil-square", "info");
 
         // se vuelve a la lista con el mensaje de confirmacion
         window.location.href = "plagas.html?mensaje=modificada";

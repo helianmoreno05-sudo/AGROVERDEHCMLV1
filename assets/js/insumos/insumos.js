@@ -372,7 +372,7 @@ function activarInhabilitarInsumo() {
       return;
     }
 
-    insumo.habilitado = false;
+    marcarInhabilitado(insumo);
     guardarLista(CLAVE_INSUMOS, todos);
     registrarEvento("Insumo inhabilitado", insumo.nombre, "insumos", "bi-slash-circle", "danger");
     window.location.href = "insumos.html?mensaje=inhabilitado";
@@ -979,8 +979,8 @@ function mostrarProveedor() {
     return;
   }
 
-  let lista = obtenerProveedores();
-  let proveedor = buscarPorId(lista, idDeLaDireccion()) || lista[0];
+  let lista = todosLosProveedores();
+  let proveedor = buscarPorId(obtenerProveedores(), idDeLaDireccion()) || obtenerProveedores()[0];
 
   if (proveedor === undefined) {
     window.location.href = "proveedores-insumos.html";
@@ -1017,8 +1017,9 @@ function mostrarProveedor() {
       return;
     }
 
-    let restantes = lista.filter(function (p) { return p.id !== proveedor.id; });
-    guardarLista(CLAVE_PROVEEDORES, restantes);
+    // no se borra: queda en "Inhabilitados" por si se quiere recuperar
+    marcarInhabilitado(buscarPorId(lista, proveedor.id));
+    guardarLista(CLAVE_PROVEEDORES, lista);
     registrarEvento("Proveedor eliminado", proveedor.nombre, "insumos", "bi-truck", "danger");
     window.location.href = "proveedores-insumos.html?mensaje=inhabilitado";
   });
@@ -1033,7 +1034,8 @@ function activarFormularioProveedor() {
 
   let selectInsumo = document.getElementById("insumo");
   if (selectInsumo !== null) {
-    llenarSelect(selectInsumo, insumosHabilitados().map(function (i) { return i.nombre; }));
+    // además de los insumos registrados, siempre se puede elegir "Varios insumos"
+    llenarSelect(selectInsumo, insumosHabilitados().map(function (i) { return i.nombre; }).concat(["Varios insumos"]));
   }
 
   formulario.addEventListener("submit", function (evento) {
@@ -1064,7 +1066,7 @@ function activarFormularioProveedor() {
       return;
     }
 
-    let lista = obtenerProveedores();
+    let lista = todosLosProveedores();
     lista.push({
       id: nuevoId(lista),
       nombre: nombre,

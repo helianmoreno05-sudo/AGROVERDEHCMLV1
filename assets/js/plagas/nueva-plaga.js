@@ -38,6 +38,7 @@ formulario.addEventListener("submit", function (evento) {
     });
 
     guardar_plagas(lista);
+    registrarEvento("Plaga registrada", nombre + " en " + ubicacion, "cultivos", "bi-bug", "danger");
 
     // se vuelve a la lista con el mensaje de confirmacion
     window.location.href = "plagas.html?mensaje=guardada";

@@ -74,7 +74,8 @@ formulario.addEventListener("submit", function (evento) {
 // cuando se confirma, la plaga queda inhabilitada (no se borra)
 boton_confirmar.addEventListener("click", function () {
     const plaga = lista.find(function (p) { return p.id === id_seleccionado; });
-    plaga.habilitada = false;
+    marcarInhabilitado(plaga, "habilitada");
+    registrarEvento("Plaga inhabilitada", plaga.nombre + " en " + plaga.ubicacion, "cultivos", "bi-slash-circle", "danger");
 
     guardar_plagas(lista);
 
