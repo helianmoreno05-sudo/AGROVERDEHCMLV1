@@ -146,6 +146,8 @@ function activarAlertas() {
 }
 
 // ================== SOPORTE ==================
+// WhatsApp de soporte de Agro Verde
+const NUMERO_SOPORTE = "https://wa.me/573204154049";
 function activarSoporte() {
   let formulario = document.getElementById("formSoporte");
 
@@ -171,13 +173,16 @@ function activarSoporte() {
       return;
     }
 
-    // el mensaje queda guardado hasta que exista la API que lo envíe
+    // el mensaje se guarda y se abre WhatsApp de soporte con el texto ya escrito
     let mensajes = obtenerLista("mensajesSoporte", []);
     let usuario = obtenerUsuarioActual();
     mensajes.push({ asunto: asunto, mensaje: mensaje, correo: usuario ? usuario.correo : "", fecha: fechaDeHoy(0) });
     guardarLista("mensajesSoporte", mensajes);
 
-    window.location.href = "soporte.html?mensaje=guardado";
+    let texto = "Hola, soy " + (usuario ? usuario.nombre + " (" + usuario.correo + ")" : "un usuario de Agro Verde") +
+      ".\nAsunto: " + asunto + "\n" + mensaje;
+    window.open(NUMERO_SOPORTE + "?text=" + encodeURIComponent(texto), "_blank", "noopener");
+    formulario.reset();
   });
 }
 
