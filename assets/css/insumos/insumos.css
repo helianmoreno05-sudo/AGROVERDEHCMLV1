@@ -90,26 +90,7 @@
   color: #eab308;
 }
 
-/* Botones secundarios (borde verde) */
-.btn-agro-outline {
-  width: 100%;
-  background-color: transparent;
-  color: var(--green-primary);
-  font-weight: 700;
-  border: 1px solid var(--green-primary);
-  border-radius: 50px;
-  padding: 11px 20px;
-  font-size: 0.95rem;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  transition: background-color 0.2s;
-}
-
-.btn-agro-outline:hover {
-  background-color: rgba(34, 197, 94, 0.12);
-  color: var(--green-primary);
-}
+/* El botón secundario (.btn-agro-outline) ahora está en global.css */
 
 /* Selectores tipo pastilla (Entrada / Salida, Ver / Registrar) */
 .pastillas {

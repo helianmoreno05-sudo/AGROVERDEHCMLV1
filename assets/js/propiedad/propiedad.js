@@ -29,6 +29,7 @@ function activarBotonesComunes() {
   // A dónde lleva la flecha de cada pantalla si no hay una página anterior
   let destinos = {
     "crear-propiedad": "ver-propiedad.html",
+    "editar-propiedad": "ver-propiedad.html",
     "inhabilitar-propiedad": "ver-propiedad.html",
     "ver-etapa": "ver-propiedad.html",
     "ver-propiedad": "../inicio/inicio.html"
@@ -84,13 +85,16 @@ function mostrarPropiedades() {
   for (let i = 0; i < lista.length; i++) {
     let p = lista[i];
     html += `
-      <a href="ver-etapa.html?id=${p.id}" class="tarjeta-propiedad d-flex align-items-center justify-content-between p-3 px-md-4 py-md-3 text-decoration-none">
-        <div>
+      <div class="tarjeta-propiedad d-flex align-items-center justify-content-between gap-3 p-3 px-md-4 py-md-3">
+        <a href="ver-etapa.html?id=${p.id}" class="flex-grow-1 text-decoration-none">
           <h2 class="nombre-propiedad m-0 fs-5">${textoSeguro(p.nombre)}</h2>
           <span class="tipo-propiedad">${textoSeguro(p.tipo)}${p.id === idPropiedadActual() ? ' • <strong class="text-success">Propiedad actual</strong>' : ""}</span>
-        </div>
+        </a>
         <span class="badge-ubicacion ${claseZona(p.zona)} px-4 py-1">${textoSeguro(p.zona)}</span>
-      </a>`;
+        <a href="editar-propiedad.html?id=${p.id}" class="text-success fs-5" aria-label="Editar ${textoSeguro(p.nombre)}" title="Editar propiedad">
+          <i class="bi bi-pencil-square"></i>
+        </a>
+      </div>`;
   }
 
   contenedor.innerHTML = html || '<p class="texto_gris">No hay propiedades registradas.</p>';
@@ -168,6 +172,68 @@ function activarCrearPropiedad() {
     // la propiedad nueva pasa a ser en la que se trabaja
     cambiarPropiedad(lista[lista.length - 1].id);
     window.location.href = esPrimeraPropiedad() ? "../inicio/inicio.html?mensaje=guardado" : "../perfil/perfil.html?mensaje=guardado";
+  });
+}
+
+// ================== EDITAR PROPIEDAD ==================
+function activarEditarPropiedad() {
+  let formulario = document.getElementById("formEditarPropiedad");
+
+  if (formulario === null) {
+    return;
+  }
+
+  let todas = obtenerLista(CLAVE_PROPIEDADES, propiedadesDeEjemplo());
+  let visibles = propiedadesHabilitadas();
+  let propiedad = buscarPorId(visibles, idDeLaDireccion()) || buscarPorId(visibles, idPropiedadActual());
+
+  if (propiedad === null || propiedad === undefined) {
+    alert("No se encontró la propiedad");
+    window.location.href = "ver-propiedad.html";
+    return;
+  }
+
+  // se llena el formulario con lo guardado
+  document.getElementById("nombrePropiedad").value = propiedad.nombre;
+  document.getElementById("tipoPropiedad").value = propiedad.tipo;
+  document.getElementById("zonaPropiedad").value = propiedad.zona;
+  document.getElementById("areaPropiedad").value = propiedad.area || "";
+  document.getElementById("ubicacionPropiedad").value = propiedad.ubicacion;
+  document.getElementById("notasPropiedad").value = propiedad.notas || "";
+
+  formulario.addEventListener("submit", function (evento) {
+    evento.preventDefault();
+
+    let nombre = document.getElementById("nombrePropiedad").value.trim();
+    let ubicacion = document.getElementById("ubicacionPropiedad").value.trim();
+    let area = Number(document.getElementById("areaPropiedad").value);
+
+    if (nombre.length < 3) {
+      alert("El nombre de la propiedad debe tener mínimo 3 letras");
+      return;
+    }
+
+    if (ubicacion === "") {
+      alert("Escribe la ubicación de la propiedad");
+      return;
+    }
+
+    if (isNaN(area) || area <= 0) {
+      alert("Escribe el área de la propiedad en hectáreas");
+      return;
+    }
+
+    let guardada = buscarPorId(todas, propiedad.id);
+    guardada.nombre = nombre;
+    guardada.tipo = document.getElementById("tipoPropiedad").value;
+    guardada.zona = document.getElementById("zonaPropiedad").value;
+    guardada.area = area;
+    guardada.ubicacion = ubicacion;
+    guardada.notas = document.getElementById("notasPropiedad").value.trim();
+
+    guardarLista(CLAVE_PROPIEDADES, todas);
+    registrarEvento("Propiedad editada", nombre + " en " + ubicacion, "inventario", "bi-pencil-square", "info");
+    window.location.href = "ver-propiedad.html?mensaje=guardado";
   });
 }
 
@@ -251,6 +317,8 @@ function mostrarEtapa() {
   document.getElementById("etapaEstado").textContent = primero ? primero.estado : "----";
   document.getElementById("etapaEtapa").textContent = primero ? primero.etapa : "----";
 
+  document.getElementById("botonEditarPropiedad").href = "editar-propiedad.html?id=" + propiedad.id;
+
   // botón para trabajar en esta propiedad
   let boton = document.getElementById("botonUsarPropiedad");
 
@@ -270,5 +338,6 @@ function mostrarEtapa() {
 activarBotonesComunes();
 mostrarPropiedades();
 activarCrearPropiedad();
+activarEditarPropiedad();
 activarInhabilitarPropiedad();
 mostrarEtapa();

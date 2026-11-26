@@ -11,7 +11,7 @@ const MODULOS_PERMISO = [
   { clave: "plagas", nombre: "Plagas", detalle: "Registrar, modificar e inhabilitar plagas" },
   { clave: "reportes", nombre: "Reportes", detalle: "Crear e inhabilitar reportes" },
   { clave: "clima", nombre: "Calendario agrícola", detalle: "Agregar eventos al calendario" },
-  { clave: "propiedad", nombre: "Propiedad", detalle: "Inhabilitar propiedades" }
+  { clave: "propiedad", nombre: "Propiedad", detalle: "Editar e inhabilitar la propiedad" }
 ];
 
 // Pantallas que sirven para modificar algo, por módulo (carpeta de pages/)
@@ -21,7 +21,7 @@ const PANTALLAS_DE_MODIFICAR = {
   insumos: ["crear-insumo", "editar-insumo", "inhabilitar-insumo", "uso-insumo", "actualizar-stock", "codigo-barras", "registrar-proveedor", "nuevo-proveedor"],
   plagas: ["nueva-plaga", "modificar-plaga", "inhabilitar-plaga"],
   reportes: ["crear-reportes", "inhabilitar-reporte"],
-  propiedad: ["inhabilitar-propiedad"]
+  propiedad: ["editar-propiedad", "inhabilitar-propiedad"]
 };
 
 // La propiedad en la que se está trabajando (o null)
